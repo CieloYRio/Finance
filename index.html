@@ -1,0 +1,2471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Management System 2025</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e40af',
+                        secondary: '#3b82f6',
+                        accent: '#0ea5e9',
+                        success: '#059669',
+                        warning: '#d97706',
+                        danger: '#dc2626',
+                        dark: '#1f2937',
+                        light: '#f8fafc'
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .tab-button.active { 
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
+        }
+        .editable-cell { 
+            cursor: pointer; 
+            transition: all 0.2s ease;
+        }
+        .editable-cell:hover { 
+            background-color: #f1f5f9; 
+            transform: translateY(-1px);
+        }
+        .editing { 
+            background-color: #dbeafe !important; 
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+        .metric-card {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            border-radius: 16px;
+            padding: 24px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(30, 64, 175, 0.3);
+            transition: transform 0.3s ease;
+        }
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+        .sidebar {
+            background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+            min-height: 100vh;
+            width: 280px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8fafc 0%, #e1e7ef 100%);
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            margin: 4px 12px;
+            border-radius: 12px;
+            color: #9ca3af;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        .nav-item:hover, .nav-item.active {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+            transform: translateX(5px);
+        }
+        .nav-item i {
+            width: 20px;
+            margin-right: 12px;
+        }
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body class="font-sans bg-light">
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+        <div class="p-6 border-b border-gray-700">
+            <h1 class="text-xl font-bold text-white">Prospira</h1>
+            <p class="text-gray-400 text-sm mt-1">Simplifying Finance for Growth and Clarity</p>
+            
+            <!-- Company Section -->
+            <div class="mt-4 p-3 bg-gray-800 rounded-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-gray-400 uppercase tracking-wide">Company</p>
+                        <p class="text-white font-medium" id="companyName">Click to set company name</p>
+                    </div>
+                    <button onclick="editCompanyName()" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fas fa-edit text-sm"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="py-6">
+            <a href="#" class="nav-item active" onclick="showTab('dashboard')">
+                <i class="fas fa-chart-line"></i>
+                Dashboard
+            </a>
+            <a href="#" class="nav-item" onclick="showTab('project-profile')">
+                <i class="fas fa-project-diagram"></i>
+                Project Profile
+            </a>
+            <a href="#" class="nav-item" onclick="showTab('reference-table')">
+                <i class="fas fa-table"></i>
+                Reference Table
+            </a>
+            <a href="#" class="nav-item" onclick="showTab('transaction-masters')">
+                <i class="fas fa-exchange-alt"></i>
+                Transaction Masters
+            </a>
+            <a href="#" class="nav-item" onclick="showTab('overhead-summary')">
+                <i class="fas fa-chart-pie"></i>
+                Overhead Summary
+            </a>
+            <a href="#" class="nav-item" onclick="showTab('project-revenue')">
+                <i class="fas fa-money-bill-wave"></i>
+                Project Revenue
+            </a>
+            <a href="#" class="nav-item" onclick="showTab('budget-actual')">
+                <i class="fas fa-balance-scale"></i>
+                Budget vs Actual
+            </a>
+            <a href="#" class="nav-item" onclick="showTab('project-cost')">
+                <i class="fas fa-calculator"></i>
+                Project Cost
+            </a>
+            <a href="#" class="nav-item" onclick="showTab('collections-master')">
+                <i class="fas fa-coins"></i>
+                Collections Master
+            </a>
+            <a href="#" class="nav-item" onclick="showTab('accounts-receivable')">
+                <i class="fas fa-file-invoice-dollar"></i>
+                Accounts Receivable
+            </a>
+            <a href="#" class="nav-item" onclick="showTab('cash-flow')">
+                <i class="fas fa-water"></i>
+                Cash Flow
+            </a>
+            <a href="#" class="nav-item" onclick="showTab('profit-loss')">
+                <i class="fas fa-chart-bar"></i>
+                Profit & Loss
+            </a>
+            <a href="#" class="nav-item" onclick="showTab('accounts-payable')">
+                <i class="fas fa-file-invoice"></i>
+                Accounts Payables
+            </a>
+            <a href="#" class="nav-item" onclick="showTab('fixed-assets')">
+                <i class="fas fa-building"></i>
+                Fixed Assets
+            </a>
+            <a href="#" class="nav-item" onclick="showTab('owners-capital')">
+                <i class="fas fa-user-tie"></i>
+                Owners' Capital
+            </a>
+            <a href="#" class="nav-item" onclick="showTab('owners-liability')">
+                <i class="fas fa-clipboard-list"></i>
+                Owners Liability
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="glass-card border-b p-6 sticky top-0 z-50">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <button onclick="toggleSidebar()" class="lg:hidden mr-4 p-2 rounded-lg hover:bg-gray-100">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900" id="pageTitle">Dashboard</h2>
+                        <p class="text-gray-600 text-sm">Real-time financial insights and analytics</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="importExcel()" class="bg-success hover:bg-green-600 text-white px-6 py-3 rounded-xl flex items-center gap-2 shadow-lg transition-all duration-300 hover:shadow-xl">
+                        <i class="fas fa-file-import"></i>
+                        Import Excel
+                    </button>
+                    <button onclick="exportExcel()" class="bg-primary hover:bg-indigo-600 text-white px-6 py-3 rounded-xl flex items-center gap-2 shadow-lg transition-all duration-300 hover:shadow-xl">
+                        <i class="fas fa-file-export"></i>
+                        Export Excel
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Tab Content -->
+        <main class="p-6">
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <!-- Key Metrics -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="metric-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-white/80 text-sm font-medium">Total Revenue</p>
+                                <p class="text-3xl font-bold mt-2" id="totalRevenue">₱0.00</p>
+                            </div>
+                            <i class="fas fa-chart-line text-3xl text-white/60"></i>
+                        </div>
+                    </div>
+                    <div class="metric-card" style="background: linear-gradient(135deg, #059669 0%, #047857 100%);">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-white/80 text-sm font-medium">Total Collections</p>
+                                <p class="text-3xl font-bold mt-2" id="totalCollections">₱0.00</p>
+                            </div>
+                            <i class="fas fa-coins text-3xl text-white/60"></i>
+                        </div>
+                    </div>
+                    <div class="metric-card" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-white/80 text-sm font-medium">Total Expenses</p>
+                                <p class="text-3xl font-bold mt-2" id="totalExpenses">₱0.00</p>
+                            </div>
+                            <i class="fas fa-credit-card text-3xl text-white/60"></i>
+                        </div>
+                    </div>
+                    <div class="metric-card" style="background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-white/80 text-sm font-medium">Net Profit</p>
+                                <p class="text-3xl font-bold mt-2" id="netProfit">₱0.00</p>
+                            </div>
+                            <i class="fas fa-trophy text-3xl text-white/60"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <!-- Profitability Charts -->
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Revenue vs Profit Trend</h3>
+                        <div class="chart-container">
+                            <canvas id="revenueProfitChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Monthly Net Profit</h3>
+                        <div class="chart-container">
+                            <canvas id="monthlyProfitChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Project Performance Charts -->
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Budget vs Actual by Project</h3>
+                        <div class="chart-container">
+                            <canvas id="budgetActualChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Budget Usage Breakdown</h3>
+                        <div class="chart-container">
+                            <canvas id="budgetUsageChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Cash Flow Charts -->
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Cash Balance Trend</h3>
+                        <div class="chart-container">
+                            <canvas id="cashBalanceChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Monthly Inflows vs Outflows</h3>
+                        <div class="chart-container">
+                            <canvas id="inflowOutflowChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Outstanding Items -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Outstanding Receivables</h3>
+                        <div class="text-3xl font-bold text-success" id="outstandingReceivables">₱0.00</div>
+                        <p class="text-gray-600 mt-2">Pending collections from clients</p>
+                    </div>
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Outstanding Payables</h3>
+                        <div class="text-3xl font-bold text-danger" id="outstandingPayables">₱0.00</div>
+                        <p class="text-gray-600 mt-2">Pending payments to vendors</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Profile Tab -->
+            <div id="project-profile" class="tab-content">
+                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">Project Profile</h2>
+                        <button onclick="addProject()" class="bg-primary hover:bg-indigo-600 text-white px-6 py-3 rounded-xl shadow-lg transition-all duration-300">
+                            <i class="fas fa-plus mr-2"></i>Add Project
+                        </button>
+                    </div>
+                    
+                    <div id="projectCards" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                        <!-- Project cards will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reference Table Tab -->
+            <div id="reference-table" class="tab-content">
+                <div class="space-y-6">
+                    <!-- COA Section -->
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-semibold text-gray-800">Chart of Accounts (BIR-Aligned)</h3>
+                            <button onclick="addCOA()" class="bg-primary text-white px-4 py-2 rounded-lg">
+                                <i class="fas fa-plus mr-2"></i>Add Account
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-50">
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Old COA</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Unified Code</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Account Name</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Category</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Subcategory</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="coaTable">
+                                    <!-- COA entries will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Other Reference Tables -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-lg font-semibold mb-4 text-gray-800">Expense Types</h3>
+                            <div id="expenseTypesList" class="space-y-2 max-h-64 overflow-y-auto">
+                                <!-- Expense types will be populated here -->
+                            </div>
+                            <button onclick="addExpenseType()" class="mt-4 text-primary hover:text-indigo-600 font-medium">
+                                <i class="fas fa-plus mr-2"></i>Add Expense Type
+                            </button>
+                        </div>
+
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-lg font-semibold mb-4 text-gray-800">Project Types</h3>
+                            <div id="projectTypesList" class="space-y-2 max-h-64 overflow-y-auto">
+                                <!-- Project types will be populated here -->
+                            </div>
+                            <button onclick="addProjectType()" class="mt-4 text-primary hover:text-indigo-600 font-medium">
+                                <i class="fas fa-plus mr-2"></i>Add Project Type
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction Masters Tab -->
+            <div id="transaction-masters" class="tab-content">
+                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">Transaction Masters</h2>
+                        <button onclick="addTransaction()" class="bg-primary hover:bg-indigo-600 text-white px-6 py-3 rounded-xl shadow-lg">
+                            <i class="fas fa-plus mr-2"></i>Add Transaction
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Payment Date</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Particulars</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Expense Type</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">COA Code</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Project ID</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Vendor</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Total Amount</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Paid</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionTable">
+                                <!-- Transactions will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collections Master Tab -->
+            <div id="collections-master" class="tab-content">
+                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">Collections Master</h2>
+                        <button onclick="addCollection()" class="bg-success hover:bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg">
+                            <i class="fas fa-plus mr-2"></i>Add Collection
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Invoice Number</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Project ID</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Client Name</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Revenue Milestone</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Invoice Date</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Amount Billed</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Amount Paid</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="collectionTable">
+                                <!-- Collections will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fixed Assets Tab -->
+            <div id="fixed-assets" class="tab-content">
+                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">Fixed Asset Register</h2>
+                        <button onclick="addFixedAsset()" class="bg-primary hover:bg-indigo-600 text-white px-6 py-3 rounded-xl shadow-lg">
+                            <i class="fas fa-plus mr-2"></i>Add Asset
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Asset Name</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Model No.</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Acquisition Date</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Acquisition Cost</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Useful Life</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Depreciation</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Net Book Value</th>
+                                </tr>
+                            </thead>
+                            <tbody id="fixedAssetsTable">
+                                <!-- Fixed assets will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Owners Capital Tab -->
+            <div id="owners-capital" class="tab-content">
+                <div class="space-y-6">
+                    <!-- Capital Pie Chart -->
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">Capital Distribution by Owner</h3>
+                        <div class="chart-container">
+                            <canvas id="capitalDistributionChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Capital Transactions -->
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800">Owners Capital and Infusion</h2>
+                            <button onclick="addCapitalEntry()" class="bg-primary hover:bg-indigo-600 text-white px-6 py-3 rounded-xl shadow-lg">
+                                <i class="fas fa-plus mr-2"></i>Add Capital Entry
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-50">
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Date</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Owner Name</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Type</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Amount</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Investment Type</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">% of Total</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Cumulative</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="capitalTable">
+                                    <!-- Capital entries will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Owners Liability Tab -->
+            <div id="owners-liability" class="tab-content">
+                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">Owners Liability Log</h2>
+                        <button onclick="addLiabilityEntry()" class="bg-warning hover:bg-yellow-600 text-white px-6 py-3 rounded-xl shadow-lg">
+                            <i class="fas fa-plus mr-2"></i>Add Liability Entry
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Date</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Source of Funds</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Investment Type</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Purpose</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Amount</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Paid Back</th>
+                                </tr>
+                            </thead>
+                            <tbody id="liabilityTable">
+                                <!-- Liability entries will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Overhead Summary Tab -->
+            <div id="overhead-summary" class="tab-content">
+                <div class="space-y-6">
+                    <!-- Overhead Metrics -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-lg font-semibold mb-2 text-gray-800">Total Overhead</h3>
+                            <div class="text-3xl font-bold text-primary" id="totalOverhead">₱0.00</div>
+                            <p class="text-gray-600 text-sm mt-2">Non-project expenses</p>
+                        </div>
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-lg font-semibold mb-2 text-gray-800">Overhead Rate</h3>
+                            <div class="text-3xl font-bold text-warning" id="overheadRate">0%</div>
+                            <p class="text-gray-600 text-sm mt-2">Of total revenue</p>
+                        </div>
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-lg font-semibold mb-2 text-gray-800">Monthly Average</h3>
+                            <div class="text-3xl font-bold text-accent" id="monthlyOverhead">₱0.00</div>
+                            <p class="text-gray-600 text-sm mt-2">Average per month</p>
+                        </div>
+                    </div>
+
+                    <!-- Overhead Breakdown -->
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">Overhead Breakdown by Category</h3>
+                        <div class="chart-container">
+                            <canvas id="overheadBreakdownChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Overhead Transactions -->
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">Overhead Transactions</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-50">
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Date</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Description</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Category</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Amount</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Vendor</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="overheadTable">
+                                    <!-- Overhead transactions will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Revenue Tab -->
+            <div id="project-revenue" class="tab-content">
+                <div class="space-y-6">
+                    <!-- Revenue Summary Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Total Contract Value</h3>
+                            <div class="text-2xl font-bold text-primary" id="totalContractValue">₱0.00</div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Revenue Recognized</h3>
+                            <div class="text-2xl font-bold text-success" id="revenueRecognized">₱0.00</div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Pending Revenue</h3>
+                            <div class="text-2xl font-bold text-warning" id="pendingRevenue">₱0.00</div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Completion Rate</h3>
+                            <div class="text-2xl font-bold text-accent" id="completionRate">0%</div>
+                        </div>
+                    </div>
+
+                    <!-- Project Revenue Table -->
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">Revenue by Project</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-50">
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Project ID</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Project Name</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Contract Amount</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Billed Amount</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Collected Amount</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Outstanding</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Progress</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="projectRevenueTable">
+                                    <!-- Project revenue will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Budget vs Actual Tab -->
+            <div id="budget-actual" class="tab-content">
+                <div class="space-y-6">
+                    <!-- Budget Summary -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Total Budget</h3>
+                            <div class="text-2xl font-bold text-primary" id="totalBudget">₱0.00</div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Actual Spent</h3>
+                            <div class="text-2xl font-bold text-danger" id="actualSpent">₱0.00</div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Variance</h3>
+                            <div class="text-2xl font-bold" id="budgetVariance">₱0.00</div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Budget Utilization</h3>
+                            <div class="text-2xl font-bold text-accent" id="budgetUtilization">0%</div>
+                        </div>
+                    </div>
+
+                    <!-- Budget vs Actual Chart -->
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">Budget vs Actual by Project</h3>
+                        <div class="chart-container">
+                            <canvas id="budgetComparisonChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Budget Table -->
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">Detailed Budget Analysis</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-50">
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Project</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Budget</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Actual</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Variance</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">% Used</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="budgetAnalysisTable">
+                                    <!-- Budget analysis will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Cost Tab -->
+            <div id="project-cost" class="tab-content">
+                <div class="space-y-6">
+                    <!-- Cost Summary -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Total Project Costs</h3>
+                            <div class="text-2xl font-bold text-primary" id="totalProjectCosts">₱0.00</div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Materials (500.1)</h3>
+                            <div class="text-2xl font-bold text-success" id="materialsCost">₱0.00</div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Labor (500.2)</h3>
+                            <div class="text-2xl font-bold text-warning" id="laborCost">₱0.00</div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Other Costs</h3>
+                            <div class="text-2xl font-bold text-accent" id="otherCosts">₱0.00</div>
+                        </div>
+                    </div>
+
+                    <!-- Cost Breakdown Chart -->
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">Cost Breakdown by 500 Series</h3>
+                        <div class="chart-container">
+                            <canvas id="costBreakdownChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Project Cost Details -->
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">Project Cost Details</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-50">
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Project ID</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Project Name</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Materials</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Labor</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Equipment</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Other</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Total Cost</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="projectCostTable">
+                                    <!-- Project costs will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accounts Receivable Tab -->
+            <div id="accounts-receivable" class="tab-content">
+                <div class="space-y-6">
+                    <!-- AR Summary -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Total Receivables</h3>
+                            <div class="text-2xl font-bold text-primary" id="totalReceivables">₱0.00</div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Current (0-30 days)</h3>
+                            <div class="text-2xl font-bold text-success" id="currentReceivables">₱0.00</div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Overdue (31+ days)</h3>
+                            <div class="text-2xl font-bold text-danger" id="overdueReceivables">₱0.00</div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Average Days</h3>
+                            <div class="text-2xl font-bold text-warning" id="averageDays">0</div>
+                        </div>
+                    </div>
+
+                    <!-- AR Aging Chart -->
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">Accounts Receivable Aging</h3>
+                        <div class="chart-container">
+                            <canvas id="arAgingChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- AR Details Table -->
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">Outstanding Receivables</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-50">
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Invoice #</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Client</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Invoice Date</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Due Date</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Amount</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Days Overdue</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="receivablesTable">
+                                    <!-- Receivables will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cash Flow Tab -->
+            <div id="cash-flow" class="tab-content">
+                <div class="space-y-6">
+                    <!-- Cash Flow Summary -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Opening Balance</h3>
+                            <div class="text-2xl font-bold text-primary" id="openingBalance">₱0.00</div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Total Inflows</h3>
+                            <div class="text-2xl font-bold text-success" id="totalInflows">₱0.00</div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Total Outflows</h3>
+                            <div class="text-2xl font-bold text-danger" id="totalOutflows">₱0.00</div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Closing Balance</h3>
+                            <div class="text-2xl font-bold text-accent" id="closingBalance">₱0.00</div>
+                        </div>
+                    </div>
+
+                    <!-- Cash Flow Chart -->
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">Monthly Cash Flow</h3>
+                        <div class="chart-container">
+                            <canvas id="cashFlowChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Cash Flow Statement -->
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">Cash Flow Statement</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-50">
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Month</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Opening Balance</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Inflows</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Outflows</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Net Flow</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Closing Balance</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cashFlowTable">
+                                    <!-- Cash flow will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profit & Loss Tab -->
+            <div id="profit-loss" class="tab-content">
+                <div class="space-y-6">
+                    <!-- P&L Summary -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Total Revenue</h3>
+                            <div class="text-2xl font-bold text-success" id="plTotalRevenue">₱0.00</div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Total Expenses</h3>
+                            <div class="text-2xl font-bold text-danger" id="plTotalExpenses">₱0.00</div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Gross Profit</h3>
+                            <div class="text-2xl font-bold text-primary" id="grossProfit">₱0.00</div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Net Profit</h3>
+                            <div class="text-2xl font-bold text-accent" id="plNetProfit">₱0.00</div>
+                        </div>
+                    </div>
+
+                    <!-- P&L Statement -->
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">Profit & Loss Statement</h3>
+                        <div class="space-y-4">
+                            <!-- Revenue Section -->
+                            <div class="border-b pb-4">
+                                <h4 class="font-semibold text-lg text-gray-800 mb-2">REVENUE</h4>
+                                <div class="pl-4 space-y-2" id="revenueSection">
+                                    <!-- Revenue items will be populated here -->
+                                </div>
+                            </div>
+                            
+                            <!-- Cost of Goods Sold -->
+                            <div class="border-b pb-4">
+                                <h4 class="font-semibold text-lg text-gray-800 mb-2">COST OF GOODS SOLD</h4>
+                                <div class="pl-4 space-y-2" id="cogsSection">
+                                    <!-- COGS items will be populated here -->
+                                </div>
+                            </div>
+                            
+                            <!-- Operating Expenses -->
+                            <div class="border-b pb-4">
+                                <h4 class="font-semibold text-lg text-gray-800 mb-2">OPERATING EXPENSES</h4>
+                                <div class="pl-4 space-y-2" id="opexSection">
+                                    <!-- Operating expenses will be populated here -->
+                                </div>
+                            </div>
+                            
+                            <!-- Net Income -->
+                            <div class="pt-4">
+                                <div class="flex justify-between items-center text-xl font-bold">
+                                    <span>NET INCOME</span>
+                                    <span id="finalNetIncome">₱0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accounts Payable Tab -->
+            <div id="accounts-payable" class="tab-content">
+                <div class="space-y-6">
+                    <!-- AP Summary -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Total Payables</h3>
+                            <div class="text-2xl font-bold text-danger" id="totalPayables">₱0.00</div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Current (0-30 days)</h3>
+                            <div class="text-2xl font-bold text-warning" id="currentPayables">₱0.00</div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Overdue (31+ days)</h3>
+                            <div class="text-2xl font-bold text-danger" id="overduePayables">₱0.00</div>
+                        </div>
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-sm font-medium text-gray-600 mb-2">Vendors</h3>
+                            <div class="text-2xl font-bold text-primary" id="totalVendors">0</div>
+                        </div>
+                    </div>
+
+                    <!-- AP Aging Chart -->
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">Accounts Payable Aging</h3>
+                        <div class="chart-container">
+                            <canvas id="apAgingChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- AP Details Table -->
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">Outstanding Payables</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-50">
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Date</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Vendor</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Description</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Amount</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Days Outstanding</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Status</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="payablesTable">
+                                    <!-- Payables will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Auto-save notification -->
+    <div id="autoSaveNotification" class="fixed bottom-4 right-4 bg-success text-white px-4 py-2 rounded-lg shadow-lg transform translate-y-full transition-transform duration-300">
+        <i class="fas fa-check-circle mr-2"></i>
+        Data auto-saved
+    </div>
+    </div>
+
+    <!-- Hidden file input for Excel import -->
+    <input type="file" id="excelFileInput" accept=".xlsx,.xls" style="display: none;" onchange="handleExcelImport(event)">
+
+    <script>
+        // Global data storage with your exact structure
+        let financeData = {
+            companyName: 'Click to set company name',
+            projects: [],
+            coa: [
+                { oldCOA: '1000', unifiedCode: '1000', accountName: 'Cash and Cash Equivalents', category: 'Assets', subcategory: 'Current Assets', notes: 'BIR-Compliant' },
+                { oldCOA: '1100', unifiedCode: '1100', accountName: 'Accounts Receivable', category: 'Assets', subcategory: 'Current Assets', notes: 'Trade receivables' },
+                { oldCOA: '5001', unifiedCode: '500.1', accountName: 'Materials', category: 'Project Expenses', subcategory: '500 Series', notes: 'Project materials cost' },
+                { oldCOA: '5002', unifiedCode: '500.2', accountName: 'Professional Fees', category: 'Project Expenses', subcategory: '500 Series', notes: 'Professional services' }
+            ],
+            expenseTypes: ['Office Supplies', 'Utilities', 'Rent', 'Professional Fees', 'Materials', 'Labor'],
+            projectTypes: ['Construction', 'Consulting', 'Design', 'Engineering'],
+            transactions: [],
+            collections: [],
+            fixedAssets: [],
+            capitalEntries: [],
+            liabilityEntries: [],
+            charts: {}
+        };
+
+        // Initialize charts
+        function initializeCharts() {
+            // Revenue vs Profit Chart
+            const ctx1 = document.getElementById('revenueProfitChart').getContext('2d');
+            financeData.charts.revenueProfitChart = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: ['2021', '2022', '2023', '2024', '2025'],
+                    datasets: [{
+                        label: 'Total Revenue',
+                        data: [0, 0, 0, 0, 0],
+                        borderColor: '#1e40af',
+                        backgroundColor: 'rgba(30, 64, 175, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Total Profit',
+                        data: [0, 0, 0, 0, 0],
+                        borderColor: '#059669',
+                        backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                }
+            });
+
+            // Monthly Profit Chart
+            const ctx2 = document.getElementById('monthlyProfitChart').getContext('2d');
+            financeData.charts.monthlyProfitChart = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Net Profit',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        borderColor: '#0ea5e9',
+                        backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Budget vs Actual Chart
+            const ctx3 = document.getElementById('budgetActualChart').getContext('2d');
+            financeData.charts.budgetActualChart = new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Budget',
+                        data: [],
+                        backgroundColor: '#0ea5e9'
+                    }, {
+                        label: 'Actual',
+                        data: [],
+                        backgroundColor: '#d97706'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Budget Usage Pie Chart
+            const ctx4 = document.getElementById('budgetUsageChart').getContext('2d');
+            financeData.charts.budgetUsageChart = new Chart(ctx4, {
+                type: 'pie',
+                data: {
+                    labels: ['Used', 'Remaining'],
+                    datasets: [{
+                        data: [0, 100],
+                        backgroundColor: ['#dc2626', '#059669']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Cash Balance Trend
+            const ctx5 = document.getElementById('cashBalanceChart').getContext('2d');
+            financeData.charts.cashBalanceChart = new Chart(ctx5, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Closing Balance',
+                        data: [0, 0, 0, 0, 0, 0],
+                        borderColor: '#0ea5e9',
+                        backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Inflow vs Outflow Chart
+            const ctx6 = document.getElementById('inflowOutflowChart').getContext('2d');
+            financeData.charts.inflowOutflowChart = new Chart(ctx6, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Inflows',
+                        data: [0, 0, 0, 0, 0, 0],
+                        backgroundColor: '#059669'
+                    }, {
+                        label: 'Outflows',
+                        data: [0, 0, 0, 0, 0, 0],
+                        backgroundColor: '#dc2626'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Capital Distribution Chart
+            const ctx7 = document.getElementById('capitalDistributionChart').getContext('2d');
+            financeData.charts.capitalDistributionChart = new Chart(ctx7, {
+                type: 'pie',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: ['#1e40af', '#3b82f6', '#0ea5e9', '#059669', '#d97706', '#dc2626']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Initialize additional charts for new tabs
+            initializeAdditionalCharts();
+        }
+
+        // Initialize additional charts for new tabs
+        function initializeAdditionalCharts() {
+            // Overhead Breakdown Chart
+            const overheadCtx = document.getElementById('overheadBreakdownChart').getContext('2d');
+            financeData.charts.overheadBreakdownChart = new Chart(overheadCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Office Supplies', 'Utilities', 'Rent', 'Insurance', 'Other'],
+                    datasets: [{
+                        data: [0, 0, 0, 0, 0],
+                        backgroundColor: ['#1e40af', '#3b82f6', '#0ea5e9', '#059669', '#d97706']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Budget Comparison Chart
+            const budgetCtx = document.getElementById('budgetComparisonChart').getContext('2d');
+            financeData.charts.budgetComparisonChart = new Chart(budgetCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Budget',
+                        data: [],
+                        backgroundColor: '#0ea5e9'
+                    }, {
+                        label: 'Actual',
+                        data: [],
+                        backgroundColor: '#d97706'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Cost Breakdown Chart
+            const costCtx = document.getElementById('costBreakdownChart').getContext('2d');
+            financeData.charts.costBreakdownChart = new Chart(costCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Materials (500.1)', 'Labor (500.2)', 'Equipment (500.3)', 'Other'],
+                    datasets: [{
+                        data: [0, 0, 0, 0],
+                        backgroundColor: ['#059669', '#d97706', '#0ea5e9', '#1e40af']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // AR Aging Chart
+            const arCtx = document.getElementById('arAgingChart').getContext('2d');
+            financeData.charts.arAgingChart = new Chart(arCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['0-30 days', '31-60 days', '61-90 days', '90+ days'],
+                    datasets: [{
+                        label: 'Amount',
+                        data: [0, 0, 0, 0],
+                        backgroundColor: ['#059669', '#d97706', '#dc2626', '#7f1d1d']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // Cash Flow Chart
+            const cashCtx = document.getElementById('cashFlowChart').getContext('2d');
+            financeData.charts.cashFlowChart = new Chart(cashCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Cash Balance',
+                        data: [0, 0, 0, 0, 0, 0],
+                        borderColor: '#0ea5e9',
+                        backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+
+            // AP Aging Chart
+            const apCtx = document.getElementById('apAgingChart').getContext('2d');
+            financeData.charts.apAgingChart = new Chart(apCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['0-30 days', '31-60 days', '61-90 days', '90+ days'],
+                    datasets: [{
+                        label: 'Amount',
+                        data: [0, 0, 0, 0],
+                        backgroundColor: ['#d97706', '#dc2626', '#b91c1c', '#7f1d1d']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        // Tab switching functionality
+        function showTab(tabName) {
+            // Update page title
+            const titles = {
+                'dashboard': 'Dashboard',
+                'project-profile': 'Project Profile',
+                'reference-table': 'Reference Table',
+                'transaction-masters': 'Transaction Masters',
+                'overhead-summary': 'Overhead Summary',
+                'project-revenue': 'Project Revenue',
+                'budget-actual': 'Budget vs Actual',
+                'project-cost': 'Project Cost',
+                'collections-master': 'Collections Master',
+                'accounts-receivable': 'Accounts Receivable',
+                'cash-flow': 'Cash Flow',
+                'profit-loss': 'Profit & Loss',
+                'accounts-payable': 'Accounts Payables',
+                'fixed-assets': 'Fixed Asset Register',
+                'owners-capital': 'Owners\' Capital',
+                'owners-liability': 'Owners Liability Log'
+            };
+            
+            document.getElementById('pageTitle').textContent = titles[tabName] || 'Dashboard';
+            
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked nav item
+            event.target.classList.add('active');
+            
+            // Update data when switching to certain tabs
+            if (tabName === 'dashboard') updateDashboard();
+            if (tabName === 'project-profile') renderProjectCards();
+            if (tabName === 'reference-table') renderReferenceTables();
+            if (tabName === 'transaction-masters') renderTransactions();
+            if (tabName === 'collections-master') renderCollections();
+            if (tabName === 'fixed-assets') renderFixedAssets();
+            if (tabName === 'owners-capital') renderCapitalEntries();
+            if (tabName === 'owners-liability') renderLiabilityEntries();
+            if (tabName === 'overhead-summary') renderOverheadSummary();
+            if (tabName === 'project-revenue') renderProjectRevenue();
+            if (tabName === 'budget-actual') renderBudgetActual();
+            if (tabName === 'project-cost') renderProjectCost();
+            if (tabName === 'accounts-receivable') renderAccountsReceivable();
+            if (tabName === 'cash-flow') renderCashFlow();
+            if (tabName === 'profit-loss') renderProfitLoss();
+            if (tabName === 'accounts-payable') renderAccountsPayable();
+        }
+
+        // Sidebar toggle for mobile
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Project management
+        function addProject() {
+            const project = {
+                id: 'PRJ' + (financeData.projects.length + 1).toString().padStart(3, '0'),
+                projectName: prompt('Project Name:') || 'New Project',
+                clientName: prompt('Client Name:') || 'Client',
+                projectType: financeData.projectTypes[0] || 'General',
+                location: prompt('Location:') || '',
+                startDate: new Date().toISOString().split('T')[0],
+                endDate: '',
+                contractAmount: parseFloat(prompt('Contract Amount:') || '0'),
+                approvedBudget: parseFloat(prompt('Approved Budget:') || '0'),
+                status: 'Ongoing'
+            };
+            
+            financeData.projects.push(project);
+            renderProjectCards();
+            autoSave();
+        }
+
+        function renderProjectCards() {
+            const container = document.getElementById('projectCards');
+            container.innerHTML = financeData.projects.map(project => {
+                const profit = (project.projectRevenue || 0) - (project.projectCost || 0);
+                const margin = project.projectRevenue ? ((profit / project.projectRevenue) * 100).toFixed(1) : 0;
+                
+                return `
+                    <div class="glass-card rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800">${project.projectName}</h3>
+                                <p class="text-gray-600">${project.clientName}</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-xs font-medium ${project.status === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}">
+                                ${project.status}
+                            </span>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Project ID:</span>
+                                <span class="font-medium">${project.id}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Contract Amount:</span>
+                                <span class="font-medium">₱${project.contractAmount.toLocaleString()}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Budget:</span>
+                                <span class="font-medium">₱${project.approvedBudget.toLocaleString()}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Profit:</span>
+                                <span class="font-medium ${profit >= 0 ? 'text-green-600' : 'text-red-600'}">₱${profit.toLocaleString()}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Margin:</span>
+                                <span class="font-medium">${margin}%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <div class="flex justify-between text-sm text-gray-600">
+                                <span>Start: ${project.startDate}</span>
+                                <span>End: ${project.endDate || 'TBD'}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Reference table management
+        function renderReferenceTables() {
+            renderCOATable();
+            renderExpenseTypes();
+            renderProjectTypes();
+        }
+
+        function renderCOATable() {
+            const tbody = document.getElementById('coaTable');
+            tbody.innerHTML = financeData.coa.map(account => `
+                <tr class="hover:bg-gray-50">
+                    <td class="border border-gray-200 px-4 py-3">${account.oldCOA}</td>
+                    <td class="border border-gray-200 px-4 py-3 font-medium">${account.unifiedCode}</td>
+                    <td class="border border-gray-200 px-4 py-3">${account.accountName}</td>
+                    <td class="border border-gray-200 px-4 py-3">${account.category}</td>
+                    <td class="border border-gray-200 px-4 py-3">${account.subcategory}</td>
+                    <td class="border border-gray-200 px-4 py-3 text-gray-600">${account.notes}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderExpenseTypes() {
+            const container = document.getElementById('expenseTypesList');
+            container.innerHTML = financeData.expenseTypes.map(type => `
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <span class="font-medium">${type}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderProjectTypes() {
+            const container = document.getElementById('projectTypesList');
+            container.innerHTML = financeData.projectTypes.map(type => `
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <span class="font-medium">${type}</span>
+                </div>
+            `).join('');
+        }
+
+        // Transaction management
+        function addTransaction() {
+            const transaction = {
+                id: Date.now(),
+                paymentDate: new Date().toISOString().split('T')[0],
+                month: new Date().toISOString().slice(0, 7),
+                particulars: prompt('Particulars:') || 'New Transaction',
+                expenseType: financeData.expenseTypes[0] || 'General',
+                oldCOACode: financeData.coa[0]?.oldCOA || '',
+                unifiedCode: financeData.coa[0]?.unifiedCode || '',
+                expenseName: financeData.coa[0]?.accountName || '',
+                projectID: financeData.projects[0]?.id || '',
+                vendor: prompt('Vendor/Supplier:') || 'Vendor',
+                totalAmount: parseFloat(prompt('Total Amount:') || '0'),
+                vatableAmount: 0,
+                vat: 0,
+                paid: 'No',
+                paymentMethod: 'Cash',
+                notes: ''
+            };
+            
+            // Calculate VAT
+            transaction.vatableAmount = transaction.totalAmount / 1.12;
+            transaction.vat = transaction.totalAmount - transaction.vatableAmount;
+            
+            financeData.transactions.push(transaction);
+            renderTransactions();
+            autoSave();
+        }
+
+        function renderTransactions() {
+            const tbody = document.getElementById('transactionTable');
+            tbody.innerHTML = financeData.transactions.map(transaction => `
+                <tr class="hover:bg-gray-50">
+                    <td class="border border-gray-200 px-4 py-3">${transaction.paymentDate}</td>
+                    <td class="border border-gray-200 px-4 py-3">${transaction.particulars}</td>
+                    <td class="border border-gray-200 px-4 py-3">${transaction.expenseType}</td>
+                    <td class="border border-gray-200 px-4 py-3 font-mono">${transaction.unifiedCode}</td>
+                    <td class="border border-gray-200 px-4 py-3">${transaction.projectID}</td>
+                    <td class="border border-gray-200 px-4 py-3">${transaction.vendor}</td>
+                    <td class="border border-gray-200 px-4 py-3 font-semibold">₱${transaction.totalAmount.toLocaleString()}</td>
+                    <td class="border border-gray-200 px-4 py-3">
+                        <select onchange="updateTransactionStatus('${transaction.id}', this.value)" class="border rounded px-2 py-1 ${transaction.paid === 'Yes' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            <option value="No" ${transaction.paid === 'No' ? 'selected' : ''}>No</option>
+                            <option value="Yes" ${transaction.paid === 'Yes' ? 'selected' : ''}>Yes</option>
+                        </select>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Collection management
+        function addCollection() {
+            const collection = {
+                id: Date.now(),
+                invoiceNumber: 'INV' + Date.now().toString().slice(-6),
+                projectID: financeData.projects[0]?.id || '',
+                projectName: financeData.projects[0]?.projectName || '',
+                clientName: financeData.projects[0]?.clientName || 'Client',
+                revenueMilestone: prompt('Revenue Milestone:') || 'Initial Payment',
+                invoiceDate: new Date().toISOString().split('T')[0],
+                dueDate: new Date(Date.now() + 30*24*60*60*1000).toISOString().split('T')[0],
+                amountBilled: parseFloat(prompt('Amount Billed:') || '0'),
+                amountPaid: 0,
+                outstandingAmount: 0,
+                status: 'Unpaid',
+                paymentDate: '',
+                paymentMethod: '',
+                daysOverdue: 0,
+                notes: ''
+            };
+            
+            collection.outstandingAmount = collection.amountBilled - collection.amountPaid;
+            
+            financeData.collections.push(collection);
+            renderCollections();
+            autoSave();
+        }
+
+        function renderCollections() {
+            const tbody = document.getElementById('collectionTable');
+            tbody.innerHTML = financeData.collections.map(collection => `
+                <tr class="hover:bg-gray-50">
+                    <td class="border border-gray-200 px-4 py-3 font-mono">${collection.invoiceNumber}</td>
+                    <td class="border border-gray-200 px-4 py-3">${collection.projectID}</td>
+                    <td class="border border-gray-200 px-4 py-3">${collection.clientName}</td>
+                    <td class="border border-gray-200 px-4 py-3">${collection.revenueMilestone}</td>
+                    <td class="border border-gray-200 px-4 py-3">${collection.invoiceDate}</td>
+                    <td class="border border-gray-200 px-4 py-3 font-semibold">₱${collection.amountBilled.toLocaleString()}</td>
+                    <td class="border border-gray-200 px-4 py-3 font-semibold text-green-600">₱${collection.amountPaid.toLocaleString()}</td>
+                    <td class="border border-gray-200 px-4 py-3">
+                        <span class="px-2 py-1 rounded-full text-xs font-medium ${collection.status === 'Paid' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            ${collection.status}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Fixed Assets management
+        function addFixedAsset() {
+            const asset = {
+                id: Date.now(),
+                assetName: prompt('Asset Name:') || 'New Asset',
+                modelNo: prompt('Model Number:') || '',
+                acquisitionDate: new Date().toISOString().split('T')[0],
+                month: new Date().toISOString().slice(0, 7),
+                acquisitionCost: parseFloat(prompt('Acquisition Cost:') || '0'),
+                currentCondition: 'Good',
+                usefulLife: parseInt(prompt('Useful Life (Years):') || '5'),
+                depreciation: 0,
+                netBookValue: 0
+            };
+            
+            // Calculate straight-line depreciation
+            asset.depreciation = asset.acquisitionCost / asset.usefulLife;
+            asset.netBookValue = asset.acquisitionCost - asset.depreciation;
+            
+            financeData.fixedAssets.push(asset);
+            renderFixedAssets();
+            autoSave();
+        }
+
+        function renderFixedAssets() {
+            const tbody = document.getElementById('fixedAssetsTable');
+            tbody.innerHTML = financeData.fixedAssets.map(asset => `
+                <tr class="hover:bg-gray-50">
+                    <td class="border border-gray-200 px-4 py-3 font-medium">${asset.assetName}</td>
+                    <td class="border border-gray-200 px-4 py-3">${asset.modelNo}</td>
+                    <td class="border border-gray-200 px-4 py-3">${asset.acquisitionDate}</td>
+                    <td class="border border-gray-200 px-4 py-3 font-semibold">₱${asset.acquisitionCost.toLocaleString()}</td>
+                    <td class="border border-gray-200 px-4 py-3">${asset.usefulLife} years</td>
+                    <td class="border border-gray-200 px-4 py-3">₱${asset.depreciation.toLocaleString()}</td>
+                    <td class="border border-gray-200 px-4 py-3 font-semibold text-green-600">₱${asset.netBookValue.toLocaleString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Capital management
+        function addCapitalEntry() {
+            const entry = {
+                id: Date.now(),
+                date: new Date().toISOString().split('T')[0],
+                month: new Date().toISOString().slice(0, 7),
+                ownerName: prompt('Owner Name:') || 'Owner',
+                type: prompt('Type (Initial Capital/Additional Capital/Withdrawals):') || 'Initial Capital',
+                amount: parseFloat(prompt('Amount:') || '0'),
+                investmentType: prompt('Investment Type (Cash/Property):') || 'Cash',
+                notes: prompt('Notes:') || '',
+                percentOfTotal: 0,
+                entryValue: 0,
+                cumulativeCapital: 0,
+                capitalForCashFlow: 0
+            };
+            
+            financeData.capitalEntries.push(entry);
+            updateCapitalCalculations();
+            renderCapitalEntries();
+            autoSave();
+        }
+
+        function updateCapitalCalculations() {
+            const totalCapital = financeData.capitalEntries.reduce((sum, entry) => {
+                return sum + (entry.type === 'Withdrawals' ? -entry.amount : entry.amount);
+            }, 0);
+            
+            financeData.capitalEntries.forEach(entry => {
+                entry.percentOfTotal = totalCapital > 0 ? ((entry.amount / totalCapital) * 100).toFixed(2) : 0;
+            });
+            
+            // Update capital distribution chart
+            updateCapitalChart();
+        }
+
+        function updateCapitalChart() {
+            const ownerTotals = {};
+            financeData.capitalEntries.forEach(entry => {
+                if (!ownerTotals[entry.ownerName]) {
+                    ownerTotals[entry.ownerName] = 0;
+                }
+                ownerTotals[entry.ownerName] += entry.type === 'Withdrawals' ? -entry.amount : entry.amount;
+            });
+            
+            const labels = Object.keys(ownerTotals);
+            const data = Object.values(ownerTotals);
+            
+            financeData.charts.capitalDistributionChart.data.labels = labels;
+            financeData.charts.capitalDistributionChart.data.datasets[0].data = data;
+            financeData.charts.capitalDistributionChart.update();
+        }
+
+        function renderCapitalEntries() {
+            const tbody = document.getElementById('capitalTable');
+            tbody.innerHTML = financeData.capitalEntries.map(entry => `
+                <tr class="hover:bg-gray-50">
+                    <td class="border border-gray-200 px-4 py-3">${entry.date}</td>
+                    <td class="border border-gray-200 px-4 py-3 font-medium">${entry.ownerName}</td>
+                    <td class="border border-gray-200 px-4 py-3">
+                        <span class="px-2 py-1 rounded-full text-xs font-medium ${entry.type === 'Withdrawals' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}">
+                            ${entry.type}
+                        </span>
+                    </td>
+                    <td class="border border-gray-200 px-4 py-3 font-semibold">₱${entry.amount.toLocaleString()}</td>
+                    <td class="border border-gray-200 px-4 py-3">${entry.investmentType}</td>
+                    <td class="border border-gray-200 px-4 py-3 font-medium">${entry.percentOfTotal}%</td>
+                    <td class="border border-gray-200 px-4 py-3 font-semibold">₱${entry.cumulativeCapital.toLocaleString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Liability management
+        function addLiabilityEntry() {
+            const entry = {
+                id: Date.now(),
+                date: new Date().toISOString().split('T')[0],
+                month: new Date().toISOString().slice(0, 7),
+                sourceOfFunds: prompt('Source of Funds:') || 'Bank Loan',
+                investmentType: prompt('Investment Type:') || 'Cash',
+                purpose: prompt('Purpose:') || 'Business Operations',
+                amount: parseFloat(prompt('Amount:') || '0'),
+                paidBack: 'No'
+            };
+            
+            financeData.liabilityEntries.push(entry);
+            renderLiabilityEntries();
+            autoSave();
+        }
+
+        function renderLiabilityEntries() {
+            const tbody = document.getElementById('liabilityTable');
+            tbody.innerHTML = financeData.liabilityEntries.map(entry => `
+                <tr class="hover:bg-gray-50">
+                    <td class="border border-gray-200 px-4 py-3">${entry.date}</td>
+                    <td class="border border-gray-200 px-4 py-3">${entry.sourceOfFunds}</td>
+                    <td class="border border-gray-200 px-4 py-3">${entry.investmentType}</td>
+                    <td class="border border-gray-200 px-4 py-3">${entry.purpose}</td>
+                    <td class="border border-gray-200 px-4 py-3 font-semibold">₱${entry.amount.toLocaleString()}</td>
+                    <td class="border border-gray-200 px-4 py-3">
+                        <select onchange="updateLiabilityStatus('${entry.id}', this.value)" class="border rounded px-2 py-1 ${entry.paidBack === 'Yes' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            <option value="No" ${entry.paidBack === 'No' ? 'selected' : ''}>No</option>
+                            <option value="Yes" ${entry.paidBack === 'Yes' ? 'selected' : ''}>Yes</option>
+                        </select>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Dashboard updates
+        function updateDashboard() {
+            const totalRevenue = financeData.collections.filter(c => c.status === 'Paid').reduce((sum, c) => sum + c.amountPaid, 0);
+            const totalCollections = financeData.collections.reduce((sum, c) => sum + c.amountBilled, 0);
+            const totalExpenses = financeData.transactions.filter(t => t.paid === 'Yes').reduce((sum, t) => sum + t.totalAmount, 0);
+            const netProfit = totalRevenue - totalExpenses;
+            const outstandingReceivables = financeData.collections.filter(c => c.status === 'Unpaid').reduce((sum, c) => sum + c.outstandingAmount, 0);
+            const outstandingPayables = financeData.transactions.filter(t => t.paid === 'No').reduce((sum, t) => sum + t.totalAmount, 0);
+
+            document.getElementById('totalRevenue').textContent = `₱${totalRevenue.toLocaleString()}`;
+            document.getElementById('totalCollections').textContent = `₱${totalCollections.toLocaleString()}`;
+            document.getElementById('totalExpenses').textContent = `₱${totalExpenses.toLocaleString()}`;
+            document.getElementById('netProfit').textContent = `₱${netProfit.toLocaleString()}`;
+            document.getElementById('outstandingReceivables').textContent = `₱${outstandingReceivables.toLocaleString()}`;
+            document.getElementById('outstandingPayables').textContent = `₱${outstandingPayables.toLocaleString()}`;
+        }
+
+        // Status update functions
+        function updateTransactionStatus(id, status) {
+            const transaction = financeData.transactions.find(t => t.id == id);
+            if (transaction) {
+                transaction.paid = status;
+                updateDashboard();
+                renderTransactions();
+                autoSave();
+            }
+        }
+
+        function updateLiabilityStatus(id, status) {
+            const liability = financeData.liabilityEntries.find(l => l.id == id);
+            if (liability) {
+                liability.paidBack = status;
+                renderLiabilityEntries();
+                autoSave();
+            }
+        }
+
+        // Add reference table functions
+        function addCOA() {
+            const account = {
+                oldCOA: prompt('Old COA Code:') || '',
+                unifiedCode: prompt('Unified Code:') || '',
+                accountName: prompt('Account Name:') || '',
+                category: prompt('Category:') || '',
+                subcategory: prompt('Subcategory:') || '',
+                notes: prompt('Notes:') || ''
+            };
+            
+            financeData.coa.push(account);
+            renderCOATable();
+            autoSave();
+        }
+
+        function addExpenseType() {
+            const type = prompt('Expense Type:');
+            if (type) {
+                financeData.expenseTypes.push(type);
+                renderExpenseTypes();
+                autoSave();
+            }
+        }
+
+        function addProjectType() {
+            const type = prompt('Project Type:');
+            if (type) {
+                financeData.projectTypes.push(type);
+                renderProjectTypes();
+                autoSave();
+            }
+        }
+
+        // Excel Import/Export functionality
+        function importExcel() {
+            document.getElementById('excelFileInput').click();
+        }
+
+        function handleExcelImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    let importedData = false;
+                    
+                    // Process each sheet and try multiple column name variations
+                    workbook.SheetNames.forEach(sheetName => {
+                        const worksheet = workbook.Sheets[sheetName];
+                        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                        
+                        if (jsonData.length === 0) return;
+                        
+                        console.log(`Processing sheet: ${sheetName}`, jsonData[0]); // Debug log
+                        
+                        // Get the first row to check column headers
+                        const headers = Object.keys(jsonData[0] || {});
+                        
+                        // Project Profile - try multiple variations
+                        if (sheetName.toLowerCase().includes('project') || 
+                            headers.some(h => h.toLowerCase().includes('project'))) {
+                            
+                            financeData.projects = jsonData.map((row, index) => ({
+                                id: row['Project ID'] || row['ProjectID'] || row['ID'] || `PRJ${String(index + 1).padStart(3, '0')}`,
+                                projectName: row['Project Name'] || row['ProjectName'] || row['Name'] || `Project ${index + 1}`,
+                                clientName: row['Client Name'] || row['ClientName'] || row['Client'] || 'Client',
+                                projectType: row['Project Type'] || row['ProjectType'] || row['Type'] || 'General',
+                                location: row['Location'] || '',
+                                startDate: row['Start Date'] || row['StartDate'] || new Date().toISOString().split('T')[0],
+                                endDate: row['End Date'] || row['EndDate'] || '',
+                                contractAmount: parseFloat(row['Contract Amount'] || row['ContractAmount'] || row['Amount'] || 0),
+                                approvedBudget: parseFloat(row['Approved Budget'] || row['ApprovedBudget'] || row['Budget'] || 0),
+                                status: row['Status'] || 'Ongoing'
+                            }));
+                            importedData = true;
+                            console.log('Imported projects:', financeData.projects.length);
+                        }
+                        
+                        // Transaction Masters - try multiple variations
+                        else if (sheetName.toLowerCase().includes('transaction') || 
+                                headers.some(h => h.toLowerCase().includes('transaction') || h.toLowerCase().includes('expense'))) {
+                            
+                            financeData.transactions = jsonData.map((row, index) => ({
+                                id: Date.now() + index,
+                                paymentDate: row['Payment Date'] || row['PaymentDate'] || row['Date'] || new Date().toISOString().split('T')[0],
+                                month: (row['Payment Date'] || row['PaymentDate'] || row['Date'] || new Date().toISOString()).slice(0, 7),
+                                particulars: row['Particulars'] || row['Description'] || row['Details'] || 'Transaction',
+                                expenseType: row['Expense Type'] || row['ExpenseType'] || row['Type'] || 'General',
+                                oldCOACode: row['Old COA Code'] || row['COA'] || '',
+                                unifiedCode: row['Unified Code'] || row['Code'] || '',
+                                projectID: row['Project ID'] || row['ProjectID'] || '',
+                                vendor: row['Vendor/Supplier'] || row['Vendor'] || row['Supplier'] || 'Vendor',
+                                totalAmount: parseFloat(row['Total Amount'] || row['TotalAmount'] || row['Amount'] || 0),
+                                vatableAmount: parseFloat(row['Vatable Amount'] || row['VatableAmount'] || 0),
+                                vat: parseFloat(row['VAT'] || 0),
+                                paid: row['Paid'] || 'No',
+                                paymentMethod: row['Payment Method'] || row['PaymentMethod'] || 'Cash',
+                                notes: row['Notes'] || ''
+                            }));
+                            importedData = true;
+                            console.log('Imported transactions:', financeData.transactions.length);
+                        }
+                        
+                        // Collections Master - try multiple variations
+                        else if (sheetName.toLowerCase().includes('collection') || sheetName.toLowerCase().includes('invoice') ||
+                                headers.some(h => h.toLowerCase().includes('collection') || h.toLowerCase().includes('invoice'))) {
+                            
+                            financeData.collections = jsonData.map((row, index) => ({
+                                id: Date.now() + index,
+                                invoiceNumber: row['Invoice Number'] || row['InvoiceNumber'] || row['Invoice'] || `INV${String(index + 1).padStart(4, '0')}`,
+                                projectID: row['Project ID'] || row['ProjectID'] || '',
+                                projectName: row['Project Name'] || row['ProjectName'] || '',
+                                clientName: row['Client Name'] || row['ClientName'] || row['Client'] || 'Client',
+                                revenueMilestone: row['Revenue Milestones'] || row['Milestone'] || row['Description'] || 'Payment',
+                                invoiceDate: row['Invoice Date'] || row['InvoiceDate'] || row['Date'] || new Date().toISOString().split('T')[0],
+                                dueDate: row['Due Date'] || row['DueDate'] || new Date(Date.now() + 30*24*60*60*1000).toISOString().split('T')[0],
+                                amountBilled: parseFloat(row['Amount Billed'] || row['AmountBilled'] || row['Billed'] || row['Amount'] || 0),
+                                amountPaid: parseFloat(row['Amount Paid'] || row['AmountPaid'] || row['Paid'] || 0),
+                                outstandingAmount: parseFloat(row['Outstanding Amount'] || row['Outstanding'] || 0),
+                                status: row['Status'] || (parseFloat(row['Amount Paid'] || row['AmountPaid'] || 0) > 0 ? 'Paid' : 'Unpaid'),
+                                paymentDate: row['Payment Date'] || row['PaymentDate'] || '',
+                                paymentMethod: row['Payment Method'] || row['PaymentMethod'] || '',
+                                daysOverdue: parseInt(row['Days Overdue'] || row['DaysOverdue'] || 0),
+                                notes: row['Notes'] || ''
+                            }));
+                            
+                            // Calculate outstanding amounts if not provided
+                            financeData.collections.forEach(c => {
+                                if (!c.outstandingAmount) {
+                                    c.outstandingAmount = c.amountBilled - c.amountPaid;
+                                }
+                            });
+                            
+                            importedData = true;
+                            console.log('Imported collections:', financeData.collections.length);
+                        }
+                        
+                        // Fixed Assets
+                        else if (sheetName.toLowerCase().includes('asset') ||
+                                headers.some(h => h.toLowerCase().includes('asset'))) {
+                            
+                            financeData.fixedAssets = jsonData.map((row, index) => ({
+                                id: Date.now() + index,
+                                assetName: row['Asset Name'] || row['AssetName'] || row['Name'] || `Asset ${index + 1}`,
+                                modelNo: row['Model No.'] || row['Model'] || row['ModelNo'] || '',
+                                acquisitionDate: row['Acquisition Date'] || row['AcquisitionDate'] || row['Date'] || new Date().toISOString().split('T')[0],
+                                month: (row['Acquisition Date'] || row['AcquisitionDate'] || new Date().toISOString()).slice(0, 7),
+                                acquisitionCost: parseFloat(row['Acquisition Cost'] || row['AcquisitionCost'] || row['Cost'] || 0),
+                                currentCondition: row['Current Condition'] || row['Condition'] || 'Good',
+                                usefulLife: parseInt(row['Useful Life'] || row['UsefulLife'] || row['Life'] || 5),
+                                depreciation: parseFloat(row['Depreciation'] || 0),
+                                netBookValue: parseFloat(row['Net Book Value'] || row['NetBookValue'] || row['BookValue'] || 0)
+                            }));
+                            
+                            // Calculate depreciation if not provided
+                            financeData.fixedAssets.forEach(asset => {
+                                if (!asset.depreciation && asset.acquisitionCost && asset.usefulLife) {
+                                    asset.depreciation = asset.acquisitionCost / asset.usefulLife;
+                                }
+                                if (!asset.netBookValue) {
+                                    asset.netBookValue = asset.acquisitionCost - asset.depreciation;
+                                }
+                            });
+                            
+                            importedData = true;
+                            console.log('Imported fixed assets:', financeData.fixedAssets.length);
+                        }
+                    });
+                    
+                    if (importedData) {
+                        // Force refresh all displays
+                        setTimeout(() => {
+                            renderProjectCards();
+                            renderTransactions();
+                            renderCollections();
+                            renderFixedAssets();
+                            renderReferenceTables();
+                            updateDashboard();
+                            updateCapitalCalculations();
+                            
+                            // Update charts
+                            Object.values(financeData.charts).forEach(chart => {
+                                if (chart && chart.update) {
+                                    chart.update();
+                                }
+                            });
+                            
+                            // Save to localStorage
+                            autoSave();
+                            
+                            alert(`Excel file imported successfully!\n\nImported:\n- ${financeData.projects.length} projects\n- ${financeData.transactions.length} transactions\n- ${financeData.collections.length} collections\n- ${financeData.fixedAssets.length} fixed assets`);
+                        }, 100);
+                    } else {
+                        alert('No recognizable data found in the Excel file. Please check that your sheets contain the expected column headers.');
+                    }
+                    
+                } catch (error) {
+                    console.error('Import error:', error);
+                    alert('Error importing Excel file: ' + error.message + '\n\nPlease ensure your Excel file has the correct format and column headers.');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+            
+            // Clear the file input so the same file can be imported again
+            event.target.value = '';
+        }
+
+        function exportExcel() {
+            const wb = XLSX.utils.book_new();
+            
+            // Create worksheets for each data type with your exact structure
+            const projectWS = XLSX.utils.json_to_sheet(financeData.projects.map(p => ({
+                'Project ID': p.id,
+                'Project Name': p.projectName,
+                'Client Name': p.clientName,
+                'Project Type': p.projectType,
+                'Location': p.location,
+                'Start Date': p.startDate,
+                'End Date': p.endDate,
+                'Contract Amount': p.contractAmount,
+                'Approved Budget': p.approvedBudget,
+                'Status': p.status
+            })));
+            
+            const transactionWS = XLSX.utils.json_to_sheet(financeData.transactions.map(t => ({
+                'Payment Date': t.paymentDate,
+                'Month': t.month,
+                'Particulars': t.particulars,
+                'Expense Type': t.expenseType,
+                'Old COA Code': t.oldCOACode,
+                'Unified Code': t.unifiedCode,
+                'Project ID': t.projectID,
+                'Vendor/Supplier': t.vendor,
+                'Total Amount': t.totalAmount,
+                'Vatable Amount': t.vatableAmount,
+                'VAT': t.vat,
+                'Paid': t.paid,
+                'Payment Method': t.paymentMethod,
+                'Notes': t.notes
+            })));
+            
+            const collectionWS = XLSX.utils.json_to_sheet(financeData.collections.map(c => ({
+                'Invoice Number': c.invoiceNumber,
+                'Project ID': c.projectID,
+                'Project Name': c.projectName,
+                'Client Name': c.clientName,
+                'Revenue Milestones': c.revenueMilestone,
+                'Invoice Date': c.invoiceDate,
+                'Due Date': c.dueDate,
+                'Amount Billed': c.amountBilled,
+                'Amount Paid': c.amountPaid,
+                'Outstanding Amount': c.outstandingAmount,
+                'Status': c.status,
+                'Payment Date': c.paymentDate,
+                'Payment Method': c.paymentMethod,
+                'Days Overdue': c.daysOverdue,
+                'Notes': c.notes
+            })));
+            
+            // Add worksheets to workbook
+            XLSX.utils.book_append_sheet(wb, projectWS, "Project Profile");
+            XLSX.utils.book_append_sheet(wb, transactionWS, "Transaction Masters");
+            XLSX.utils.book_append_sheet(wb, collectionWS, "Collections Master");
+            
+            // Generate and download file
+            const fileName = `Finance_System_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+        }
+
+        // Company name management
+        function editCompanyName() {
+            const newName = prompt('Enter company name:', financeData.companyName === 'Click to set company name' ? '' : financeData.companyName);
+            if (newName && newName.trim()) {
+                financeData.companyName = newName.trim();
+                document.getElementById('companyName').textContent = financeData.companyName;
+                saveToLocalStorage();
+                showAutoSaveNotification();
+            }
+        }
+
+        // Auto-save functionality
+        function saveToLocalStorage() {
+            try {
+                localStorage.setItem('prospiraFinanceData', JSON.stringify(financeData));
+            } catch (error) {
+                console.error('Error saving to localStorage:', error);
+            }
+        }
+
+        function loadFromLocalStorage() {
+            try {
+                const saved = localStorage.getItem('prospiraFinanceData');
+                if (saved) {
+                    const parsedData = JSON.parse(saved);
+                    // Merge saved data with default structure
+                    financeData = { ...financeData, ...parsedData };
+                    document.getElementById('companyName').textContent = financeData.companyName;
+                }
+            } catch (error) {
+                console.error('Error loading from localStorage:', error);
+            }
+        }
+
+        function showAutoSaveNotification() {
+            const notification = document.getElementById('autoSaveNotification');
+            notification.style.transform = 'translateY(0)';
+            setTimeout(() => {
+                notification.style.transform = 'translateY(100%)';
+            }, 2000);
+        }
+
+        // Auto-save on data changes
+        function autoSave() {
+            saveToLocalStorage();
+            showAutoSaveNotification();
+        }
+
+        // Render functions for all remaining tabs
+        function renderOverheadSummary() {
+            // Calculate overhead metrics
+            const overheadTransactions = financeData.transactions.filter(t => !t.projectID || t.projectID === '');
+            const totalOverhead = overheadTransactions.reduce((sum, t) => sum + (t.paid === 'Yes' ? t.totalAmount : 0), 0);
+            const totalRevenue = financeData.collections.filter(c => c.status === 'Paid').reduce((sum, c) => sum + c.amountPaid, 0);
+            const overheadRate = totalRevenue > 0 ? ((totalOverhead / totalRevenue) * 100).toFixed(1) : 0;
+            const monthlyOverhead = totalOverhead / 12;
+
+            document.getElementById('totalOverhead').textContent = `₱${totalOverhead.toLocaleString()}`;
+            document.getElementById('overheadRate').textContent = `${overheadRate}%`;
+            document.getElementById('monthlyOverhead').textContent = `₱${monthlyOverhead.toLocaleString()}`;
+
+            // Render overhead table
+            const tbody = document.getElementById('overheadTable');
+            tbody.innerHTML = overheadTransactions.map(transaction => `
+                <tr class="hover:bg-gray-50">
+                    <td class="border border-gray-200 px-4 py-3">${transaction.paymentDate}</td>
+                    <td class="border border-gray-200 px-4 py-3">${transaction.particulars}</td>
+                    <td class="border border-gray-200 px-4 py-3">${transaction.expenseType}</td>
+                    <td class="border border-gray-200 px-4 py-3 font-semibold">₱${transaction.totalAmount.toLocaleString()}</td>
+                    <td class="border border-gray-200 px-4 py-3">${transaction.vendor}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderProjectRevenue() {
+            // Calculate project revenue metrics
+            const totalContractValue = financeData.projects.reduce((sum, p) => sum + p.contractAmount, 0);
+            const revenueRecognized = financeData.collections.filter(c => c.status === 'Paid').reduce((sum, c) => sum + c.amountPaid, 0);
+            const pendingRevenue = financeData.collections.filter(c => c.status === 'Unpaid').reduce((sum, c) => sum + c.outstandingAmount, 0);
+            const completionRate = totalContractValue > 0 ? ((revenueRecognized / totalContractValue) * 100).toFixed(1) : 0;
+
+            document.getElementById('totalContractValue').textContent = `₱${totalContractValue.toLocaleString()}`;
+            document.getElementById('revenueRecognized').textContent = `₱${revenueRecognized.toLocaleString()}`;
+            document.getElementById('pendingRevenue').textContent = `₱${pendingRevenue.toLocaleString()}`;
+            document.getElementById('completionRate').textContent = `${completionRate}%`;
+
+            // Render project revenue table
+            const tbody = document.getElementById('projectRevenueTable');
+            tbody.innerHTML = financeData.projects.map(project => {
+                const projectCollections = financeData.collections.filter(c => c.projectID === project.id);
+                const billedAmount = projectCollections.reduce((sum, c) => sum + c.amountBilled, 0);
+                const collectedAmount = projectCollections.filter(c => c.status === 'Paid').reduce((sum, c) => sum + c.amountPaid, 0);
+                const outstanding = billedAmount - collectedAmount;
+                const progress = project.contractAmount > 0 ? ((collectedAmount / project.contractAmount) * 100).toFixed(1) : 0;
+
+                return `
+                    <tr class="hover:bg-gray-50">
+                        <td class="border border-gray-200 px-4 py-3 font-mono">${project.id}</td>
+                        <td class="border border-gray-200 px-4 py-3">${project.projectName}</td>
+                        <td class="border border-gray-200 px-4 py-3 font-semibold">₱${project.contractAmount.toLocaleString()}</td>
+                        <td class="border border-gray-200 px-4 py-3">₱${billedAmount.toLocaleString()}</td>
+                        <td class="border border-gray-200 px-4 py-3 text-green-600 font-semibold">₱${collectedAmount.toLocaleString()}</td>
+                        <td class="border border-gray-200 px-4 py-3 text-red-600">₱${outstanding.toLocaleString()}</td>
+                        <td class="border border-gray-200 px-4 py-3">
+                            <div class="flex items-center">
+                                <div class="w-full bg-gray-200 rounded-full h-2 mr-2">
+                                    <div class="bg-blue-600 h-2 rounded-full" style="width: ${progress}%"></div>
+                                </div>
+                                <span class="text-sm font-medium">${progress}%</span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderBudgetActual() {
+            // Calculate budget metrics
+            const totalBudget = financeData.projects.reduce((sum, p) => sum + p.approvedBudget, 0);
+            const actualSpent = financeData.transactions.filter(t => t.paid === 'Yes').reduce((sum, t) => sum + t.totalAmount, 0);
+            const variance = totalBudget - actualSpent;
+            const utilization = totalBudget > 0 ? ((actualSpent / totalBudget) * 100).toFixed(1) : 0;
+
+            document.getElementById('totalBudget').textContent = `₱${totalBudget.toLocaleString()}`;
+            document.getElementById('actualSpent').textContent = `₱${actualSpent.toLocaleString()}`;
+            document.getElementById('budgetVariance').textContent = `₱${variance.toLocaleString()}`;
+            document.getElementById('budgetVariance').className = `text-2xl font-bold ${variance >= 0 ? 'text-green-600' : 'text-red-600'}`;
+            document.getElementById('budgetUtilization').textContent = `${utilization}%`;
+
+            // Render budget analysis table
+            const tbody = document.getElementById('budgetAnalysisTable');
+            tbody.innerHTML = financeData.projects.map(project => {
+                const projectExpenses = financeData.transactions.filter(t => t.projectID === project.id && t.paid === 'Yes').reduce((sum, t) => sum + t.totalAmount, 0);
+                const projectVariance = project.approvedBudget - projectExpenses;
+                const projectUtilization = project.approvedBudget > 0 ? ((projectExpenses / project.approvedBudget) * 100).toFixed(1) : 0;
+                const status = projectUtilization > 100 ? 'Over Budget' : projectUtilization > 80 ? 'Near Limit' : 'On Track';
+
+                return `
+                    <tr class="hover:bg-gray-50">
+                        <td class="border border-gray-200 px-4 py-3">${project.projectName}</td>
+                        <td class="border border-gray-200 px-4 py-3 font-semibold">₱${project.approvedBudget.toLocaleString()}</td>
+                        <td class="border border-gray-200 px-4 py-3">₱${projectExpenses.toLocaleString()}</td>
+                        <td class="border border-gray-200 px-4 py-3 ${projectVariance >= 0 ? 'text-green-600' : 'text-red-600'} font-semibold">₱${projectVariance.toLocaleString()}</td>
+                        <td class="border border-gray-200 px-4 py-3">${projectUtilization}%</td>
+                        <td class="border border-gray-200 px-4 py-3">
+                            <span class="px-2 py-1 rounded-full text-xs font-medium ${status === 'Over Budget' ? 'bg-red-100 text-red-800' : status === 'Near Limit' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}">
+                                ${status}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderProjectCost() {
+            // Calculate cost metrics by 500 series
+            const materialsCost = financeData.transactions.filter(t => t.unifiedCode === '500.1' && t.paid === 'Yes').reduce((sum, t) => sum + t.totalAmount, 0);
+            const laborCost = financeData.transactions.filter(t => t.unifiedCode === '500.2' && t.paid === 'Yes').reduce((sum, t) => sum + t.totalAmount, 0);
+            const equipmentCost = financeData.transactions.filter(t => t.unifiedCode === '500.3' && t.paid === 'Yes').reduce((sum, t) => sum + t.totalAmount, 0);
+            const otherCosts = financeData.transactions.filter(t => t.unifiedCode.startsWith('500') && !['500.1', '500.2', '500.3'].includes(t.unifiedCode) && t.paid === 'Yes').reduce((sum, t) => sum + t.totalAmount, 0);
+            const totalProjectCosts = materialsCost + laborCost + equipmentCost + otherCosts;
+
+            document.getElementById('totalProjectCosts').textContent = `₱${totalProjectCosts.toLocaleString()}`;
+            document.getElementById('materialsCost').textContent = `₱${materialsCost.toLocaleString()}`;
+            document.getElementById('laborCost').textContent = `₱${laborCost.toLocaleString()}`;
+            document.getElementById('otherCosts').textContent = `₱${(equipmentCost + otherCosts).toLocaleString()}`;
+
+            // Update cost breakdown chart
+            financeData.charts.costBreakdownChart.data.datasets[0].data = [materialsCost, laborCost, equipmentCost, otherCosts];
+            financeData.charts.costBreakdownChart.update();
+
+            // Render project cost table
+            const tbody = document.getElementById('projectCostTable');
+            tbody.innerHTML = financeData.projects.map(project => {
+                const projectTransactions = financeData.transactions.filter(t => t.projectID === project.id && t.paid === 'Yes');
+                const materials = projectTransactions.filter(t => t.unifiedCode === '500.1').reduce((sum, t) => sum + t.totalAmount, 0);
+                const labor = projectTransactions.filter(t => t.unifiedCode === '500.2').reduce((sum, t) => sum + t.totalAmount, 0);
+                const equipment = projectTransactions.filter(t => t.unifiedCode === '500.3').reduce((sum, t) => sum + t.totalAmount, 0);
+                const other = projectTransactions.filter(t => t.unifiedCode.startsWith('500') && !['500.1', '500.2', '500.3'].includes(t.unifiedCode)).reduce((sum, t) => sum + t.totalAmount, 0);
+                const totalCost = materials + labor + equipment + other;
+
+                return `
+                    <tr class="hover:bg-gray-50">
+                        <td class="border border-gray-200 px-4 py-3 font-mono">${project.id}</td>
+                        <td class="border border-gray-200 px-4 py-3">${project.projectName}</td>
+                        <td class="border border-gray-200 px-4 py-3">₱${materials.toLocaleString()}</td>
+                        <td class="border border-gray-200 px-4 py-3">₱${labor.toLocaleString()}</td>
+                        <td class="border border-gray-200 px-4 py-3">₱${equipment.toLocaleString()}</td>
+                        <td class="border border-gray-200 px-4 py-3">₱${other.toLocaleString()}</td>
+                        <td class="border border-gray-200 px-4 py-3 font-semibold">₱${totalCost.toLocaleString()}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderAccountsReceivable() {
+            // Calculate AR metrics
+            const unpaidCollections = financeData.collections.filter(c => c.status === 'Unpaid');
+            const totalReceivables = unpaidCollections.reduce((sum, c) => sum + c.outstandingAmount, 0);
+            
+            // Calculate aging
+            const today = new Date();
+            let currentReceivables = 0, overdueReceivables = 0;
+            let totalDays = 0;
+
+            unpaidCollections.forEach(c => {
+                const dueDate = new Date(c.dueDate);
+                const daysOverdue = Math.floor((today - dueDate) / (1000 * 60 * 60 * 24));
+                c.daysOverdue = Math.max(0, daysOverdue);
+                totalDays += c.daysOverdue;
+
+                if (c.daysOverdue <= 30) {
+                    currentReceivables += c.outstandingAmount;
+                } else {
+                    overdueReceivables += c.outstandingAmount;
+                }
+            });
+
+            const averageDays = unpaidCollections.length > 0 ? Math.round(totalDays / unpaidCollections.length) : 0;
+
+            document.getElementById('totalReceivables').textContent = `₱${totalReceivables.toLocaleString()}`;
+            document.getElementById('currentReceivables').textContent = `₱${currentReceivables.toLocaleString()}`;
+            document.getElementById('overdueReceivables').textContent = `₱${overdueReceivables.toLocaleString()}`;
+            document.getElementById('averageDays').textContent = averageDays;
+
+            // Render receivables table
+            const tbody = document.getElementById('receivablesTable');
+            tbody.innerHTML = unpaidCollections.map(collection => `
+                <tr class="hover:bg-gray-50">
+                    <td class="border border-gray-200 px-4 py-3 font-mono">${collection.invoiceNumber}</td>
+                    <td class="border border-gray-200 px-4 py-3">${collection.clientName}</td>
+                    <td class="border border-gray-200 px-4 py-3">${collection.invoiceDate}</td>
+                    <td class="border border-gray-200 px-4 py-3">${collection.dueDate}</td>
+                    <td class="border border-gray-200 px-4 py-3 font-semibold">₱${collection.outstandingAmount.toLocaleString()}</td>
+                    <td class="border border-gray-200 px-4 py-3 ${collection.daysOverdue > 30 ? 'text-red-600 font-semibold' : ''}">${collection.daysOverdue}</td>
+                    <td class="border border-gray-200 px-4 py-3">
+                        <span class="px-2 py-1 rounded-full text-xs font-medium ${collection.daysOverdue > 30 ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}">
+                            ${collection.daysOverdue > 30 ? 'Overdue' : 'Current'}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderCashFlow() {
+            // Calculate cash flow metrics (simplified)
+            const collections = financeData.collections.filter(c => c.status === 'Paid');
+            const expenses = financeData.transactions.filter(t => t.paid === 'Yes');
+            
+            const totalInflows = collections.reduce((sum, c) => sum + c.amountPaid, 0);
+            const totalOutflows = expenses.reduce((sum, t) => sum + t.totalAmount, 0);
+            const openingBalance = 0; // This would come from previous period
+            const closingBalance = openingBalance + totalInflows - totalOutflows;
+
+            document.getElementById('openingBalance').textContent = `₱${openingBalance.toLocaleString()}`;
+            document.getElementById('totalInflows').textContent = `₱${totalInflows.toLocaleString()}`;
+            document.getElementById('totalOutflows').textContent = `₱${totalOutflows.toLocaleString()}`;
+            document.getElementById('closingBalance').textContent = `₱${closingBalance.toLocaleString()}`;
+
+            // Render cash flow table (monthly summary)
+            const tbody = document.getElementById('cashFlowTable');
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+            tbody.innerHTML = months.map(month => {
+                const monthlyInflows = totalInflows / 6; // Simplified
+                const monthlyOutflows = totalOutflows / 6; // Simplified
+                const netFlow = monthlyInflows - monthlyOutflows;
+                const monthlyClosing = openingBalance + netFlow;
+
+                return `
+                    <tr class="hover:bg-gray-50">
+                        <td class="border border-gray-200 px-4 py-3 font-medium">${month}</td>
+                        <td class="border border-gray-200 px-4 py-3">₱${openingBalance.toLocaleString()}</td>
+                        <td class="border border-gray-200 px-4 py-3 text-green-600">₱${monthlyInflows.toLocaleString()}</td>
+                        <td class="border border-gray-200 px-4 py-3 text-red-600">₱${monthlyOutflows.toLocaleString()}</td>
+                        <td class="border border-gray-200 px-4 py-3 ${netFlow >= 0 ? 'text-green-600' : 'text-red-600'} font-semibold">₱${netFlow.toLocaleString()}</td>
+                        <td class="border border-gray-200 px-4 py-3 font-semibold">₱${monthlyClosing.toLocaleString()}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderProfitLoss() {
+            // Calculate P&L metrics
+            const totalRevenue = financeData.collections.filter(c => c.status === 'Paid').reduce((sum, c) => sum + c.amountPaid, 0);
+            const totalExpenses = financeData.transactions.filter(t => t.paid === 'Yes').reduce((sum, t) => sum + t.totalAmount, 0);
+            const grossProfit = totalRevenue;
+            const netProfit = totalRevenue - totalExpenses;
+
+            document.getElementById('plTotalRevenue').textContent = `₱${totalRevenue.toLocaleString()}`;
+            document.getElementById('plTotalExpenses').textContent = `₱${totalExpenses.toLocaleString()}`;
+            document.getElementById('grossProfit').textContent = `₱${grossProfit.toLocaleString()}`;
+            document.getElementById('plNetProfit').textContent = `₱${netProfit.toLocaleString()}`;
+            document.getElementById('finalNetIncome').textContent = `₱${netProfit.toLocaleString()}`;
+
+            // Render P&L sections
+            document.getElementById('revenueSection').innerHTML = `
+                <div class="flex justify-between">
+                    <span>Project Revenue</span>
+                    <span class="font-semibold">₱${totalRevenue.toLocaleString()}</span>
+                </div>
+                <div class="flex justify-between font-semibold border-t pt-2">
+                    <span>TOTAL REVENUE</span>
+                    <span>₱${totalRevenue.toLocaleString()}</span>
+                </div>
+            `;
+
+            document.getElementById('cogsSection').innerHTML = `
+                <div class="flex justify-between">
+                    <span>Direct Project Costs</span>
+                    <span class="font-semibold">₱0.00</span>
+                </div>
+                <div class="flex justify-between font-semibold border-t pt-2">
+                    <span>TOTAL COGS</span>
+                    <span>₱0.00</span>
+                </div>
+            `;
+
+            document.getElementById('opexSection').innerHTML = `
+                <div class="flex justify-between">
+                    <span>Operating Expenses</span>
+                    <span class="font-semibold">₱${totalExpenses.toLocaleString()}</span>
+                </div>
+                <div class="flex justify-between font-semibold border-t pt-2">
+                    <span>TOTAL OPERATING EXPENSES</span>
+                    <span>₱${totalExpenses.toLocaleString()}</span>
+                </div>
+            `;
+        }
+
+        function renderAccountsPayable() {
+            // Calculate AP metrics
+            const unpaidTransactions = financeData.transactions.filter(t => t.paid === 'No');
+            const totalPayables = unpaidTransactions.reduce((sum, t) => sum + t.totalAmount, 0);
+            
+            // Calculate aging
+            const today = new Date();
+            let currentPayables = 0, overduePayables = 0;
+
+            unpaidTransactions.forEach(t => {
+                const paymentDate = new Date(t.paymentDate);
+                const daysOutstanding = Math.floor((today - paymentDate) / (1000 * 60 * 60 * 24));
+                t.daysOutstanding = daysOutstanding;
+
+                if (daysOutstanding <= 30) {
+                    currentPayables += t.totalAmount;
+                } else {
+                    overduePayables += t.totalAmount;
+                }
+            });
+
+            const uniqueVendors = [...new Set(unpaidTransactions.map(t => t.vendor))].length;
+
+            document.getElementById('totalPayables').textContent = `₱${totalPayables.toLocaleString()}`;
+            document.getElementById('currentPayables').textContent = `₱${currentPayables.toLocaleString()}`;
+            document.getElementById('overduePayables').textContent = `₱${overduePayables.toLocaleString()}`;
+            document.getElementById('totalVendors').textContent = uniqueVendors;
+
+            // Render payables table
+            const tbody = document.getElementById('payablesTable');
+            tbody.innerHTML = unpaidTransactions.map(transaction => `
+                <tr class="hover:bg-gray-50">
+                    <td class="border border-gray-200 px-4 py-3">${transaction.paymentDate}</td>
+                    <td class="border border-gray-200 px-4 py-3">${transaction.vendor}</td>
+                    <td class="border border-gray-200 px-4 py-3">${transaction.particulars}</td>
+                    <td class="border border-gray-200 px-4 py-3 font-semibold">₱${transaction.totalAmount.toLocaleString()}</td>
+                    <td class="border border-gray-200 px-4 py-3 ${transaction.daysOutstanding > 30 ? 'text-red-600 font-semibold' : ''}">${transaction.daysOutstanding}</td>
+                    <td class="border border-gray-200 px-4 py-3">
+                        <span class="px-2 py-1 rounded-full text-xs font-medium ${transaction.daysOutstanding > 30 ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}">
+                            ${transaction.daysOutstanding > 30 ? 'Overdue' : 'Current'}
+                        </span>
+                    </td>
+                    <td class="border border-gray-200 px-4 py-3">
+                        <button onclick="markAsPaid('${transaction.id}')" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs">
+                            Mark Paid
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Helper function to mark transaction as paid
+        function markAsPaid(transactionId) {
+            const transaction = financeData.transactions.find(t => t.id == transactionId);
+            if (transaction) {
+                transaction.paid = 'Yes';
+                renderAccountsPayable();
+                updateDashboard();
+                autoSave();
+            }
+        }
+
+        // Initialize the application
+        function initializeApp() {
+            loadFromLocalStorage();
+            initializeCharts();
+            renderProjectCards();
+            renderReferenceTables();
+            renderTransactions();
+            renderCollections();
+            renderFixedAssets();
+            renderCapitalEntries();
+            renderLiabilityEntries();
+            updateDashboard();
+        }
+
+        // Start the application
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9734d5449192ed68',t:'MTc1NTg5MTUzMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
