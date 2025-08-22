@@ -208,6 +208,26 @@
                 <i class="fas fa-clipboard-list"></i>
                 Owners Liability
             </a>
+            <a href="#" class="nav-item" onclick="showTab('balance-sheet')">
+                <i class="fas fa-balance-scale-right"></i>
+                Balance Sheet
+            </a>
+            <a href="#" class="nav-item" onclick="showTab('trial-balance')">
+                <i class="fas fa-calculator"></i>
+                Trial Balance
+            </a>
+            <a href="#" class="nav-item" onclick="showTab('general-ledger')">
+                <i class="fas fa-book"></i>
+                General Ledger
+            </a>
+            <a href="#" class="nav-item" onclick="showTab('journal-entries')">
+                <i class="fas fa-edit"></i>
+                Journal Entries
+            </a>
+            <a href="#" class="nav-item" onclick="showTab('financial-reports')">
+                <i class="fas fa-chart-area"></i>
+                Financial Reports
+            </a>
         </div>
     </nav>
 
@@ -381,6 +401,47 @@
                             <!-- Project expenses will be populated here -->
                         </div>
                     </div>
+
+                    <!-- Operating Funds -->
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Operating Funds</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="operatingFundsList">
+                            <!-- Operating funds will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Expense Categories -->
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Expense Categories</h3>
+                        <div class="space-y-4" id="expenseCategoriesList">
+                            <!-- Expense categories will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Project Types & Status -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-lg font-semibold mb-4 text-gray-800">Project Types</h3>
+                            <div class="space-y-2" id="projectTypesList">
+                                <!-- Project types will be populated here -->
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card rounded-2xl p-6 shadow-xl">
+                            <h3 class="text-lg font-semibold mb-4 text-gray-800">Project Status</h3>
+                            <div class="space-y-3" id="projectStatusList">
+                                <!-- Project status will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Client Billing Types -->
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Client Billing Types (Revenue Milestones)</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="billingTypesList">
+                            <!-- Billing types will be populated here -->
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -445,8 +506,189 @@
                 </div>
             </div>
 
-            <!-- Other tabs remain the same structure but will be populated with calculated data -->
-            <!-- ... (keeping the rest of the tabs as they were) ... -->
+            <!-- Overhead Summary Tab -->
+            <div id="overhead-summary" class="tab-content">
+                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Overhead Summary</h2>
+                    <div id="overheadSummaryContent">
+                        <!-- Overhead data will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Revenue Tab -->
+            <div id="project-revenue" class="tab-content">
+                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Project Revenue</h2>
+                    <div id="projectRevenueContent">
+                        <!-- Project revenue data will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Budget vs Actual Tab -->
+            <div id="budget-actual" class="tab-content">
+                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Budget vs Actual</h2>
+                    <div id="budgetActualContent">
+                        <!-- Budget vs actual data will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Cost Tab -->
+            <div id="project-cost" class="tab-content">
+                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Project Cost</h2>
+                    <div id="projectCostContent">
+                        <!-- Project cost data will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accounts Receivable Tab -->
+            <div id="accounts-receivable" class="tab-content">
+                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Accounts Receivable</h2>
+                    <div id="accountsReceivableContent">
+                        <!-- Accounts receivable data will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cash Flow Tab -->
+            <div id="cash-flow" class="tab-content">
+                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Cash Flow</h2>
+                    <div id="cashFlowContent">
+                        <!-- Cash flow data will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profit & Loss Tab -->
+            <div id="profit-loss" class="tab-content">
+                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Profit & Loss Statement</h2>
+                    <div id="profitLossContent">
+                        <!-- P&L data will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accounts Payable Tab -->
+            <div id="accounts-payable" class="tab-content">
+                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Accounts Payables</h2>
+                    <div id="accountsPayableContent">
+                        <!-- Accounts payable data will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fixed Assets Tab -->
+            <div id="fixed-assets" class="tab-content">
+                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Fixed Assets</h2>
+                    <div class="flex justify-between items-center mb-6">
+                        <div></div>
+                        <button onclick="addFixedAsset()" class="bg-primary hover:bg-indigo-600 text-white px-6 py-3 rounded-xl shadow-lg">
+                            <i class="fas fa-plus mr-2"></i>Add Fixed Asset
+                        </button>
+                    </div>
+                    <div id="fixedAssetsContent">
+                        <!-- Fixed assets data will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Owners' Capital Tab -->
+            <div id="owners-capital" class="tab-content">
+                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Owners' Capital</h2>
+                    <div class="flex justify-between items-center mb-6">
+                        <div></div>
+                        <button onclick="addCapitalEntry()" class="bg-primary hover:bg-indigo-600 text-white px-6 py-3 rounded-xl shadow-lg">
+                            <i class="fas fa-plus mr-2"></i>Add Capital Entry
+                        </button>
+                    </div>
+                    <div id="ownersCapitalContent">
+                        <!-- Owners' capital data will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Owners Liability Tab -->
+            <div id="owners-liability" class="tab-content">
+                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Owners Liability</h2>
+                    <div class="flex justify-between items-center mb-6">
+                        <div></div>
+                        <button onclick="addLiabilityEntry()" class="bg-primary hover:bg-indigo-600 text-white px-6 py-3 rounded-xl shadow-lg">
+                            <i class="fas fa-plus mr-2"></i>Add Liability Entry
+                        </button>
+                    </div>
+                    <div id="ownersLiabilityContent">
+                        <!-- Owners' liability data will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Balance Sheet Tab -->
+            <div id="balance-sheet" class="tab-content">
+                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Balance Sheet</h2>
+                    <div id="balanceSheetContent">
+                        <!-- Balance sheet will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trial Balance Tab -->
+            <div id="trial-balance" class="tab-content">
+                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Trial Balance</h2>
+                    <div id="trialBalanceContent">
+                        <!-- Trial balance will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- General Ledger Tab -->
+            <div id="general-ledger" class="tab-content">
+                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">General Ledger</h2>
+                    <div id="generalLedgerContent">
+                        <!-- General ledger will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Journal Entries Tab -->
+            <div id="journal-entries" class="tab-content">
+                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Journal Entries</h2>
+                    <div class="flex justify-between items-center mb-6">
+                        <div></div>
+                        <button onclick="addJournalEntry()" class="bg-primary hover:bg-indigo-600 text-white px-6 py-3 rounded-xl shadow-lg">
+                            <i class="fas fa-plus mr-2"></i>Add Journal Entry
+                        </button>
+                    </div>
+                    <div id="journalEntriesContent">
+                        <!-- Journal entries will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Financial Reports Tab -->
+            <div id="financial-reports" class="tab-content">
+                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Financial Reports</h2>
+                    <div id="financialReportsContent">
+                        <!-- Financial reports will be populated here -->
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 
@@ -967,7 +1209,12 @@
                 'accounts-payable': 'Accounts Payables',
                 'fixed-assets': 'Fixed Assets',
                 'owners-capital': 'Owners\' Capital',
-                'owners-liability': 'Owners Liability'
+                'owners-liability': 'Owners Liability',
+                'balance-sheet': 'Balance Sheet',
+                'trial-balance': 'Trial Balance',
+                'general-ledger': 'General Ledger',
+                'journal-entries': 'Journal Entries',
+                'financial-reports': 'Financial Reports'
             };
             
             document.getElementById('pageTitle').textContent = titles[tabName] || 'Dashboard';
@@ -1065,6 +1312,59 @@
         function renderReferenceTables() {
             renderCOATable();
             renderProjectExpenses();
+            renderOperatingFunds();
+            renderExpenseCategories();
+            renderProjectTypes();
+            renderProjectStatus();
+            renderBillingTypes();
+        }
+
+        function renderOperatingFunds() {
+            const container = document.getElementById('operatingFundsList');
+            container.innerHTML = financeData.operatingFunds.map(fund => `
+                <div class="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <span class="font-medium text-blue-800">${fund}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderExpenseCategories() {
+            const container = document.getElementById('expenseCategoriesList');
+            container.innerHTML = Object.entries(financeData.expenseCategories).map(([name, description]) => `
+                <div class="p-4 bg-gray-50 rounded-lg border">
+                    <div class="font-semibold text-gray-800 mb-2">${name}</div>
+                    <div class="text-sm text-gray-600">${description}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderProjectTypes() {
+            const container = document.getElementById('projectTypesList');
+            container.innerHTML = financeData.projectTypes.map(type => `
+                <div class="p-2 bg-green-50 rounded border border-green-200">
+                    <span class="text-green-800 font-medium">${type}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderProjectStatus() {
+            const container = document.getElementById('projectStatusList');
+            container.innerHTML = Object.entries(financeData.projectStatuses).map(([status, description]) => `
+                <div class="p-3 bg-gray-50 rounded-lg border">
+                    <div class="font-semibold text-gray-800">${status}</div>
+                    <div class="text-xs text-gray-600 mt-1">${description}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderBillingTypes() {
+            const container = document.getElementById('billingTypesList');
+            container.innerHTML = Object.entries(financeData.billingTypes).map(([code, description]) => `
+                <div class="p-3 bg-purple-50 rounded-lg border border-purple-200">
+                    <div class="font-semibold text-purple-800">${code}</div>
+                    <div class="text-sm text-purple-600">${description}</div>
+                </div>
+            `).join('');
         }
 
         function renderCOATable() {
@@ -1202,6 +1502,164 @@
             financeData.calculatedData.totals.expenses = financeData.transactions.filter(t => t.paid === 'Yes').reduce((sum, t) => sum + (parseFloat(t.totalAmount) || 0), 0);
         }
 
+        // Add/Edit functions
+        function addProject() {
+            const projectName = prompt('Enter project name:');
+            if (!projectName) return;
+            
+            const clientName = prompt('Enter client name:');
+            if (!clientName) return;
+            
+            const projectType = prompt('Enter project type (Design/Fit Out/Build/Renovation):');
+            if (!projectType) return;
+            
+            const location = prompt('Enter project location:');
+            
+            // Generate next project ID
+            const existingKeys = Object.keys(financeData.projectMaster).filter(k => k.startsWith('P')).map(k => parseInt(k.substring(1))).filter(n => !isNaN(n));
+            const nextNum = Math.max(...existingKeys, -1) + 1;
+            const projectKey = `P${nextNum}`;
+            const projectCode = projectName.substring(0, 3).toUpperCase();
+            const fullId = `${projectKey}-${projectCode}`;
+            
+            financeData.projectMaster[projectKey] = {
+                code: projectCode,
+                fullId: fullId,
+                clientName: clientName,
+                projectName: projectName,
+                projectType: projectType,
+                location: location || ''
+            };
+            
+            renderProjectCards();
+            autoSave();
+            alert(`Project ${fullId} added successfully!`);
+        }
+
+        function addTransaction() {
+            // Simple transaction form - in a real app this would be a modal
+            const paymentDate = prompt('Enter payment date (YYYY-MM-DD):') || new Date().toISOString().split('T')[0];
+            const particulars = prompt('Enter particulars:');
+            if (!particulars) return;
+            
+            const amount = parseFloat(prompt('Enter amount:') || '0');
+            if (amount <= 0) return;
+            
+            const projectID = prompt('Enter project ID (e.g., P0-ART):') || 'Non-Project';
+            const vendor = prompt('Enter vendor name:') || 'Vendor';
+            
+            const newTransaction = {
+                id: Date.now(),
+                paymentDate,
+                month: paymentDate.slice(0, 7),
+                particulars,
+                expenseType: 'General',
+                oldCOACode: '',
+                unifiedCode: '529',
+                expenseName: 'Miscellaneous Expense',
+                projectExpenseCode: '',
+                operatingFunds: 'Client Payments',
+                projectID,
+                projectName: getProjectInfo(projectID).projectName,
+                vendor,
+                address: '',
+                quantity: 1,
+                unitPrice: amount,
+                totalAmount: amount,
+                vatableAmount: amount / 1.12,
+                vat: amount - (amount / 1.12),
+                siDrOr: '',
+                paid: 'Yes',
+                paymentMethod: 'Cash Payment',
+                notes: ''
+            };
+            
+            financeData.transactions.push(newTransaction);
+            renderTransactions();
+            updateDashboard();
+            autoSave();
+            alert('Transaction added successfully!');
+        }
+
+        function addCollection() {
+            const paymentDate = prompt('Enter payment date (YYYY-MM-DD):') || new Date().toISOString().split('T')[0];
+            const projectID = prompt('Enter project ID (e.g., P0-ART):');
+            if (!projectID) return;
+            
+            const amount = parseFloat(prompt('Enter amount received:') || '0');
+            if (amount <= 0) return;
+            
+            const projectInfo = getProjectInfo(projectID);
+            const invoiceNumber = prompt('Enter invoice number:') || `INV${Date.now()}`;
+            
+            const newCollection = {
+                id: Date.now(),
+                paymentDate,
+                month: paymentDate.slice(0, 7),
+                clientName: projectInfo.clientName,
+                projectID,
+                projectName: projectInfo.projectName,
+                invoiceNumber,
+                amountReceived: amount,
+                amountBilled: amount,
+                amountPaid: amount,
+                outstandingAmount: 0,
+                paymentMethod: 'CASH',
+                coaCode: '400',
+                status: 'Paid',
+                notes: ''
+            };
+            
+            financeData.collections.push(newCollection);
+            renderCollections();
+            updateDashboard();
+            autoSave();
+            alert('Collection added successfully!');
+        }
+
+        function addCOA() {
+            const accountName = prompt('Enter account name:');
+            if (!accountName) return;
+            
+            const unifiedCode = prompt('Enter unified code:');
+            if (!unifiedCode) return;
+            
+            const category = prompt('Enter category (Asset/Liability/Equity/Revenue/Expense):');
+            if (!category) return;
+            
+            const subcategory = prompt('Enter subcategory:') || '';
+            const notes = prompt('Enter notes:') || '';
+            
+            financeData.coa.push({
+                oldCOA: '',
+                unifiedCode,
+                accountName,
+                category,
+                subcategory,
+                notes
+            });
+            
+            renderCOATable();
+            autoSave();
+            alert('COA account added successfully!');
+        }
+
+        function addFixedAsset() {
+            alert('Fixed Asset form will be implemented here');
+        }
+
+        function addCapitalEntry() {
+            alert('Capital Entry form will be implemented here');
+        }
+
+        function addLiabilityEntry() {
+            alert('Liability Entry form will be implemented here');
+        }
+
+        function addJournalEntry() {
+            alert('Journal Entry form will be implemented here');
+        }
+
         // Utility functions
         function importExcel() {
             document.getElementById('excelFileInput').click();
@@ -1282,5 +1740,5 @@
         // Start the application
         document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97353631f56eee69',t:'MTc1NTg5NTUwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97356303353dedbe',t:'MTc1NTg5NzMzOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
