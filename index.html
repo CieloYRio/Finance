@@ -85,6 +85,13 @@
             transition: transform 0.3s ease;
             overflow-y: auto;
             overflow-x: hidden;
+            max-height: 100vh;
+        }
+        .sidebar-content {
+            height: calc(100vh - 120px);
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-bottom: 20px;
         }
         .main-content {
             margin-left: 280px;
@@ -171,7 +178,7 @@
             </div>
         </div>
         
-        <div class="py-6">
+        <div class="sidebar-content">
             <!-- CORE DASHBOARD -->
             <a href="#" class="nav-item active" onclick="showTab('dashboard')">
                 <i class="fas fa-chart-line"></i>
@@ -498,7 +505,17 @@
 
                     <!-- 500 Series Project Expenses -->
                     <div class="glass-card rounded-2xl p-6 shadow-xl">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-800">500 Series Project Expenses</h3>
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">500 Series Project Expenses</h3>
+                            <div class="flex gap-2">
+                                <button onclick="addProjectExpense()" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition-colors">
+                                    <i class="fas fa-plus mr-2"></i>Add Expense
+                                </button>
+                                <button onclick="removeProjectExpense()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">
+                                    <i class="fas fa-trash mr-2"></i>Remove
+                                </button>
+                            </div>
+                        </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="projectExpensesList">
                             <!-- Project expenses will be populated here -->
                         </div>
@@ -506,7 +523,17 @@
 
                     <!-- Operating Funds -->
                     <div class="glass-card rounded-2xl p-6 shadow-xl">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Operating Funds</h3>
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Operating Funds</h3>
+                            <div class="flex gap-2">
+                                <button onclick="addOperatingFund()" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition-colors">
+                                    <i class="fas fa-plus mr-2"></i>Add Fund
+                                </button>
+                                <button onclick="removeOperatingFund()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">
+                                    <i class="fas fa-trash mr-2"></i>Remove
+                                </button>
+                            </div>
+                        </div>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="operatingFundsList">
                             <!-- Operating funds will be populated here -->
                         </div>
@@ -514,7 +541,17 @@
 
                     <!-- Expense Categories -->
                     <div class="glass-card rounded-2xl p-6 shadow-xl">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Expense Categories</h3>
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Expense Categories</h3>
+                            <div class="flex gap-2">
+                                <button onclick="addExpenseCategory()" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition-colors">
+                                    <i class="fas fa-plus mr-2"></i>Add Category
+                                </button>
+                                <button onclick="removeExpenseCategory()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">
+                                    <i class="fas fa-trash mr-2"></i>Remove
+                                </button>
+                            </div>
+                        </div>
                         <div class="space-y-4" id="expenseCategoriesList">
                             <!-- Expense categories will be populated here -->
                         </div>
@@ -523,14 +560,34 @@
                     <!-- Project Types & Status -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div class="glass-card rounded-2xl p-6 shadow-xl">
-                            <h3 class="text-lg font-semibold mb-4 text-gray-800">Project Types</h3>
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-semibold text-gray-800">Project Types</h3>
+                                <div class="flex gap-2">
+                                    <button onclick="addProjectType()" class="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-indigo-600 transition-colors">
+                                        <i class="fas fa-plus mr-1"></i>Add
+                                    </button>
+                                    <button onclick="removeProjectType()" class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 transition-colors">
+                                        <i class="fas fa-trash mr-1"></i>Remove
+                                    </button>
+                                </div>
+                            </div>
                             <div class="space-y-2" id="projectTypesList">
                                 <!-- Project types will be populated here -->
                             </div>
                         </div>
                         
                         <div class="glass-card rounded-2xl p-6 shadow-xl">
-                            <h3 class="text-lg font-semibold mb-4 text-gray-800">Project Status</h3>
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-semibold text-gray-800">Project Status</h3>
+                                <div class="flex gap-2">
+                                    <button onclick="addProjectStatus()" class="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-indigo-600 transition-colors">
+                                        <i class="fas fa-plus mr-1"></i>Add
+                                    </button>
+                                    <button onclick="removeProjectStatus()" class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 transition-colors">
+                                        <i class="fas fa-trash mr-1"></i>Remove
+                                    </button>
+                                </div>
+                            </div>
                             <div class="space-y-3" id="projectStatusList">
                                 <!-- Project status will be populated here -->
                             </div>
@@ -539,7 +596,17 @@
 
                     <!-- Client Billing Types -->
                     <div class="glass-card rounded-2xl p-6 shadow-xl">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Client Billing Types (Revenue Milestones)</h3>
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Client Billing Types (Revenue Milestones)</h3>
+                            <div class="flex gap-2">
+                                <button onclick="addBillingType()" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition-colors">
+                                    <i class="fas fa-plus mr-2"></i>Add Type
+                                </button>
+                                <button onclick="removeBillingType()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">
+                                    <i class="fas fa-trash mr-2"></i>Remove
+                                </button>
+                            </div>
+                        </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="billingTypesList">
                             <!-- Billing types will be populated here -->
                         </div>
@@ -585,35 +652,88 @@
 
             <!-- Collections Master Tab -->
             <div id="collections-master" class="tab-content">
-                <div class="glass-card rounded-2xl p-6 shadow-xl">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-bold text-gray-800">Collections Master</h2>
+                <div class="space-y-6">
+                    <!-- Manual Entry Form -->
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Add New Collection Entry</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                                <input type="date" id="collectionDate" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Client Name</label>
+                                <input type="text" id="collectionClient" placeholder="Enter client name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Project ID</label>
+                                <select id="collectionProjectId" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Select Project</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Invoice Number</label>
+                                <input type="text" id="collectionInvoice" placeholder="ADCC-XXX000-XX" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Amount Received (₱)</label>
+                                <input type="number" id="collectionAmount" placeholder="0.00" step="0.01" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Payment Method</label>
+                                <select id="collectionPaymentMethod" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="CASH">CASH</option>
+                                    <option value="CHECK">CHECK</option>
+                                    <option value="BANK_TRANSFER">BANK TRANSFER</option>
+                                    <option value="GCASH">GCASH</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Notes</label>
+                                <input type="text" id="collectionNotes" placeholder="Optional notes" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                        </div>
                         <div class="flex gap-3">
-                            <button onclick="addCollection()" class="bg-success hover:bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg transition-all duration-300">
+                            <button onclick="addCollectionFromForm()" class="bg-success hover:bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg transition-all duration-300">
                                 <i class="fas fa-plus mr-2"></i>Add Collection
                             </button>
-                            <button onclick="removeCollection()" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl shadow-lg transition-all duration-300">
-                                <i class="fas fa-trash mr-2"></i>Remove Collection
+                            <button onclick="clearCollectionForm()" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-xl shadow-lg transition-all duration-300">
+                                <i class="fas fa-eraser mr-2"></i>Clear Form
                             </button>
                         </div>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full border-collapse">
-                            <thead>
-                                <tr class="bg-gray-50">
-                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Date</th>
-                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Client Name</th>
-                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Project ID</th>
-                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Project Name</th>
-                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Invoice Number</th>
-                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Amount Received</th>
-                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Payment Method</th>
-                                </tr>
-                            </thead>
-                            <tbody id="collectionTable">
-                                <!-- Collections will be populated here -->
-                            </tbody>
-                        </table>
+
+                    <!-- Collections Table -->
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800">Collections Master</h2>
+                            <div class="flex gap-3">
+                                <button onclick="removeCollection()" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl shadow-lg transition-all duration-300">
+                                    <i class="fas fa-trash mr-2"></i>Remove Collection
+                                </button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-50">
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Date</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Client Name</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Project ID</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Project Name</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Invoice Number</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Amount Received</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Payment Method</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="collectionTable">
+                                    <!-- Collections will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1031,11 +1151,11 @@
             }
         };
 
-        // Enhanced date parsing function for your format (20-Sep-21)
+        // Enhanced date parsing function for your format (18-Oct-21)
         function parseExcelDate(dateStr) {
             if (!dateStr) return new Date().toISOString().split('T')[0];
             
-            // Handle your format: 20-Sep-21
+            // Handle your exact format: 18-Oct-21
             if (typeof dateStr === 'string' && dateStr.includes('-')) {
                 const parts = dateStr.split('-');
                 if (parts.length === 3) {
@@ -1186,32 +1306,49 @@
                             console.log('Imported transactions:', financeData.transactions.length);
                         }
                         
-                        // Collections Master - Your exact format
+                        // Collections Master - Your exact format with exact column names
                         else if (sheetName.toLowerCase().includes('collection') || 
                                 headers.some(h => h.toLowerCase().includes('amount received') || h.toLowerCase().includes('client name'))) {
                             
+                            console.log('Collection headers found:', headers);
+                            
                             financeData.collections = jsonData.map((row, index) => {
+                                // Use exact column names from your sample
                                 const paymentDate = parseExcelDate(row['Date (Payment Received)'] || row['Date']);
+                                const month = row['Month'] || paymentDate.slice(0, 7);
+                                const clientName = row['Client Name'] || '';
                                 const projectID = row['Project ID'] || '';
-                                const projectInfo = getProjectInfo(projectID);
-                                const amountReceived = parseAmount(row['Amount Received (₱)'] || row['Amount Received'] || row['Amount']);
+                                const projectName = row['Project Name'] || '';
+                                const invoiceNumber = row['Invoice Number'] || '';
+                                const amountReceived = parseAmount(row['Amount Received (₱)'] || row['Amount Received']);
+                                const paymentMethod = row['Payment Method'] || 'CASH';
+                                const coaCode = row['COA Code'] || '400';
+                                const notes = row['Notes / Allocation Reference'] || '';
+                                
+                                console.log(`Collection ${index + 1}:`, {
+                                    paymentDate,
+                                    clientName,
+                                    projectID,
+                                    amountReceived,
+                                    invoiceNumber
+                                });
                                 
                                 return {
                                     id: Date.now() + index,
                                     paymentDate,
-                                    month: paymentDate.slice(0, 7),
-                                    clientName: row['Client Name'] || projectInfo.clientName,
+                                    month,
+                                    clientName,
                                     projectID,
-                                    projectName: row['Project Name'] || projectInfo.projectName,
-                                    invoiceNumber: row['Invoice Number'] || `INV${String(index + 1).padStart(4, '0')}`,
+                                    projectName,
+                                    invoiceNumber,
                                     amountReceived,
-                                    amountBilled: amountReceived, // Assuming received = billed for now
+                                    amountBilled: amountReceived,
                                     amountPaid: amountReceived,
                                     outstandingAmount: 0,
-                                    paymentMethod: row['Payment Method'] || 'CASH',
-                                    coaCode: row['COA Code'] || '400',
+                                    paymentMethod,
+                                    coaCode,
                                     status: 'Paid',
-                                    notes: row['Notes / Allocation Reference'] || row['Notes'] || ''
+                                    notes
                                 };
                             });
                             
@@ -1632,11 +1769,37 @@
                 <div class="p-4 bg-gray-50 rounded-lg">
                     <div class="flex justify-between items-start mb-2">
                         <span class="font-semibold text-primary">${expense.code}</span>
-                        <span class="text-sm font-medium">${expense.description}</span>
+                        <div class="flex gap-2">
+                            <button onclick="editProjectExpense('${expense.code}')" class="text-blue-500 hover:text-blue-700 text-sm">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <span class="text-sm font-medium">${expense.description}</span>
+                        </div>
                     </div>
                     <p class="text-sm text-gray-600">${expense.details}</p>
                 </div>
             `).join('');
+        }
+
+        function editProjectExpense(code) {
+            const expense = financeData.projectExpenses[code];
+            if (!expense) return;
+            
+            const newDescription = prompt('Edit description:', expense.description);
+            if (newDescription === null) return;
+            
+            const newDetails = prompt('Edit details:', expense.details);
+            if (newDetails === null) return;
+            
+            financeData.projectExpenses[code] = {
+                ...expense,
+                description: newDescription,
+                details: newDetails
+            };
+            
+            renderProjectExpenses();
+            autoSave();
+            alert('Project expense updated successfully!');
         }
 
         function renderTransactions() {
@@ -1661,7 +1824,7 @@
 
         function renderCollections() {
             const tbody = document.getElementById('collectionTable');
-            tbody.innerHTML = financeData.collections.map(collection => `
+            tbody.innerHTML = financeData.collections.map((collection, index) => `
                 <tr class="hover:bg-gray-50">
                     <td class="border border-gray-200 px-4 py-3">${collection.paymentDate}</td>
                     <td class="border border-gray-200 px-4 py-3">${collection.clientName}</td>
@@ -1670,8 +1833,60 @@
                     <td class="border border-gray-200 px-4 py-3 font-mono">${collection.invoiceNumber}</td>
                     <td class="border border-gray-200 px-4 py-3 font-semibold text-green-600">₱${collection.amountReceived.toLocaleString()}</td>
                     <td class="border border-gray-200 px-4 py-3">${collection.paymentMethod}</td>
+                    <td class="border border-gray-200 px-4 py-3">
+                        <button onclick="editCollection(${index})" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors">
+                            <i class="fas fa-edit mr-1"></i>Edit
+                        </button>
+                    </td>
                 </tr>
             `).join('');
+        }
+
+        function editCollection(index) {
+            const collection = financeData.collections[index];
+            if (!collection) return;
+            
+            const newDate = prompt('Edit date (YYYY-MM-DD):', collection.paymentDate);
+            if (newDate === null) return;
+            
+            const newClient = prompt('Edit client name:', collection.clientName);
+            if (newClient === null) return;
+            
+            const newProjectId = prompt('Edit project ID:', collection.projectID);
+            if (newProjectId === null) return;
+            
+            const newInvoice = prompt('Edit invoice number:', collection.invoiceNumber);
+            if (newInvoice === null) return;
+            
+            const newAmount = parseFloat(prompt('Edit amount received:', collection.amountReceived));
+            if (isNaN(newAmount) || newAmount <= 0) return;
+            
+            const newPaymentMethod = prompt('Edit payment method:', collection.paymentMethod);
+            if (newPaymentMethod === null) return;
+            
+            const newNotes = prompt('Edit notes:', collection.notes || '');
+            if (newNotes === null) return;
+            
+            // Update the collection
+            financeData.collections[index] = {
+                ...collection,
+                paymentDate: newDate,
+                month: newDate.slice(0, 7),
+                clientName: newClient,
+                projectID: newProjectId,
+                projectName: getProjectInfo(newProjectId).projectName,
+                invoiceNumber: newInvoice,
+                amountReceived: newAmount,
+                amountBilled: newAmount,
+                amountPaid: newAmount,
+                paymentMethod: newPaymentMethod,
+                notes: newNotes
+            };
+            
+            renderCollections();
+            updateDashboard();
+            autoSave();
+            alert('Collection updated successfully!');
         }
 
         function updateDashboard() {
@@ -2345,6 +2560,233 @@
             alert('COA account updated successfully!');
         }
 
+        // Reference table management functions
+        function addProjectExpense() {
+            const code = prompt('Enter expense code (e.g., 500.13):');
+            if (!code) return;
+            
+            const description = prompt('Enter expense description:');
+            if (!description) return;
+            
+            const details = prompt('Enter expense details:');
+            if (!details) return;
+            
+            financeData.projectExpenses[code] = { code, description, details };
+            renderProjectExpenses();
+            autoSave();
+            alert('Project expense added successfully!');
+        }
+
+        function removeProjectExpense() {
+            const code = prompt('Enter expense code to remove:');
+            if (code && financeData.projectExpenses[code]) {
+                if (confirm(`Remove expense ${code}?`)) {
+                    delete financeData.projectExpenses[code];
+                    renderProjectExpenses();
+                    autoSave();
+                    alert('Project expense removed successfully!');
+                }
+            } else {
+                alert('Expense code not found');
+            }
+        }
+
+        function addOperatingFund() {
+            const fund = prompt('Enter operating fund name:');
+            if (fund && fund.trim()) {
+                financeData.operatingFunds.push(fund.trim());
+                renderOperatingFunds();
+                autoSave();
+                alert('Operating fund added successfully!');
+            }
+        }
+
+        function removeOperatingFund() {
+            const fund = prompt('Enter operating fund to remove:');
+            const index = financeData.operatingFunds.indexOf(fund);
+            if (index >= 0) {
+                if (confirm(`Remove operating fund "${fund}"?`)) {
+                    financeData.operatingFunds.splice(index, 1);
+                    renderOperatingFunds();
+                    autoSave();
+                    alert('Operating fund removed successfully!');
+                }
+            } else {
+                alert('Operating fund not found');
+            }
+        }
+
+        function addExpenseCategory() {
+            const name = prompt('Enter expense category name:');
+            if (!name) return;
+            
+            const description = prompt('Enter category description:');
+            if (!description) return;
+            
+            financeData.expenseCategories[name] = description;
+            renderExpenseCategories();
+            autoSave();
+            alert('Expense category added successfully!');
+        }
+
+        function removeExpenseCategory() {
+            const name = prompt('Enter expense category to remove:');
+            if (name && financeData.expenseCategories[name]) {
+                if (confirm(`Remove category "${name}"?`)) {
+                    delete financeData.expenseCategories[name];
+                    renderExpenseCategories();
+                    autoSave();
+                    alert('Expense category removed successfully!');
+                }
+            } else {
+                alert('Expense category not found');
+            }
+        }
+
+        function addProjectType() {
+            const type = prompt('Enter project type:');
+            if (type && type.trim()) {
+                financeData.projectTypes.push(type.trim());
+                renderProjectTypes();
+                autoSave();
+                alert('Project type added successfully!');
+            }
+        }
+
+        function removeProjectType() {
+            const type = prompt('Enter project type to remove:');
+            const index = financeData.projectTypes.indexOf(type);
+            if (index >= 0) {
+                if (confirm(`Remove project type "${type}"?`)) {
+                    financeData.projectTypes.splice(index, 1);
+                    renderProjectTypes();
+                    autoSave();
+                    alert('Project type removed successfully!');
+                }
+            } else {
+                alert('Project type not found');
+            }
+        }
+
+        function addProjectStatus() {
+            const status = prompt('Enter project status name:');
+            if (!status) return;
+            
+            const description = prompt('Enter status description:');
+            if (!description) return;
+            
+            financeData.projectStatuses[status] = description;
+            renderProjectStatus();
+            autoSave();
+            alert('Project status added successfully!');
+        }
+
+        function removeProjectStatus() {
+            const status = prompt('Enter project status to remove:');
+            if (status && financeData.projectStatuses[status]) {
+                if (confirm(`Remove status "${status}"?`)) {
+                    delete financeData.projectStatuses[status];
+                    renderProjectStatus();
+                    autoSave();
+                    alert('Project status removed successfully!');
+                }
+            } else {
+                alert('Project status not found');
+            }
+        }
+
+        function addBillingType() {
+            const code = prompt('Enter billing type code (e.g., PB6):');
+            if (!code) return;
+            
+            const description = prompt('Enter billing type description:');
+            if (!description) return;
+            
+            financeData.billingTypes[code] = description;
+            renderBillingTypes();
+            autoSave();
+            alert('Billing type added successfully!');
+        }
+
+        function removeBillingType() {
+            const code = prompt('Enter billing type code to remove:');
+            if (code && financeData.billingTypes[code]) {
+                if (confirm(`Remove billing type "${code}"?`)) {
+                    delete financeData.billingTypes[code];
+                    renderBillingTypes();
+                    autoSave();
+                    alert('Billing type removed successfully!');
+                }
+            } else {
+                alert('Billing type not found');
+            }
+        }
+
+        // Collection form functions
+        function addCollectionFromForm() {
+            const date = document.getElementById('collectionDate').value;
+            const client = document.getElementById('collectionClient').value;
+            const projectId = document.getElementById('collectionProjectId').value;
+            const invoice = document.getElementById('collectionInvoice').value;
+            const amount = parseFloat(document.getElementById('collectionAmount').value);
+            const paymentMethod = document.getElementById('collectionPaymentMethod').value;
+            const notes = document.getElementById('collectionNotes').value;
+            
+            if (!date || !client || !projectId || !amount || amount <= 0) {
+                alert('Please fill in all required fields (Date, Client, Project ID, Amount)');
+                return;
+            }
+            
+            const projectInfo = getProjectInfo(projectId);
+            
+            const newCollection = {
+                id: Date.now(),
+                paymentDate: date,
+                month: date.slice(0, 7),
+                clientName: client,
+                projectID: projectId,
+                projectName: projectInfo.projectName,
+                invoiceNumber: invoice || `INV${Date.now()}`,
+                amountReceived: amount,
+                amountBilled: amount,
+                amountPaid: amount,
+                outstandingAmount: 0,
+                paymentMethod,
+                coaCode: '400',
+                status: 'Paid',
+                notes
+            };
+            
+            financeData.collections.push(newCollection);
+            renderCollections();
+            updateDashboard();
+            clearCollectionForm();
+            autoSave();
+            alert('Collection added successfully!');
+        }
+
+        function clearCollectionForm() {
+            document.getElementById('collectionDate').value = '';
+            document.getElementById('collectionClient').value = '';
+            document.getElementById('collectionProjectId').value = '';
+            document.getElementById('collectionInvoice').value = '';
+            document.getElementById('collectionAmount').value = '';
+            document.getElementById('collectionPaymentMethod').value = 'CASH';
+            document.getElementById('collectionNotes').value = '';
+        }
+
+        function populateProjectDropdown() {
+            const select = document.getElementById('collectionProjectId');
+            select.innerHTML = '<option value="">Select Project</option>';
+            
+            Object.entries(financeData.projectMaster).forEach(([key, project]) => {
+                const option = document.createElement('option');
+                option.value = project.fullId;
+                option.textContent = `${project.fullId} - ${project.clientName}`;
+                select.appendChild(option);
+            });
+        }
+
         // Initialize the application
         function initializeApp() {
             loadFromLocalStorage();
@@ -2354,11 +2796,15 @@
             renderReferenceTables();
             renderTransactions();
             renderCollections();
+            populateProjectDropdown();
             updateDashboard();
+            
+            // Set default date to today
+            document.getElementById('collectionDate').value = new Date().toISOString().split('T')[0];
         }
 
         // Start the application
         document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97359e7b90cf98c7',t:'MTc1NTg5OTc3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9735b205c1dfed1a',t:'MTc1NTkwMDU3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
