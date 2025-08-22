@@ -83,6 +83,8 @@
             top: 0;
             z-index: 1000;
             transition: transform 0.3s ease;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
         .main-content {
             margin-left: 280px;
@@ -108,6 +110,32 @@
         .nav-item i {
             width: 20px;
             margin-right: 12px;
+        }
+        .chart-toggle-btn {
+            padding: 8px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .chart-toggle-btn:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+        .chart-toggle-btn.active {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            border-color: #1e40af;
+            color: white;
+        }
+        .chart-container-wrapper {
+            transition: all 0.3s ease;
+        }
+        .chart-container-wrapper.hidden {
+            display: none;
         }
         @media (max-width: 1024px) {
             .sidebar {
@@ -321,31 +349,75 @@
                     </div>
                 </div>
 
+                <!-- Chart Customization Panel -->
+                <div class="glass-card rounded-2xl p-6 shadow-xl mb-8">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Dashboard Charts</h3>
+                        <button onclick="showAddChartModal()" class="bg-primary hover:bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-lg transition-all duration-300">
+                            <i class="fas fa-plus mr-2"></i>Add Custom Chart
+                        </button>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mb-4" id="chartToggleButtons">
+                        <button onclick="toggleChart('monthlyRevenueExpensesChart')" class="chart-toggle-btn active" data-chart="monthlyRevenueExpensesChart">
+                            <i class="fas fa-chart-line mr-2"></i>Monthly Revenue vs Expenses
+                        </button>
+                        <button onclick="toggleChart('projectProfitabilityChart')" class="chart-toggle-btn active" data-chart="projectProfitabilityChart">
+                            <i class="fas fa-chart-bar mr-2"></i>Project Profitability
+                        </button>
+                        <button onclick="toggleChart('cashFlowChart')" class="chart-toggle-btn active" data-chart="cashFlowChart">
+                            <i class="fas fa-water mr-2"></i>Cash Flow Trend
+                        </button>
+                        <button onclick="toggleChart('expenseCategoriesChart')" class="chart-toggle-btn active" data-chart="expenseCategoriesChart">
+                            <i class="fas fa-chart-pie mr-2"></i>Expense Categories
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Charts Grid -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                    <div class="glass-card rounded-2xl p-6 shadow-xl">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Monthly Revenue vs Expenses</h3>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8" id="chartsGrid">
+                    <div class="glass-card rounded-2xl p-6 shadow-xl chart-container-wrapper" id="monthlyRevenueExpensesChart-wrapper">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Monthly Revenue vs Expenses</h3>
+                            <button onclick="removeChart('monthlyRevenueExpensesChart')" class="text-red-500 hover:text-red-700">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                         <div class="chart-container">
                             <canvas id="monthlyRevenueExpensesChart"></canvas>
                         </div>
                     </div>
                     
-                    <div class="glass-card rounded-2xl p-6 shadow-xl">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Project Profitability Analysis</h3>
+                    <div class="glass-card rounded-2xl p-6 shadow-xl chart-container-wrapper" id="projectProfitabilityChart-wrapper">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Project Profitability Analysis</h3>
+                            <button onclick="removeChart('projectProfitabilityChart')" class="text-red-500 hover:text-red-700">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                         <div class="chart-container">
                             <canvas id="projectProfitabilityChart"></canvas>
                         </div>
                     </div>
 
-                    <div class="glass-card rounded-2xl p-6 shadow-xl">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Cash Flow Trend</h3>
+                    <div class="glass-card rounded-2xl p-6 shadow-xl chart-container-wrapper" id="cashFlowChart-wrapper">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Cash Flow Trend</h3>
+                            <button onclick="removeChart('cashFlowChart')" class="text-red-500 hover:text-red-700">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                         <div class="chart-container">
                             <canvas id="cashFlowChart"></canvas>
                         </div>
                     </div>
 
-                    <div class="glass-card rounded-2xl p-6 shadow-xl">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Expense Categories Breakdown</h3>
+                    <div class="glass-card rounded-2xl p-6 shadow-xl chart-container-wrapper" id="expenseCategoriesChart-wrapper">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Expense Categories Breakdown</h3>
+                            <button onclick="removeChart('expenseCategoriesChart')" class="text-red-500 hover:text-red-700">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                         <div class="chart-container">
                             <canvas id="expenseCategoriesChart"></canvas>
                         </div>
@@ -414,6 +486,7 @@
                                         <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Category</th>
                                         <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Subcategory</th>
                                         <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Notes</th>
+                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="coaTable">
@@ -739,6 +812,56 @@
 
     <!-- Hidden file input for Excel import -->
     <input type="file" id="excelFileInput" accept=".xlsx,.xls" style="display: none;" onchange="handleExcelImport(event)">
+
+    <!-- Add Chart Modal -->
+    <div id="addChartModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-800">Add Custom Chart</h3>
+                <button onclick="hideAddChartModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Chart Type</label>
+                    <select id="chartType" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="line">Line Chart</option>
+                        <option value="bar">Bar Chart</option>
+                        <option value="pie">Pie Chart</option>
+                        <option value="doughnut">Doughnut Chart</option>
+                        <option value="area">Area Chart</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Data Source</label>
+                    <select id="dataSource" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="projects">Project Data</option>
+                        <option value="transactions">Transaction Data</option>
+                        <option value="collections">Collection Data</option>
+                        <option value="monthly">Monthly Summary</option>
+                        <option value="expenses">Expense Categories</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Chart Title</label>
+                    <input type="text" id="chartTitle" placeholder="Enter chart title" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                
+                <div class="flex gap-3 pt-4">
+                    <button onclick="createCustomChart()" class="flex-1 bg-primary hover:bg-indigo-600 text-white py-3 px-4 rounded-lg font-medium transition-colors">
+                        Create Chart
+                    </button>
+                    <button onclick="hideAddChartModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-4 rounded-lg font-medium transition-colors">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         // Global data storage with YOUR EXACT STRUCTURE
@@ -1486,7 +1609,7 @@
 
         function renderCOATable() {
             const tbody = document.getElementById('coaTable');
-            tbody.innerHTML = financeData.coa.map(account => `
+            tbody.innerHTML = financeData.coa.map((account, index) => `
                 <tr class="hover:bg-gray-50">
                     <td class="border border-gray-200 px-4 py-3">${account.oldCOA}</td>
                     <td class="border border-gray-200 px-4 py-3 font-medium">${account.unifiedCode}</td>
@@ -1494,6 +1617,11 @@
                     <td class="border border-gray-200 px-4 py-3">${account.category}</td>
                     <td class="border border-gray-200 px-4 py-3">${account.subcategory}</td>
                     <td class="border border-gray-200 px-4 py-3 text-gray-600">${account.notes}</td>
+                    <td class="border border-gray-200 px-4 py-3">
+                        <button onclick="editCOAAccount(${index})" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors">
+                            <i class="fas fa-edit mr-1"></i>Edit
+                        </button>
+                    </td>
                 </tr>
             `).join('');
         }
@@ -1998,6 +2126,225 @@
             }
         }
 
+        // Chart management functions
+        function showAddChartModal() {
+            document.getElementById('addChartModal').classList.remove('hidden');
+        }
+
+        function hideAddChartModal() {
+            document.getElementById('addChartModal').classList.add('hidden');
+        }
+
+        function toggleChart(chartId) {
+            const wrapper = document.getElementById(chartId + '-wrapper');
+            const button = document.querySelector(`[data-chart="${chartId}"]`);
+            
+            if (wrapper.classList.contains('hidden')) {
+                wrapper.classList.remove('hidden');
+                button.classList.add('active');
+            } else {
+                wrapper.classList.add('hidden');
+                button.classList.remove('active');
+            }
+        }
+
+        function removeChart(chartId) {
+            if (confirm('Are you sure you want to remove this chart?')) {
+                const wrapper = document.getElementById(chartId + '-wrapper');
+                const button = document.querySelector(`[data-chart="${chartId}"]`);
+                
+                wrapper.classList.add('hidden');
+                button.classList.remove('active');
+            }
+        }
+
+        function createCustomChart() {
+            const chartType = document.getElementById('chartType').value;
+            const dataSource = document.getElementById('dataSource').value;
+            const chartTitle = document.getElementById('chartTitle').value || 'Custom Chart';
+            
+            if (!chartTitle.trim()) {
+                alert('Please enter a chart title');
+                return;
+            }
+            
+            const chartId = 'customChart_' + Date.now();
+            const chartData = generateChartData(dataSource, chartType);
+            
+            // Create chart container
+            const chartsGrid = document.getElementById('chartsGrid');
+            const chartWrapper = document.createElement('div');
+            chartWrapper.className = 'glass-card rounded-2xl p-6 shadow-xl chart-container-wrapper';
+            chartWrapper.id = chartId + '-wrapper';
+            
+            chartWrapper.innerHTML = `
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800">${chartTitle}</h3>
+                    <button onclick="removeChart('${chartId}')" class="text-red-500 hover:text-red-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="chart-container">
+                    <canvas id="${chartId}"></canvas>
+                </div>
+            `;
+            
+            chartsGrid.appendChild(chartWrapper);
+            
+            // Create chart
+            const ctx = document.getElementById(chartId).getContext('2d');
+            financeData.charts[chartId] = new Chart(ctx, {
+                type: chartType,
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: chartType !== 'pie' && chartType !== 'doughnut' ? {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '₱' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    } : {}
+                }
+            });
+            
+            // Add toggle button
+            const toggleButtons = document.getElementById('chartToggleButtons');
+            const toggleButton = document.createElement('button');
+            toggleButton.className = 'chart-toggle-btn active';
+            toggleButton.setAttribute('data-chart', chartId);
+            toggleButton.onclick = () => toggleChart(chartId);
+            toggleButton.innerHTML = `<i class="fas fa-chart-bar mr-2"></i>${chartTitle}`;
+            toggleButtons.appendChild(toggleButton);
+            
+            hideAddChartModal();
+            alert('Custom chart created successfully!');
+        }
+
+        function generateChartData(dataSource, chartType) {
+            let data = { labels: [], datasets: [] };
+            
+            switch (dataSource) {
+                case 'projects':
+                    const projectLabels = [];
+                    const projectRevenue = [];
+                    const projectExpenses = [];
+                    
+                    Object.entries(financeData.calculatedData.projectSummaries || {}).forEach(([key, project]) => {
+                        if (project.totalCollected > 0 || project.totalExpenses > 0) {
+                            projectLabels.push(project.code || key);
+                            projectRevenue.push(project.totalCollected);
+                            projectExpenses.push(project.totalExpenses);
+                        }
+                    });
+                    
+                    data = {
+                        labels: projectLabels,
+                        datasets: [{
+                            label: 'Revenue',
+                            data: projectRevenue,
+                            backgroundColor: chartType === 'pie' || chartType === 'doughnut' ? 
+                                ['#1e40af', '#3b82f6', '#60a5fa', '#93c5fd', '#dbeafe'] : '#059669',
+                            borderColor: '#059669'
+                        }]
+                    };
+                    break;
+                    
+                case 'transactions':
+                    const expenseTypes = {};
+                    financeData.transactions.filter(t => t.paid === 'Yes').forEach(t => {
+                        expenseTypes[t.expenseType] = (expenseTypes[t.expenseType] || 0) + parseFloat(t.totalAmount);
+                    });
+                    
+                    data = {
+                        labels: Object.keys(expenseTypes),
+                        datasets: [{
+                            label: 'Amount',
+                            data: Object.values(expenseTypes),
+                            backgroundColor: chartType === 'pie' || chartType === 'doughnut' ? 
+                                ['#dc2626', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'] : '#dc2626',
+                            borderColor: '#dc2626'
+                        }]
+                    };
+                    break;
+                    
+                case 'collections':
+                    const monthlyCollections = Array(12).fill(0);
+                    financeData.collections.forEach(c => {
+                        const month = new Date(c.paymentDate).getMonth();
+                        monthlyCollections[month] += parseFloat(c.amountReceived);
+                    });
+                    
+                    data = {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                        datasets: [{
+                            label: 'Collections',
+                            data: monthlyCollections,
+                            backgroundColor: '#059669',
+                            borderColor: '#059669',
+                            fill: chartType === 'area'
+                        }]
+                    };
+                    break;
+                    
+                default:
+                    data = {
+                        labels: ['Sample 1', 'Sample 2', 'Sample 3'],
+                        datasets: [{
+                            label: 'Sample Data',
+                            data: [100, 200, 150],
+                            backgroundColor: ['#1e40af', '#3b82f6', '#60a5fa'],
+                            borderColor: '#1e40af'
+                        }]
+                    };
+            }
+            
+            return data;
+        }
+
+        // COA Edit function
+        function editCOAAccount(index) {
+            const account = financeData.coa[index];
+            
+            const newAccountName = prompt('Edit account name:', account.accountName);
+            if (newAccountName === null) return;
+            
+            const newUnifiedCode = prompt('Edit unified code:', account.unifiedCode);
+            if (newUnifiedCode === null) return;
+            
+            const newCategory = prompt('Edit category:', account.category);
+            if (newCategory === null) return;
+            
+            const newSubcategory = prompt('Edit subcategory:', account.subcategory);
+            if (newSubcategory === null) return;
+            
+            const newNotes = prompt('Edit notes:', account.notes);
+            if (newNotes === null) return;
+            
+            // Update the account
+            financeData.coa[index] = {
+                ...account,
+                accountName: newAccountName,
+                unifiedCode: newUnifiedCode,
+                category: newCategory,
+                subcategory: newSubcategory,
+                notes: newNotes
+            };
+            
+            renderCOATable();
+            autoSave();
+            alert('COA account updated successfully!');
+        }
+
         // Initialize the application
         function initializeApp() {
             loadFromLocalStorage();
@@ -2013,5 +2360,5 @@
         // Start the application
         document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97358c1ca1b2cd75',t:'MTc1NTg5OTAyMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97359e7b90cf98c7',t:'MTc1NTg5OTc3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
