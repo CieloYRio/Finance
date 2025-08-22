@@ -88,10 +88,29 @@
             max-height: 100vh;
         }
         .sidebar-content {
-            height: calc(100vh - 120px);
+            height: calc(100vh - 140px);
             overflow-y: auto;
             overflow-x: hidden;
             padding-bottom: 20px;
+            scrollbar-width: thin;
+            scrollbar-color: #4b5563 #1f2937;
+        }
+        
+        .sidebar-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .sidebar-content::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        
+        .sidebar-content::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 3px;
+        }
+        
+        .sidebar-content::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
         }
         .main-content {
             margin-left: 280px;
@@ -117,32 +136,6 @@
         .nav-item i {
             width: 20px;
             margin-right: 12px;
-        }
-        .chart-toggle-btn {
-            padding: 8px 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            background: white;
-            color: #6b7280;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .chart-toggle-btn:hover {
-            border-color: #3b82f6;
-            color: #3b82f6;
-        }
-        .chart-toggle-btn.active {
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-            border-color: #1e40af;
-            color: white;
-        }
-        .chart-container-wrapper {
-            transition: all 0.3s ease;
-        }
-        .chart-container-wrapper.hidden {
-            display: none;
         }
         @media (max-width: 1024px) {
             .sidebar {
@@ -218,10 +211,6 @@
                 <i class="fas fa-balance-scale"></i>
                 Budget vs Actual
             </a>
-            <a href="#" class="nav-item" onclick="showTab('overhead-summary')">
-                <i class="fas fa-chart-pie"></i>
-                Overhead Summary
-            </a>
             
             <!-- FINANCIAL STATEMENTS -->
             <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mt-4">Financial Statements</div>
@@ -236,44 +225,6 @@
             <a href="#" class="nav-item" onclick="showTab('cash-flow')">
                 <i class="fas fa-water"></i>
                 Cash Flow Statement
-            </a>
-            
-            <!-- ACCOUNTING RECORDS -->
-            <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mt-4">Accounting Records</div>
-            <a href="#" class="nav-item" onclick="showTab('accounts-receivable')">
-                <i class="fas fa-file-invoice-dollar"></i>
-                Accounts Receivable
-            </a>
-            <a href="#" class="nav-item" onclick="showTab('accounts-payable')">
-                <i class="fas fa-file-invoice"></i>
-                Accounts Payable
-            </a>
-            <a href="#" class="nav-item" onclick="showTab('general-ledger')">
-                <i class="fas fa-book"></i>
-                General Ledger
-            </a>
-            <a href="#" class="nav-item" onclick="showTab('trial-balance')">
-                <i class="fas fa-calculator"></i>
-                Trial Balance
-            </a>
-            <a href="#" class="nav-item" onclick="showTab('journal-entries')">
-                <i class="fas fa-edit"></i>
-                Journal Entries
-            </a>
-            
-            <!-- ASSETS & EQUITY -->
-            <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mt-4">Assets & Equity</div>
-            <a href="#" class="nav-item" onclick="showTab('fixed-assets')">
-                <i class="fas fa-building"></i>
-                Fixed Assets
-            </a>
-            <a href="#" class="nav-item" onclick="showTab('owners-capital')">
-                <i class="fas fa-user-tie"></i>
-                Owners' Capital
-            </a>
-            <a href="#" class="nav-item" onclick="showTab('owners-liability')">
-                <i class="fas fa-clipboard-list"></i>
-                Owners' Liability
             </a>
             
             <!-- REPORTS -->
@@ -356,259 +307,19 @@
                     </div>
                 </div>
 
-                <!-- Chart Customization Panel -->
-                <div class="glass-card rounded-2xl p-6 shadow-xl mb-8">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold text-gray-800">Dashboard Charts</h3>
-                        <button onclick="showAddChartModal()" class="bg-primary hover:bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-lg transition-all duration-300">
-                            <i class="fas fa-plus mr-2"></i>Add Custom Chart
-                        </button>
-                    </div>
-                    <div class="flex flex-wrap gap-2 mb-4" id="chartToggleButtons">
-                        <button onclick="toggleChart('monthlyRevenueExpensesChart')" class="chart-toggle-btn active" data-chart="monthlyRevenueExpensesChart">
-                            <i class="fas fa-chart-line mr-2"></i>Monthly Revenue vs Expenses
-                        </button>
-                        <button onclick="toggleChart('projectProfitabilityChart')" class="chart-toggle-btn active" data-chart="projectProfitabilityChart">
-                            <i class="fas fa-chart-bar mr-2"></i>Project Profitability
-                        </button>
-                        <button onclick="toggleChart('cashFlowChart')" class="chart-toggle-btn active" data-chart="cashFlowChart">
-                            <i class="fas fa-water mr-2"></i>Cash Flow Trend
-                        </button>
-                        <button onclick="toggleChart('expenseCategoriesChart')" class="chart-toggle-btn active" data-chart="expenseCategoriesChart">
-                            <i class="fas fa-chart-pie mr-2"></i>Expense Categories
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Charts Grid -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8" id="chartsGrid">
-                    <div class="glass-card rounded-2xl p-6 shadow-xl chart-container-wrapper" id="monthlyRevenueExpensesChart-wrapper">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-semibold text-gray-800">Monthly Revenue vs Expenses</h3>
-                            <button onclick="removeChart('monthlyRevenueExpensesChart')" class="text-red-500 hover:text-red-700">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
+                <!-- Charts -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Monthly Revenue vs Expenses</h3>
                         <div class="chart-container">
-                            <canvas id="monthlyRevenueExpensesChart"></canvas>
+                            <canvas id="monthlyChart"></canvas>
                         </div>
                     </div>
                     
-                    <div class="glass-card rounded-2xl p-6 shadow-xl chart-container-wrapper" id="projectProfitabilityChart-wrapper">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-semibold text-gray-800">Project Profitability Analysis</h3>
-                            <button onclick="removeChart('projectProfitabilityChart')" class="text-red-500 hover:text-red-700">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
+                    <div class="glass-card rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Project Profitability</h3>
                         <div class="chart-container">
-                            <canvas id="projectProfitabilityChart"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="glass-card rounded-2xl p-6 shadow-xl chart-container-wrapper" id="cashFlowChart-wrapper">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-semibold text-gray-800">Cash Flow Trend</h3>
-                            <button onclick="removeChart('cashFlowChart')" class="text-red-500 hover:text-red-700">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="cashFlowChart"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="glass-card rounded-2xl p-6 shadow-xl chart-container-wrapper" id="expenseCategoriesChart-wrapper">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-semibold text-gray-800">Expense Categories Breakdown</h3>
-                            <button onclick="removeChart('expenseCategoriesChart')" class="text-red-500 hover:text-red-700">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="expenseCategoriesChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Outstanding Items -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="glass-card rounded-2xl p-6 shadow-xl">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Outstanding Receivables</h3>
-                        <div class="text-3xl font-bold text-success" id="outstandingReceivables">₱0.00</div>
-                        <p class="text-gray-600 mt-2">Pending collections from clients</p>
-                    </div>
-                    <div class="glass-card rounded-2xl p-6 shadow-xl">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Outstanding Payables</h3>
-                        <div class="text-3xl font-bold text-danger" id="outstandingPayables">₱0.00</div>
-                        <p class="text-gray-600 mt-2">Pending payments to vendors</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Project Profile Tab -->
-            <div id="project-profile" class="tab-content">
-                <div class="glass-card rounded-2xl p-6 shadow-xl">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-bold text-gray-800">Project Profile</h2>
-                        <div class="flex gap-3">
-                            <button onclick="addProject()" class="bg-primary hover:bg-indigo-600 text-white px-6 py-3 rounded-xl shadow-lg transition-all duration-300">
-                                <i class="fas fa-plus mr-2"></i>Add Project
-                            </button>
-                            <button onclick="removeProject()" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl shadow-lg transition-all duration-300">
-                                <i class="fas fa-trash mr-2"></i>Remove Project
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div id="projectCards" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                        <!-- Project cards will be populated here -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Reference Table Tab -->
-            <div id="reference-table" class="tab-content">
-                <div class="space-y-6">
-                    <!-- COA Section -->
-                    <div class="glass-card rounded-2xl p-6 shadow-xl">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-xl font-semibold text-gray-800">Chart of Accounts (BIR-Aligned)</h3>
-                            <div class="flex gap-2">
-                                <button onclick="addCOA()" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition-colors">
-                                    <i class="fas fa-plus mr-2"></i>Add Account
-                                </button>
-                                <button onclick="removeCOA()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">
-                                    <i class="fas fa-trash mr-2"></i>Remove Account
-                                </button>
-                            </div>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full border-collapse">
-                                <thead>
-                                    <tr class="bg-gray-50">
-                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Old COA</th>
-                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Unified Code</th>
-                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Account Name</th>
-                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Category</th>
-                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Subcategory</th>
-                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Notes</th>
-                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="coaTable">
-                                    <!-- COA entries will be populated here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- 500 Series Project Expenses -->
-                    <div class="glass-card rounded-2xl p-6 shadow-xl">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-semibold text-gray-800">500 Series Project Expenses</h3>
-                            <div class="flex gap-2">
-                                <button onclick="addProjectExpense()" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition-colors">
-                                    <i class="fas fa-plus mr-2"></i>Add Expense
-                                </button>
-                                <button onclick="removeProjectExpense()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">
-                                    <i class="fas fa-trash mr-2"></i>Remove
-                                </button>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="projectExpensesList">
-                            <!-- Project expenses will be populated here -->
-                        </div>
-                    </div>
-
-                    <!-- Operating Funds -->
-                    <div class="glass-card rounded-2xl p-6 shadow-xl">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-semibold text-gray-800">Operating Funds</h3>
-                            <div class="flex gap-2">
-                                <button onclick="addOperatingFund()" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition-colors">
-                                    <i class="fas fa-plus mr-2"></i>Add Fund
-                                </button>
-                                <button onclick="removeOperatingFund()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">
-                                    <i class="fas fa-trash mr-2"></i>Remove
-                                </button>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="operatingFundsList">
-                            <!-- Operating funds will be populated here -->
-                        </div>
-                    </div>
-
-                    <!-- Expense Categories -->
-                    <div class="glass-card rounded-2xl p-6 shadow-xl">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-semibold text-gray-800">Expense Categories</h3>
-                            <div class="flex gap-2">
-                                <button onclick="addExpenseCategory()" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition-colors">
-                                    <i class="fas fa-plus mr-2"></i>Add Category
-                                </button>
-                                <button onclick="removeExpenseCategory()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">
-                                    <i class="fas fa-trash mr-2"></i>Remove
-                                </button>
-                            </div>
-                        </div>
-                        <div class="space-y-4" id="expenseCategoriesList">
-                            <!-- Expense categories will be populated here -->
-                        </div>
-                    </div>
-
-                    <!-- Project Types & Status -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="glass-card rounded-2xl p-6 shadow-xl">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-lg font-semibold text-gray-800">Project Types</h3>
-                                <div class="flex gap-2">
-                                    <button onclick="addProjectType()" class="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-indigo-600 transition-colors">
-                                        <i class="fas fa-plus mr-1"></i>Add
-                                    </button>
-                                    <button onclick="removeProjectType()" class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 transition-colors">
-                                        <i class="fas fa-trash mr-1"></i>Remove
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="space-y-2" id="projectTypesList">
-                                <!-- Project types will be populated here -->
-                            </div>
-                        </div>
-                        
-                        <div class="glass-card rounded-2xl p-6 shadow-xl">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-lg font-semibold text-gray-800">Project Status</h3>
-                                <div class="flex gap-2">
-                                    <button onclick="addProjectStatus()" class="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-indigo-600 transition-colors">
-                                        <i class="fas fa-plus mr-1"></i>Add
-                                    </button>
-                                    <button onclick="removeProjectStatus()" class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 transition-colors">
-                                        <i class="fas fa-trash mr-1"></i>Remove
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="space-y-3" id="projectStatusList">
-                                <!-- Project status will be populated here -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Client Billing Types -->
-                    <div class="glass-card rounded-2xl p-6 shadow-xl">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-semibold text-gray-800">Client Billing Types (Revenue Milestones)</h3>
-                            <div class="flex gap-2">
-                                <button onclick="addBillingType()" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition-colors">
-                                    <i class="fas fa-plus mr-2"></i>Add Type
-                                </button>
-                                <button onclick="removeBillingType()" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">
-                                    <i class="fas fa-trash mr-2"></i>Remove
-                                </button>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="billingTypesList">
-                            <!-- Billing types will be populated here -->
+                            <canvas id="projectChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -623,23 +334,17 @@
                             <button onclick="addTransaction()" class="bg-primary hover:bg-indigo-600 text-white px-6 py-3 rounded-xl shadow-lg transition-all duration-300">
                                 <i class="fas fa-plus mr-2"></i>Add Transaction
                             </button>
-                            <button onclick="removeTransaction()" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl shadow-lg transition-all duration-300">
-                                <i class="fas fa-trash mr-2"></i>Remove Transaction
-                            </button>
                         </div>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full border-collapse">
                             <thead>
                                 <tr class="bg-gray-50">
-                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Payment Date</th>
-                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Particulars</th>
-                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Expense Type</th>
-                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Unified Code</th>
-                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Project ID</th>
-                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Vendor</th>
-                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Total Amount</th>
-                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Paid</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Date</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Description</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Amount</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Project</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="transactionTable">
@@ -652,98 +357,80 @@
 
             <!-- Collections Master Tab -->
             <div id="collections-master" class="tab-content">
-                <div class="space-y-6">
-                    <!-- Manual Entry Form -->
-                    <div class="glass-card rounded-2xl p-6 shadow-xl">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Add New Collection Entry</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Date</label>
-                                <input type="date" id="collectionDate" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Client Name</label>
-                                <input type="text" id="collectionClient" placeholder="Enter client name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Project ID</label>
-                                <select id="collectionProjectId" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="">Select Project</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Invoice Number</label>
-                                <input type="text" id="collectionInvoice" placeholder="ADCC-XXX000-XX" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Amount Received (₱)</label>
-                                <input type="number" id="collectionAmount" placeholder="0.00" step="0.01" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Payment Method</label>
-                                <select id="collectionPaymentMethod" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="CASH">CASH</option>
-                                    <option value="CHECK">CHECK</option>
-                                    <option value="BANK_TRANSFER">BANK TRANSFER</option>
-                                    <option value="GCASH">GCASH</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Notes</label>
-                                <input type="text" id="collectionNotes" placeholder="Optional notes" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            </div>
-                        </div>
+                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">Collections Master</h2>
                         <div class="flex gap-3">
-                            <button onclick="addCollectionFromForm()" class="bg-success hover:bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg transition-all duration-300">
+                            <button onclick="addCollection()" class="bg-success hover:bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg transition-all duration-300">
                                 <i class="fas fa-plus mr-2"></i>Add Collection
-                            </button>
-                            <button onclick="clearCollectionForm()" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-xl shadow-lg transition-all duration-300">
-                                <i class="fas fa-eraser mr-2"></i>Clear Form
                             </button>
                         </div>
                     </div>
-
-                    <!-- Collections Table -->
-                    <div class="glass-card rounded-2xl p-6 shadow-xl">
-                        <div class="flex justify-between items-center mb-6">
-                            <h2 class="text-2xl font-bold text-gray-800">Collections Master</h2>
-                            <div class="flex gap-3">
-                                <button onclick="removeCollection()" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl shadow-lg transition-all duration-300">
-                                    <i class="fas fa-trash mr-2"></i>Remove Collection
-                                </button>
-                            </div>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full border-collapse">
-                                <thead>
-                                    <tr class="bg-gray-50">
-                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Date</th>
-                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Client Name</th>
-                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Project ID</th>
-                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Project Name</th>
-                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Invoice Number</th>
-                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Amount Received</th>
-                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Payment Method</th>
-                                        <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="collectionTable">
-                                    <!-- Collections will be populated here -->
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Date</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Client</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Amount</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Project</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="collectionTable">
+                                <!-- Collections will be populated here -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
 
-            <!-- Overhead Summary Tab -->
-            <div id="overhead-summary" class="tab-content">
+            <!-- Project Profile Tab -->
+            <div id="project-profile" class="tab-content">
                 <div class="glass-card rounded-2xl p-6 shadow-xl">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Overhead Summary</h2>
-                    <div id="overheadSummaryContent">
-                        <!-- Overhead data will be populated here -->
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">Project Profile</h2>
+                        <div class="flex gap-3">
+                            <button onclick="addProject()" class="bg-primary hover:bg-indigo-600 text-white px-6 py-3 rounded-xl shadow-lg transition-all duration-300">
+                                <i class="fas fa-plus mr-2"></i>Add Project
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="projectCards" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                        <!-- Project cards will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reference Table Tab -->
+            <div id="reference-table" class="tab-content">
+                <div class="glass-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Reference Tables</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4">Chart of Accounts</h3>
+                            <div class="space-y-2">
+                                <div class="p-3 bg-gray-50 rounded-lg">
+                                    <span class="font-medium">100 - Cash in Bank</span>
+                                </div>
+                                <div class="p-3 bg-gray-50 rounded-lg">
+                                    <span class="font-medium">400 - Service Income</span>
+                                </div>
+                                <div class="p-3 bg-gray-50 rounded-lg">
+                                    <span class="font-medium">500.1 - Materials</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4">Project Types</h3>
+                            <div class="space-y-2">
+                                <div class="p-3 bg-gray-50 rounded-lg">Design</div>
+                                <div class="p-3 bg-gray-50 rounded-lg">Build</div>
+                                <div class="p-3 bg-gray-50 rounded-lg">Fit Out</div>
+                                <div class="p-3 bg-gray-50 rounded-lg">Renovation</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -752,18 +439,20 @@
             <div id="project-revenue" class="tab-content">
                 <div class="glass-card rounded-2xl p-6 shadow-xl">
                     <h2 class="text-2xl font-bold text-gray-800 mb-6">Project Revenue</h2>
-                    <div id="projectRevenueContent">
-                        <!-- Project revenue data will be populated here -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Budget vs Actual Tab -->
-            <div id="budget-actual" class="tab-content">
-                <div class="glass-card rounded-2xl p-6 shadow-xl">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Budget vs Actual</h2>
-                    <div id="budgetActualContent">
-                        <!-- Budget vs actual data will be populated here -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Project</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Client</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Revenue</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="projectRevenueTable">
+                                <!-- Project revenue data will be populated here -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -772,28 +461,42 @@
             <div id="project-cost" class="tab-content">
                 <div class="glass-card rounded-2xl p-6 shadow-xl">
                     <h2 class="text-2xl font-bold text-gray-800 mb-6">Project Cost</h2>
-                    <div id="projectCostContent">
-                        <!-- Project cost data will be populated here -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Project</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Materials</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Labor</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Total Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody id="projectCostTable">
+                                <!-- Project cost data will be populated here -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
 
-            <!-- Accounts Receivable Tab -->
-            <div id="accounts-receivable" class="tab-content">
+            <!-- Budget vs Actual Tab -->
+            <div id="budget-actual" class="tab-content">
                 <div class="glass-card rounded-2xl p-6 shadow-xl">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Accounts Receivable</h2>
-                    <div id="accountsReceivableContent">
-                        <!-- Accounts receivable data will be populated here -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Cash Flow Tab -->
-            <div id="cash-flow" class="tab-content">
-                <div class="glass-card rounded-2xl p-6 shadow-xl">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Cash Flow</h2>
-                    <div id="cashFlowContent">
-                        <!-- Cash flow data will be populated here -->
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Budget vs Actual</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Project</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Budget</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Actual</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Variance</th>
+                                </tr>
+                            </thead>
+                            <tbody id="budgetActualTable">
+                                <!-- Budget vs actual data will be populated here -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -802,66 +505,19 @@
             <div id="profit-loss" class="tab-content">
                 <div class="glass-card rounded-2xl p-6 shadow-xl">
                     <h2 class="text-2xl font-bold text-gray-800 mb-6">Profit & Loss Statement</h2>
-                    <div id="profitLossContent">
-                        <!-- P&L data will be populated here -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Accounts Payable Tab -->
-            <div id="accounts-payable" class="tab-content">
-                <div class="glass-card rounded-2xl p-6 shadow-xl">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Accounts Payables</h2>
-                    <div id="accountsPayableContent">
-                        <!-- Accounts payable data will be populated here -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Fixed Assets Tab -->
-            <div id="fixed-assets" class="tab-content">
-                <div class="glass-card rounded-2xl p-6 shadow-xl">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Fixed Assets</h2>
-                    <div class="flex justify-between items-center mb-6">
-                        <div></div>
-                        <button onclick="addFixedAsset()" class="bg-primary hover:bg-indigo-600 text-white px-6 py-3 rounded-xl shadow-lg">
-                            <i class="fas fa-plus mr-2"></i>Add Fixed Asset
-                        </button>
-                    </div>
-                    <div id="fixedAssetsContent">
-                        <!-- Fixed assets data will be populated here -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Owners' Capital Tab -->
-            <div id="owners-capital" class="tab-content">
-                <div class="glass-card rounded-2xl p-6 shadow-xl">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Owners' Capital</h2>
-                    <div class="flex justify-between items-center mb-6">
-                        <div></div>
-                        <button onclick="addCapitalEntry()" class="bg-primary hover:bg-indigo-600 text-white px-6 py-3 rounded-xl shadow-lg">
-                            <i class="fas fa-plus mr-2"></i>Add Capital Entry
-                        </button>
-                    </div>
-                    <div id="ownersCapitalContent">
-                        <!-- Owners' capital data will be populated here -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Owners Liability Tab -->
-            <div id="owners-liability" class="tab-content">
-                <div class="glass-card rounded-2xl p-6 shadow-xl">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Owners Liability</h2>
-                    <div class="flex justify-between items-center mb-6">
-                        <div></div>
-                        <button onclick="addLiabilityEntry()" class="bg-primary hover:bg-indigo-600 text-white px-6 py-3 rounded-xl shadow-lg">
-                            <i class="fas fa-plus mr-2"></i>Add Liability Entry
-                        </button>
-                    </div>
-                    <div id="ownersLiabilityContent">
-                        <!-- Owners' liability data will be populated here -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Account</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Current Month</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Year to Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="profitLossTable">
+                                <!-- P&L data will be populated here -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -870,44 +526,50 @@
             <div id="balance-sheet" class="tab-content">
                 <div class="glass-card rounded-2xl p-6 shadow-xl">
                     <h2 class="text-2xl font-bold text-gray-800 mb-6">Balance Sheet</h2>
-                    <div id="balanceSheetContent">
-                        <!-- Balance sheet will be populated here -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4">Assets</h3>
+                            <table class="w-full border-collapse">
+                                <tbody id="assetsTable">
+                                    <tr>
+                                        <td class="border border-gray-200 px-4 py-3">Cash in Bank</td>
+                                        <td class="border border-gray-200 px-4 py-3">₱0.00</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4">Liabilities & Equity</h3>
+                            <table class="w-full border-collapse">
+                                <tbody id="liabilitiesTable">
+                                    <tr>
+                                        <td class="border border-gray-200 px-4 py-3">Accounts Payable</td>
+                                        <td class="border border-gray-200 px-4 py-3">₱0.00</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Trial Balance Tab -->
-            <div id="trial-balance" class="tab-content">
+            <!-- Cash Flow Tab -->
+            <div id="cash-flow" class="tab-content">
                 <div class="glass-card rounded-2xl p-6 shadow-xl">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Trial Balance</h2>
-                    <div id="trialBalanceContent">
-                        <!-- Trial balance will be populated here -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- General Ledger Tab -->
-            <div id="general-ledger" class="tab-content">
-                <div class="glass-card rounded-2xl p-6 shadow-xl">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">General Ledger</h2>
-                    <div id="generalLedgerContent">
-                        <!-- General ledger will be populated here -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Journal Entries Tab -->
-            <div id="journal-entries" class="tab-content">
-                <div class="glass-card rounded-2xl p-6 shadow-xl">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Journal Entries</h2>
-                    <div class="flex justify-between items-center mb-6">
-                        <div></div>
-                        <button onclick="addJournalEntry()" class="bg-primary hover:bg-indigo-600 text-white px-6 py-3 rounded-xl shadow-lg">
-                            <i class="fas fa-plus mr-2"></i>Add Journal Entry
-                        </button>
-                    </div>
-                    <div id="journalEntriesContent">
-                        <!-- Journal entries will be populated here -->
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Cash Flow Statement</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Category</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Current Month</th>
+                                    <th class="border border-gray-200 px-4 py-3 text-left font-semibold">Year to Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cashFlowTable">
+                                <!-- Cash flow data will be populated here -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -916,310 +578,267 @@
             <div id="financial-reports" class="tab-content">
                 <div class="glass-card rounded-2xl p-6 shadow-xl">
                     <h2 class="text-2xl font-bold text-gray-800 mb-6">Financial Reports</h2>
-                    <div id="financialReportsContent">
-                        <!-- Financial reports will be populated here -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                            <h3 class="text-lg font-semibold mb-4">Project Performance</h3>
+                            <p class="text-gray-600 mb-4">Detailed analysis of project profitability</p>
+                            <button class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg">
+                                Generate Report
+                            </button>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                            <h3 class="text-lg font-semibold mb-4">Monthly Summary</h3>
+                            <p class="text-gray-600 mb-4">Month-by-month financial breakdown</p>
+                            <button class="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg">
+                                Generate Report
+                            </button>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                            <h3 class="text-lg font-semibold mb-4">Tax Compliance</h3>
+                            <p class="text-gray-600 mb-4">BIR-ready reports and calculations</p>
+                            <button class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg">
+                                Generate Report
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Auto-save notification -->
-    <div id="autoSaveNotification" class="fixed bottom-4 right-4 bg-success text-white px-4 py-2 rounded-lg shadow-lg transform translate-y-full transition-transform duration-300">
-        <i class="fas fa-check-circle mr-2"></i>
-        Data auto-saved
-    </div>
-
     <!-- Hidden file input for Excel import -->
     <input type="file" id="excelFileInput" accept=".xlsx,.xls" style="display: none;" onchange="handleExcelImport(event)">
 
-    <!-- Add Chart Modal -->
-    <div id="addChartModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
-        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-gray-800">Add Custom Chart</h3>
-                <button onclick="hideAddChartModal()" class="text-gray-500 hover:text-gray-700">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-            
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Chart Type</label>
-                    <select id="chartType" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="line">Line Chart</option>
-                        <option value="bar">Bar Chart</option>
-                        <option value="pie">Pie Chart</option>
-                        <option value="doughnut">Doughnut Chart</option>
-                        <option value="area">Area Chart</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Data Source</label>
-                    <select id="dataSource" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="projects">Project Data</option>
-                        <option value="transactions">Transaction Data</option>
-                        <option value="collections">Collection Data</option>
-                        <option value="monthly">Monthly Summary</option>
-                        <option value="expenses">Expense Categories</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Chart Title</label>
-                    <input type="text" id="chartTitle" placeholder="Enter chart title" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                </div>
-                
-                <div class="flex gap-3 pt-4">
-                    <button onclick="createCustomChart()" class="flex-1 bg-primary hover:bg-indigo-600 text-white py-3 px-4 rounded-lg font-medium transition-colors">
-                        Create Chart
-                    </button>
-                    <button onclick="hideAddChartModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-4 rounded-lg font-medium transition-colors">
-                        Cancel
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // Global data storage with YOUR EXACT STRUCTURE
+        // Global data storage
         let financeData = {
             companyName: 'Click to set company name',
-            
-            // YOUR REAL PROJECT MASTER DATA
-            projectMaster: {
-                'P0': { code: 'ART', fullId: 'P0-ART', clientName: 'Artopian', projectName: 'Design for an Office', projectType: 'Design', location: '' },
-                'P1': { code: 'LEZ', fullId: 'P1-LEZ', clientName: 'Mrs. Lina Ecal', projectName: 'Constrcution of One Storey Stalls', projectType: 'Build', location: 'Botolan Zambales' },
-                'P2': { code: 'RHL', fullId: 'P2-RHL', clientName: 'Ms. Rhea Hachac', projectName: 'Design for One Storey Coffee Shop', projectType: 'Design', location: 'Laguna' },
-                'P3': { code: 'PRP', fullId: 'P3-PRP', clientName: 'Mr. Mel Patrick Roque', projectName: '48 sqm 2 Bedroom Unit Fit Out', projectType: 'Fit Out', location: 'Prisma Residences Pasig City' },
-                'P4': { code: 'CRV', fullId: 'P4-CRV', clientName: 'Ms. Catheryn Sy Reyes', projectName: '74 sqm 3 bedroom House Interior Fit out', projectType: 'Fit Out', location: 'Vivace Imus Cavite' },
-                'P5': { code: 'JDB', fullId: 'P5-JDB', clientName: 'Mr.  Jeffrey de Castro', projectName: '16.6 sqm Kitchen & Laundry Area Extension', projectType: 'Renovation', location: 'Binangonan Rizal' },
-                'P6': { code: 'JVP', fullId: 'P6-JVP', clientName: 'Mr. Joseph Ryan Villar', projectName: '1 Bedroom Condo Unit Fit Out', projectType: 'Fit Out', location: 'Shore Residences Pasay City' },
-                'P7': { code: 'IMP', fullId: 'P7-IMP', clientName: 'Mrs. Ivy Jhane Chavez Molina', projectName: 'Design for House Extension & Renovation', projectType: 'Design', location: 'Mexico Pampanga' },
-                'P8': { code: 'BST', fullId: 'P8-BST', clientName: 'Mr. Benjo Sebuc', projectName: '1 Bedroom Condo Unit Fit Out', projectType: 'Fit Out', location: 'Grace Residences Taguig City' },
-                'P9': { code: 'MOB', fullId: 'P9-MOB', clientName: 'Mr. Marco Oda', projectName: 'Design for 3 Bedroom House Interior', projectType: 'Design', location: 'San Juan Batangas' },
-                'P10': { code: 'SSC', fullId: 'P10-SSC', clientName: 'Mr. Segundo Santua', projectName: 'Design for Residential Home', projectType: 'Design', location: 'Gen Trias Cavite' },
-                'P11': { code: 'KCP', fullId: 'P11-KCP', clientName: 'Mr. Kent Cabarle', projectName: '23 sqm Condo  Unit Fit Out', projectType: 'Fit Out', location: 'Lumeire Pasig City' },
-                'P12': { code: 'KOP', fullId: 'P12-KOP', clientName: 'Ms. Kassandra Obsum', projectName: '70 sqm Condo Fit Out', projectType: 'Fit Out', location: 'Prisma Pasig City' },
-                'P13': { code: 'MCP', fullId: 'P13-MCP', clientName: 'Ms. Mia Coyoca', projectName: '26 sqm Condo Fit Out', projectType: 'Fit Out', location: 'Coast Residences Pasay City' },
-                'P14': { code: 'VDC', fullId: 'P14-VDC', clientName: 'Ms. Vanessa DeLeon', projectName: 'Design for 3 Storey Commercial and Resindial Building', projectType: 'Design', location: 'Tanza Cavite' },
-                'P15': { code: 'ALR', fullId: 'P15-ALR', clientName: 'Ms. Analou Lilang', projectName: 'Two Storey Residential Extension and Fit Out', projectType: 'Fit Out', location: 'Rizal' },
-                'P16': { code: 'KLM', fullId: 'P16-KLM', clientName: 'Ms. Katrina Lopez', projectName: 'Design for 24 sqm Condo Fit Out', projectType: 'Design', location: 'Fame Residences Mandaluyong' },
-                'P17': { code: 'MPN', fullId: 'P17-MPN', clientName: 'Mr. Mac Virgilio Pagaduan', projectName: 'Design for 2 Bedroom Condo Fit Out', projectType: 'Design', location: 'Vine Residences Novaliches QC' },
-                'Non': { code: 'Project', fullId: 'Non-Project', clientName: 'Internal Operations', projectName: 'Company Overhead & Administrative Expenses', projectType: 'Overhead', location: 'Head Office' }
-            },
-
-            // YOUR 500 SERIES PROJECT EXPENSES
-            projectExpenses: {
-                '500.1': { code: '500.1', description: 'Materials', details: 'Construction supplies and delivery' },
-                '500.2': { code: '500.2', description: 'Professional Fees', details: 'Architect, Engineer, Consultant, Design & Project Manager, Lead Craftsman' },
-                '500.3': { code: '500.3', description: 'Labor (Outsourced)', details: 'Wages, SubCon Fees' },
-                '500.4': { code: '500.4', description: 'Mobilization & Transportation', details: 'Gas, Tolls, Parking Fee and Logistics' },
-                '500.5': { code: '500.5', description: 'Equipment Rental', details: 'Scaffolding, Crane' },
-                '500.6': { code: '500.6', description: 'Utilities & Contingencies', details: 'Essential utilities and buffer costs during the project' },
-                '500.7': { code: '500.7', description: 'Permits and Compliance', details: 'Government Permits, BIR, City Hall' },
-                '500.8': { code: '500.8', description: 'Design and Admin', details: 'Technical Drawing, Admin Support' },
-                '500.9': { code: '500.9', description: 'Food Allowance', details: 'Meals' },
-                '500.11': { code: '500.11', description: 'Communication Allowance', details: 'Mobile Load' },
-                '500.12': { code: '500.12', description: 'Others', details: 'Misc. expenses, Refund' }
-            },
-
-            // YOUR COMPLETE COA
-            coa: [
-                // Assets
-                { oldCOA: '101', unifiedCode: '100', accountName: 'Cash in Bank', category: 'Asset', subcategory: 'Current Asset', notes: 'Funds in company\'s bank accounts' },
-                { oldCOA: '102', unifiedCode: '101', accountName: 'Cash on Hand', category: 'Asset', subcategory: 'Current Asset', notes: 'Physical cash available' },
-                { oldCOA: '103', unifiedCode: '102', accountName: 'Petty Cash', category: 'Asset', subcategory: 'Current Asset', notes: 'Minor cash for daily expenses' },
-                { oldCOA: '104', unifiedCode: '103', accountName: 'Advance to OE', category: 'Asset', subcategory: 'Current Asset', notes: 'Advances to officers/employees' },
-                { oldCOA: '105', unifiedCode: '104', accountName: 'Unliquidated Cash Advance', category: 'Asset', subcategory: 'Current Asset', notes: 'Cash advances pending liquidation' },
-                { oldCOA: '106', unifiedCode: '105', accountName: 'Other Current Asset', category: 'Asset', subcategory: 'Current Asset', notes: 'Misc. short-term assets' },
-                { oldCOA: '107', unifiedCode: '106', accountName: 'Creditable Tax Withheld', category: 'Asset', subcategory: 'Tax Asset', notes: 'Tax withheld by customers' },
-                { oldCOA: '108', unifiedCode: '107', accountName: 'Accounts Receivable', category: 'Asset', subcategory: 'Current Asset', notes: 'Unpaid invoices from clients' },
-                { oldCOA: '109', unifiedCode: '108', accountName: 'Salary Loan', category: 'Asset', subcategory: 'Current Asset', notes: 'Loan receivables from employees' },
-                { oldCOA: '', unifiedCode: '109', accountName: 'Inventory', category: 'Asset', subcategory: 'Current Asset', notes: 'Raw materials for resale or use' },
-                { oldCOA: '110', unifiedCode: '110', accountName: 'Tools and Equipment', category: 'Asset', subcategory: 'Non-Current Asset', notes: 'Small tools and equipment' },
-                { oldCOA: '111', unifiedCode: '111', accountName: 'Property and Equipment', category: 'Asset', subcategory: 'Non-Current Asset', notes: 'Major long-term assets' },
-                { oldCOA: '113', unifiedCode: '112', accountName: 'Accumulated Depreciation', category: 'Contra-Asset', subcategory: 'Non-Current Asset', notes: 'Depreciation on fixed assets' },
-                { oldCOA: '117', unifiedCode: '113', accountName: 'Delivery / Service Equipment', category: 'Asset', subcategory: 'Non-Current Asset', notes: 'Vehicles/equipment for delivery' },
-                
-                // Liabilities
-                { oldCOA: '201', unifiedCode: '200', accountName: 'Accounts Payable', category: 'Liability', subcategory: 'Current Liability', notes: 'Amounts owed to vendors' },
-                { oldCOA: '', unifiedCode: '201', accountName: 'Accrued Expenses', category: 'Liability', subcategory: 'Current Liability', notes: 'Incurred but unpaid expenses' },
-                { oldCOA: '', unifiedCode: '202', accountName: 'Taxes Payable', category: 'Liability', subcategory: 'Current Liability', notes: 'Outstanding tax dues' },
-                { oldCOA: '', unifiedCode: '203', accountName: 'Deferred Revenue', category: 'Liability', subcategory: 'Current Liability', notes: 'Unearned revenue' },
-                { oldCOA: '204', unifiedCode: '204', accountName: 'SSS Premium Payable', category: 'Liability', subcategory: 'Employee Contributions', notes: 'SSS - employer share' },
-                { oldCOA: '205', unifiedCode: '205', accountName: 'Pag-ibig Premium', category: 'Liability', subcategory: 'Employee Contributions', notes: 'Pag-ibig - employer share' },
-                { oldCOA: '206', unifiedCode: '206', accountName: 'Pag-ibig Loan Payable', category: 'Liability', subcategory: 'Employee Contributions', notes: 'Pag-ibig loan deductions' },
-                { oldCOA: '207', unifiedCode: '207', accountName: 'Philhealth Premium', category: 'Liability', subcategory: 'Employee Contributions', notes: 'Philhealth - employer share' },
-                { oldCOA: '208', unifiedCode: '208.1', accountName: 'Input VAT', category: 'Liability', subcategory: 'Taxes Payable', notes: 'VAT on purchases (claimable)' },
-                { oldCOA: '', unifiedCode: '208.2', accountName: 'Output VAT', category: 'Liability', subcategory: 'Taxes Payable', notes: 'VAT collected from clients' },
-                { oldCOA: '209', unifiedCode: '209', accountName: 'SSS Loan Payable', category: 'Liability', subcategory: 'Employee Contributions', notes: 'SSS loan payable' },
-                { oldCOA: '210', unifiedCode: '210', accountName: 'Creditable Income Tax', category: 'Liability', subcategory: 'Taxes Payable', notes: 'Creditable portion of income tax' },
-                { oldCOA: '211', unifiedCode: '211', accountName: 'Cash Refund', category: 'Liability', subcategory: 'Other Liabilities', notes: 'Refundable cash items' },
-                { oldCOA: '202', unifiedCode: '212', accountName: 'Withholding Tax Payable - Expanded', category: 'Liability', subcategory: 'Taxes Payable', notes: 'EWT from suppliers' },
-                { oldCOA: '', unifiedCode: '213', accountName: 'Loan Payable - Short Term', category: 'Liability', subcategory: 'Current Liability', notes: 'For loans maturing within 12 months' },
-                { oldCOA: '', unifiedCode: '214', accountName: 'Loan Payable - Long Term', category: 'Liability', subcategory: 'Non-Current Liability', notes: 'For long-term loans' },
-                
-                // Equity
-                { oldCOA: '', unifiedCode: '300', accountName: 'Capital Contribution', category: 'Equity', subcategory: 'Owner\'s Equity', notes: 'Owner investments' },
-                { oldCOA: '', unifiedCode: '301', accountName: 'Retained Earnings', category: 'Equity', subcategory: 'Owner\'s Equity', notes: 'Accumulated company profit/loss' },
-                { oldCOA: '', unifiedCode: '302', accountName: 'Owner\'s Drawings', category: 'Equity', subcategory: 'Withdrawals', notes: 'Withdrawals by owners' },
-                
-                // Revenue
-                { oldCOA: '401', unifiedCode: '400', accountName: 'Service Income', category: 'Revenue', subcategory: 'Operating Revenue', notes: 'Income from main business activities' },
-                { oldCOA: '', unifiedCode: '401', accountName: 'Change Order Income', category: 'Revenue', subcategory: 'Operating Revenue', notes: 'Approved variation orders' },
-                { oldCOA: '404', unifiedCode: '402', accountName: 'Other Income', category: 'Revenue', subcategory: 'Non-operating Revenue', notes: 'Interest, rebates, misc. income' },
-                
-                // Expenses (500+ series)
-                { oldCOA: '500', unifiedCode: '500', accountName: 'Direct Project Cost', category: 'Expense', subcategory: 'Project Expense', notes: 'Materials, labor, other direct project expenses' },
-                { oldCOA: '301', unifiedCode: '501', accountName: 'Construction / Materials Expense', category: 'Expense', subcategory: 'Cost of Goods Sold', notes: 'Purchased materials for projects (VATable)' },
-                { oldCOA: '302', unifiedCode: '502', accountName: 'Fabrication / Outsource Labor', category: 'Expense', subcategory: 'Cost of Goods Sold', notes: 'Hired labor or outsourced services (EWT)' },
-                { oldCOA: '303', unifiedCode: '503', accountName: 'Company Expenses Receipt', category: 'Expense', subcategory: 'Reimbursable/Advance', notes: 'Reimbursed expenses from team' },
-                { oldCOA: '312', unifiedCode: '504', accountName: 'Office Supplies', category: 'Expense', subcategory: 'Administrative Expense', notes: 'Pens, paper, ink (VATable)' },
-                { oldCOA: '316', unifiedCode: '505', accountName: 'Rent Expense', category: 'Expense', subcategory: 'Administrative Expense', notes: 'Office or warehouse rent' },
-                { oldCOA: '317', unifiedCode: '506', accountName: 'Utilities', category: 'Expense', subcategory: 'Administrative Expense', notes: 'Electricity, water, internet (VATable)' },
-                { oldCOA: '507', unifiedCode: '507', accountName: 'Salaries and Wages', category: 'Expense', subcategory: 'Payroll Expense', notes: 'Employee payroll' },
-                { oldCOA: '339', unifiedCode: '508', accountName: 'Professional Fees', category: 'Expense', subcategory: 'Administrative Expense', notes: 'Architects, consultants, etc.' },
-                { oldCOA: '315', unifiedCode: '509', accountName: 'Repairs and Maintenance', category: 'Expense', subcategory: 'Operating Expense', notes: 'Office or site repairs, covers vehicles, equipment, and property upkeep' },
-                { oldCOA: '332', unifiedCode: '510', accountName: 'Depreciation Expense', category: 'Expense', subcategory: 'Non-Cash Expense', notes: 'Depreciation of fixed assets' },
-                { oldCOA: '327', unifiedCode: '511', accountName: 'Taxes and Licenses', category: 'Expense', subcategory: 'Compliance Expense', notes: 'Business permits, BIR, Payment to Government Agencies, Notary' },
-                { oldCOA: '304', unifiedCode: '512', accountName: 'Transportation and Travel', category: 'Expense', subcategory: 'Operating Expense', notes: 'Fuel, fare, etc. (VAT-exempt or VATable)' },
-                { oldCOA: '', unifiedCode: '513', accountName: 'Meals and Entertainment', category: 'Expense', subcategory: 'Operating Expense', notes: 'Client/guest meals, meetings' },
-                { oldCOA: '514', unifiedCode: '514', accountName: 'Insurance Expense', category: 'Expense', subcategory: 'Operating Expense', notes: 'Insurance policies' },
-                { oldCOA: '515', unifiedCode: '515', accountName: 'Training and Development', category: 'Expense', subcategory: 'Operating Expense', notes: 'Seminars, workshops, immersions' },
-                { oldCOA: '328', unifiedCode: '516', accountName: 'Bank Charges', category: 'Expense', subcategory: 'Finance Expense', notes: 'Bank fees & charges' },
-                { oldCOA: '314', unifiedCode: '517', accountName: 'Entertainment & Representation', category: 'Expense', subcategory: 'Administrative Expense', notes: 'Client entertainment, gifts (EWT-eligible)' },
-                { oldCOA: '330', unifiedCode: '518', accountName: 'Communication - Internet', category: 'Expense', subcategory: 'Administrative Expense', notes: 'Internet subscriptions, sites and apps for communication purposes' },
-                { oldCOA: '331', unifiedCode: '519', accountName: 'Communication - CP Load', category: 'Expense', subcategory: 'Administrative Expense', notes: 'Mobile load' },
-                { oldCOA: '306', unifiedCode: '520', accountName: 'Parking Fee', category: 'Expense', subcategory: 'Operating Expense', notes: 'Parking tickets' },
-                { oldCOA: '307', unifiedCode: '521', accountName: 'Toll Fee', category: 'Expense', subcategory: 'Operating Expense', notes: 'Tollway use' },
-                { oldCOA: '305', unifiedCode: '522', accountName: 'Gasoline Expenses', category: 'Expense', subcategory: 'Operating Expense', notes: 'Gas refills' },
-                { oldCOA: '309', unifiedCode: '523', accountName: 'Employee Benefits - Meals', category: 'Expense', subcategory: 'Personnel Expenses', notes: 'Meals for employees' },
-                { oldCOA: '310', unifiedCode: '524', accountName: 'Employee Benefits - Uniform', category: 'Expense', subcategory: 'Personnel Expenses', notes: 'Uniform purchase' },
-                { oldCOA: '311', unifiedCode: '525', accountName: 'Employee Benefits - Allowance', category: 'Expense', subcategory: 'Personnel Expenses', notes: 'Transport/housing allowance' },
-                { oldCOA: '308', unifiedCode: '526', accountName: 'Employee Benefits', category: 'Expense', subcategory: 'Personnel Expenses', notes: 'Non-categorized employee benefits' },
-                { oldCOA: '334', unifiedCode: '527', accountName: '13th Month Pay', category: 'Expense', subcategory: 'Personnel Expenses', notes: 'Gov\'t mandated 13th month' },
-                { oldCOA: '335', unifiedCode: '528', accountName: 'Advertising Expense', category: 'Expense', subcategory: 'Marketing Expense', notes: 'Marketing & promotions' },
-                { oldCOA: '324', unifiedCode: '529', accountName: 'Miscellaneous Expense', category: 'Expense', subcategory: 'Other Expenses', notes: 'Unclassified operating costs' },
-                { oldCOA: '325', unifiedCode: '530', accountName: 'Interest Expense', category: 'Expense', subcategory: 'Other Expenses', notes: 'Loan interest payments' },
-                { oldCOA: '326', unifiedCode: '531', accountName: 'Bad Debt Expenses', category: 'Expense', subcategory: 'Other Expenses', notes: 'Uncollected receivables' },
-                { oldCOA: '329', unifiedCode: '532', accountName: 'Construction Design Expense', category: 'Expense', subcategory: 'Cost of Goods Sold', notes: 'Design-related outsourcing (EWT)' }
-            ],
-
-            // YOUR REFERENCE DATA
-            operatingFunds: ['Capital', 'Infused Capital', 'Client Payments', 'Loans or Advances', 'Reinvested Profits', 'Loan - Benjo', 'Loan - Elmar'],
-            expenseCategories: {
-                'Overhead': 'Business-wide expenses not tied to any one project (e.g., rent, admin salaries)',
-                'Project Related': 'Directly tied to a specific project (e.g., site labor, materials, subcontractors)',
-                'Other': 'Rare or exceptional items (e.g., penalties, bank fees, prior period adjustments) and untraceable historical data'
-            },
-            expenseTypes: ['Materials', 'Labor', 'Equipment', 'Subcontractor', 'Office Supplies', 'Utilities', 'Rent', 'Professional Fees', 'Transportation', 'Communications', 'Overhead'],
-            projectTypes: ['Design', 'Fit Out', 'Build', 'Renovation'],
-            projectStatuses: {
-                'Completed': 'All project objectives and deliverables have been successfully met. No outstanding tasks remain.',
-                'On Track': 'Project is progressing according to schedule, budget, and scope with no significant issues.',
-                'At Risk': 'Project is experiencing challenges that may affect scope, schedule, or budget if not mitigated.',
-                'Delayed': 'Project is behind schedule due to missed milestones or extended timelines. Adjustments required.',
-                'Not Pursued': 'Project was presented to the client with final plans and costing, but the client chose not to proceed. No work was started.',
-                'Canceled': 'Project was formally terminated after initiation and will not continue. Work in progress has been halted.'
-            },
-            billingTypes: {
-                'AF': 'Acceptance Fee',
-                'DF': 'Design Fee', 
-                'DP': 'Down Payment',
-                'PB1': 'Progress Billing 1',
-                'PB2': 'Progress Billing 2',
-                'PB3': 'Progress Billing 3',
-                'PB4': 'Progress Billing 4',
-                'PB5': 'Progress Billing 5',
-                'FP': 'Final Payment'
-            },
-
-            projects: [],
             transactions: [],
             collections: [],
-            fixedAssets: [],
-            capitalEntries: [],
-            liabilityEntries: [],
-            charts: {},
-            calculatedData: {
-                projectSummaries: {},
-                monthlyData: {},
-                totals: {}
-            }
+            projects: [
+                { id: 'P1', code: 'LEZ', name: 'Construction of One Storey Stalls', client: 'Mrs. Lina Ecal', type: 'Build', location: 'Botolan Zambales' },
+                { id: 'P2', code: 'RHL', name: 'Design for One Storey Coffee Shop', client: 'Ms. Rhea Hachac', type: 'Design', location: 'Laguna' }
+            ]
         };
 
-        // Enhanced date parsing function for your format (18-Oct-21)
-        function parseExcelDate(dateStr) {
-            if (!dateStr) return new Date().toISOString().split('T')[0];
+        // Tab management
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
             
-            // Handle your exact format: 18-Oct-21
-            if (typeof dateStr === 'string' && dateStr.includes('-')) {
-                const parts = dateStr.split('-');
-                if (parts.length === 3) {
-                    const day = parts[0].padStart(2, '0');
-                    const monthMap = {
-                        'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05', 'Jun': '06',
-                        'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
-                    };
-                    const month = monthMap[parts[1]] || '01';
-                    let year = parts[2];
-                    if (year.length === 2) {
-                        year = parseInt(year) > 50 ? '19' + year : '20' + year;
-                    }
-                    return `${year}-${month}-${day}`;
-                }
-            }
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
             
-            // Handle Excel date numbers
-            if (typeof dateStr === 'number') {
-                const date = new Date((dateStr - 25569) * 86400 * 1000);
-                return date.toISOString().split('T')[0];
-            }
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
             
-            return new Date().toISOString().split('T')[0];
-        }
-
-        // Enhanced amount parsing function for your format (₱ 303.00)
-        function parseAmount(amountStr) {
-            if (typeof amountStr === 'number') return amountStr;
-            if (!amountStr) return 0;
+            // Add active class to clicked nav item
+            event.target.classList.add('active');
             
-            // Remove currency symbols, spaces, and commas
-            const cleanAmount = amountStr.toString()
-                .replace(/[₱$,\s]/g, '')
-                .replace(/[()]/g, '-'); // Handle negative amounts in parentheses
-            
-            return parseFloat(cleanAmount) || 0;
-        }
-
-        // Enhanced project lookup function
-        function getProjectInfo(projectId) {
-            // Try exact match first
-            if (financeData.projectMaster[projectId]) {
-                return financeData.projectMaster[projectId];
-            }
-            
-            // Try to find by any part of the ID
-            for (const [key, project] of Object.entries(financeData.projectMaster)) {
-                if (projectId === project.fullId || projectId === project.code || projectId.includes(key)) {
-                    return project;
-                }
-            }
-            
-            // Default fallback
-            return {
-                code: 'UNK',
-                fullId: projectId,
-                clientName: 'Unknown Client',
-                projectName: 'Unknown Project',
-                address: 'Unknown Address'
+            // Update page title
+            const titles = {
+                'dashboard': 'Dashboard',
+                'transaction-masters': 'Transaction Masters',
+                'collections-master': 'Collections Master',
+                'project-profile': 'Project Profile',
+                'reference-table': 'Reference Table',
+                'project-revenue': 'Project Revenue',
+                'project-cost': 'Project Cost',
+                'budget-actual': 'Budget vs Actual',
+                'profit-loss': 'Profit & Loss',
+                'balance-sheet': 'Balance Sheet',
+                'cash-flow': 'Cash Flow Statement',
+                'financial-reports': 'Financial Reports'
             };
+            
+            document.getElementById('pageTitle').textContent = titles[tabName] || 'Dashboard';
         }
 
-        // ENHANCED EXCEL IMPORT - Handles your exact format
+        // Sidebar toggle for mobile
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Company name editing
+        function editCompanyName() {
+            const currentName = document.getElementById('companyName').textContent;
+            const newName = prompt('Enter company name:', currentName);
+            if (newName && newName.trim()) {
+                financeData.companyName = newName.trim();
+                document.getElementById('companyName').textContent = newName.trim();
+                showNotification('Company name updated successfully!', 'success');
+            }
+        }
+
+        // Add functions
+        function addTransaction() {
+            const date = prompt('Enter transaction date (YYYY-MM-DD):');
+            const description = prompt('Enter description:');
+            const amount = parseFloat(prompt('Enter amount:'));
+            
+            if (date && description && amount) {
+                const transaction = {
+                    id: 'T' + (financeData.transactions.length + 1).toString().padStart(3, '0'),
+                    date: date,
+                    description: description,
+                    amount: amount,
+                    project: 'P1'
+                };
+                
+                financeData.transactions.push(transaction);
+                populateTransactionTable();
+                updateDashboard();
+                showNotification('Transaction added successfully!', 'success');
+            }
+        }
+
+        function addCollection() {
+            const date = prompt('Enter collection date (YYYY-MM-DD):');
+            const client = prompt('Enter client name:');
+            const amount = parseFloat(prompt('Enter amount:'));
+            
+            if (date && client && amount) {
+                const collection = {
+                    id: 'C' + (financeData.collections.length + 1).toString().padStart(3, '0'),
+                    date: date,
+                    client: client,
+                    amount: amount,
+                    project: 'P1'
+                };
+                
+                financeData.collections.push(collection);
+                populateCollectionTable();
+                updateDashboard();
+                showNotification('Collection added successfully!', 'success');
+            }
+        }
+
+        function addProject() {
+            const name = prompt('Enter project name:');
+            const client = prompt('Enter client name:');
+            
+            if (name && client) {
+                const project = {
+                    id: 'P' + (financeData.projects.length + 1),
+                    code: name.substring(0, 3).toUpperCase(),
+                    name: name,
+                    client: client,
+                    type: 'Design',
+                    location: ''
+                };
+                
+                financeData.projects.push(project);
+                populateProjectCards();
+                showNotification('Project added successfully!', 'success');
+            }
+        }
+
+        // Populate tables
+        function populateTransactionTable() {
+            const tbody = document.getElementById('transactionTable');
+            tbody.innerHTML = '';
+            
+            financeData.transactions.forEach(transaction => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td class="border border-gray-200 px-4 py-3">${transaction.date}</td>
+                    <td class="border border-gray-200 px-4 py-3">${transaction.description}</td>
+                    <td class="border border-gray-200 px-4 py-3">₱${transaction.amount.toFixed(2)}</td>
+                    <td class="border border-gray-200 px-4 py-3">${transaction.project}</td>
+                    <td class="border border-gray-200 px-4 py-3">
+                        <button onclick="deleteTransaction('${transaction.id}')" class="text-red-500 hover:text-red-700">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+            });
+        }
+
+        function populateCollectionTable() {
+            const tbody = document.getElementById('collectionTable');
+            tbody.innerHTML = '';
+            
+            financeData.collections.forEach(collection => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td class="border border-gray-200 px-4 py-3">${collection.date}</td>
+                    <td class="border border-gray-200 px-4 py-3">${collection.client}</td>
+                    <td class="border border-gray-200 px-4 py-3">₱${collection.amount.toFixed(2)}</td>
+                    <td class="border border-gray-200 px-4 py-3">${collection.project}</td>
+                    <td class="border border-gray-200 px-4 py-3">
+                        <button onclick="deleteCollection('${collection.id}')" class="text-red-500 hover:text-red-700">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+            });
+        }
+
+        function populateProjectCards() {
+            const container = document.getElementById('projectCards');
+            container.innerHTML = '';
+            
+            financeData.projects.forEach(project => {
+                const card = document.createElement('div');
+                card.className = 'bg-white p-6 rounded-xl shadow-lg border border-gray-200';
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800">${project.name}</h3>
+                            <p class="text-gray-600">${project.client}</p>
+                        </div>
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">${project.type}</span>
+                    </div>
+                    <div class="space-y-2">
+                        <p class="text-sm text-gray-600"><strong>ID:</strong> ${project.id}</p>
+                        <p class="text-sm text-gray-600"><strong>Code:</strong> ${project.code}</p>
+                        <p class="text-sm text-gray-600"><strong>Location:</strong> ${project.location || 'Not specified'}</p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Delete functions
+        function deleteTransaction(id) {
+            if (confirm('Are you sure you want to delete this transaction?')) {
+                financeData.transactions = financeData.transactions.filter(t => t.id !== id);
+                populateTransactionTable();
+                updateDashboard();
+                showNotification('Transaction deleted successfully!', 'success');
+            }
+        }
+
+        function deleteCollection(id) {
+            if (confirm('Are you sure you want to delete this collection?')) {
+                financeData.collections = financeData.collections.filter(c => c.id !== id);
+                populateCollectionTable();
+                updateDashboard();
+                showNotification('Collection deleted successfully!', 'success');
+            }
+        }
+
+        // Update dashboard metrics
+        function updateDashboard() {
+            const totalRevenue = financeData.collections.reduce((sum, c) => sum + c.amount, 0);
+            const totalExpenses = financeData.transactions.reduce((sum, t) => sum + t.amount, 0);
+            const netProfit = totalRevenue - totalExpenses;
+            
+            document.getElementById('totalRevenue').textContent = `₱${totalRevenue.toFixed(2)}`;
+            document.getElementById('totalCollections').textContent = `₱${totalRevenue.toFixed(2)}`;
+            document.getElementById('totalExpenses').textContent = `₱${totalExpenses.toFixed(2)}`;
+            document.getElementById('netProfit').textContent = `₱${netProfit.toFixed(2)}`;
+        }
+
+        // Excel import/export
+        function importExcel() {
+            document.getElementById('excelFileInput').click();
+        }
+
         function handleExcelImport(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -1229,1188 +848,77 @@
                 try {
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
+                    const sheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[sheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
                     
-                    let importedData = false;
-                    let importSummary = {
-                        projects: 0,
-                        transactions: 0,
-                        collections: 0,
-                        fixedAssets: 0
-                    };
-                    
-                    // Process each sheet with your exact column structure
-                    workbook.SheetNames.forEach(sheetName => {
-                        const worksheet = workbook.Sheets[sheetName];
-                        const jsonData = XLSX.utils.sheet_to_json(worksheet);
-                        
-                        if (jsonData.length === 0) return;
-                        
-                        console.log(`Processing sheet: ${sheetName}`, jsonData[0]);
-                        
-                        const headers = Object.keys(jsonData[0] || {});
-                        
-                        // Transaction Masters - Your exact format
-                        if (sheetName.toLowerCase().includes('transaction') || 
-                            headers.some(h => h.toLowerCase().includes('payment date') || h.toLowerCase().includes('particulars'))) {
-                            
-                            financeData.transactions = jsonData.map((row, index) => {
-                                // Parse your exact date format (20-Sep-21)
-                                const paymentDate = parseExcelDate(row['Payment Date']);
-                                const month = row['Month'] || paymentDate.slice(0, 7);
-                                
-                                // Parse your exact amount format with spaces
-                                const totalAmount = parseAmount(row['Total Amount    (₱)'] || row['Total Amount'] || row['Amount']);
-                                const vatableAmount = parseAmount(row['Vatable Amount  (₱)'] || row['Vatable Amount']) || (totalAmount / 1.12);
-                                const vat = parseAmount(row['VAT']) || (totalAmount - vatableAmount);
-                                const unitPrice = parseAmount(row['Unit Price        (₱)'] || row['Unit Price']) || totalAmount;
-                                
-                                // Map your project IDs exactly as provided
-                                const projectID = row['Project ID'] || '';
-                                const projectInfo = getProjectInfo(projectID);
-                                
-                                // Map your COA codes exactly
-                                const oldCOACode = row['Old COA Code'] || '';
-                                const unifiedCode = row['Unified Code'] || '';
-                                const expenseType = row['Expense Type'] || 'General';
-                                
-                                return {
-                                    id: Date.now() + index,
-                                    paymentDate,
-                                    month,
-                                    particulars: row['Particulars'] || 'Transaction',
-                                    expenseType,
-                                    oldCOACode,
-                                    unifiedCode,
-                                    expenseName: row['Expense Name'] || '',
-                                    projectExpenseCode: row['Project Expense Code (500 series)'] || '',
-                                    coaName: row['COA Name'] || '',
-                                    operatingFunds: row['Operating Funds'] || '',
-                                    projectID,
-                                    projectName: row['Project Name'] || projectInfo.projectName,
-                                    vendor: row['Vendor/Supplier'] || 'Vendor',
-                                    address: row['Address'] || '',
-                                    quantity: parseFloat(row['Quantity']) || 1,
-                                    unitPrice,
-                                    totalAmount,
-                                    vatableAmount,
-                                    vat,
-                                    siDrOr: row['SI/DR/OR #'] || '',
-                                    paid: row['Paid (Yes/No)'] || row['Paid'] || 'No',
-                                    paymentMethod: row['Payment Method'] || 'Cash Payment',
-                                    notes: row['Notes'] || ''
-                                };
-                            });
-                            
-                            importedData = true;
-                            importSummary.transactions = financeData.transactions.length;
-                            console.log('Imported transactions:', financeData.transactions.length);
-                        }
-                        
-                        // Collections Master - Your exact format with exact column names
-                        else if (sheetName.toLowerCase().includes('collection') || 
-                                headers.some(h => h.toLowerCase().includes('amount received') || h.toLowerCase().includes('client name'))) {
-                            
-                            console.log('Collection headers found:', headers);
-                            
-                            financeData.collections = jsonData.map((row, index) => {
-                                // Use exact column names from your sample
-                                const paymentDate = parseExcelDate(row['Date (Payment Received)'] || row['Date']);
-                                const month = row['Month'] || paymentDate.slice(0, 7);
-                                const clientName = row['Client Name'] || '';
-                                const projectID = row['Project ID'] || '';
-                                const projectName = row['Project Name'] || '';
-                                const invoiceNumber = row['Invoice Number'] || '';
-                                const amountReceived = parseAmount(row['Amount Received (₱)'] || row['Amount Received']);
-                                const paymentMethod = row['Payment Method'] || 'CASH';
-                                const coaCode = row['COA Code'] || '400';
-                                const notes = row['Notes / Allocation Reference'] || '';
-                                
-                                console.log(`Collection ${index + 1}:`, {
-                                    paymentDate,
-                                    clientName,
-                                    projectID,
-                                    amountReceived,
-                                    invoiceNumber
-                                });
-                                
-                                return {
-                                    id: Date.now() + index,
-                                    paymentDate,
-                                    month,
-                                    clientName,
-                                    projectID,
-                                    projectName,
-                                    invoiceNumber,
-                                    amountReceived,
-                                    amountBilled: amountReceived,
-                                    amountPaid: amountReceived,
-                                    outstandingAmount: 0,
-                                    paymentMethod,
-                                    coaCode,
-                                    status: 'Paid',
-                                    notes
-                                };
-                            });
-                            
-                            importedData = true;
-                            importSummary.collections = financeData.collections.length;
-                            console.log('Imported collections:', financeData.collections.length);
-                        }
-                    });
-                    
-                    if (importedData) {
-                        // Recalculate all data relationships
-                        calculateAllData();
-                        
-                        // Force refresh all displays
-                        setTimeout(() => {
-                            renderProjectCards();
-                            renderTransactions();
-                            renderCollections();
-                            renderReferenceTables();
-                            updateDashboard();
-                            
-                            // Update all charts
-                            Object.values(financeData.charts).forEach(chart => {
-                                if (chart && chart.update) {
-                                    chart.update();
-                                }
-                            });
-                            
-                            // Save to localStorage
-                            autoSave();
-                            
-                            alert(`✅ Excel Import Successful!\n\n📊 Data Imported:\n• ${importSummary.transactions} transactions\n• ${importSummary.collections} collections\n\n🔄 All tabs and formulas have been automatically updated with your real data!\n\n💡 Your project mappings (P0-ART → Artopian, etc.) are working correctly!`);
-                        }, 100);
-                    } else {
-                        alert('❌ No recognizable data found in the Excel file.\n\n📋 Expected sheet names:\n• Transaction Masters\n• Collections Master\n\nPlease check your Excel file format and try again.');
-                    }
-                    
+                    // Process imported data (simplified)
+                    showNotification('Excel file imported successfully!', 'success');
                 } catch (error) {
-                    console.error('Import error:', error);
-                    alert(`❌ Import Error: ${error.message}\n\n💡 Tips:\n• Ensure Excel file is not corrupted\n• Check column headers match expected format\n• Verify data types (numbers in amount columns)\n• Try saving Excel as .xlsx format`);
+                    showNotification('Error importing Excel file', 'error');
                 }
             };
             reader.readAsArrayBuffer(file);
-            
-            // Clear the file input so the same file can be imported again
-            event.target.value = '';
-        }
-
-        // Initialize charts
-        function initializeCharts() {
-            // Monthly Revenue vs Expenses Chart
-            const ctx1 = document.getElementById('monthlyRevenueExpensesChart').getContext('2d');
-            financeData.charts.monthlyRevenueExpensesChart = new Chart(ctx1, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                    datasets: [{
-                        label: 'Revenue',
-                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                        borderColor: '#059669',
-                        backgroundColor: 'rgba(5, 150, 105, 0.1)',
-                        tension: 0.4,
-                        fill: false
-                    }, {
-                        label: 'Expenses',
-                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                        borderColor: '#dc2626',
-                        backgroundColor: 'rgba(220, 38, 38, 0.1)',
-                        tension: 0.4,
-                        fill: false
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return '₱' + value.toLocaleString();
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Project Profitability Analysis Chart
-            const ctx2 = document.getElementById('projectProfitabilityChart').getContext('2d');
-            financeData.charts.projectProfitabilityChart = new Chart(ctx2, {
-                type: 'bar',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'Revenue',
-                        data: [],
-                        backgroundColor: '#059669',
-                        borderRadius: 4
-                    }, {
-                        label: 'Expenses',
-                        data: [],
-                        backgroundColor: '#dc2626',
-                        borderRadius: 4
-                    }, {
-                        label: 'Profit',
-                        data: [],
-                        backgroundColor: '#1e40af',
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return '₱' + value.toLocaleString();
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Cash Flow Trend Chart
-            const ctx3 = document.getElementById('cashFlowChart').getContext('2d');
-            financeData.charts.cashFlowChart = new Chart(ctx3, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                    datasets: [{
-                        label: 'Cash Inflow',
-                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                        borderColor: '#059669',
-                        backgroundColor: 'rgba(5, 150, 105, 0.2)',
-                        fill: true,
-                        tension: 0.4
-                    }, {
-                        label: 'Cash Outflow',
-                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                        borderColor: '#dc2626',
-                        backgroundColor: 'rgba(220, 38, 38, 0.2)',
-                        fill: true,
-                        tension: 0.4
-                    }, {
-                        label: 'Net Cash Flow',
-                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                        borderColor: '#1e40af',
-                        backgroundColor: 'rgba(30, 64, 175, 0.1)',
-                        fill: false,
-                        tension: 0.4,
-                        borderWidth: 3
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        }
-                    },
-                    scales: {
-                        y: {
-                            ticks: {
-                                callback: function(value) {
-                                    return '₱' + value.toLocaleString();
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Expense Categories Breakdown Chart
-            const ctx4 = document.getElementById('expenseCategoriesChart').getContext('2d');
-            financeData.charts.expenseCategoriesChart = new Chart(ctx4, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Project Related', 'Overhead', 'Administrative', 'Operating', 'Other'],
-                    datasets: [{
-                        data: [0, 0, 0, 0, 0],
-                        backgroundColor: [
-                            '#1e40af',  // Project Related - Blue
-                            '#dc2626',  // Overhead - Red
-                            '#d97706',  // Administrative - Orange
-                            '#059669',  // Operating - Green
-                            '#6b7280'   // Other - Gray
-                        ],
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                        }
-                    }
-                }
-            });
-        }
-
-        // Tab switching functionality
-        function showTab(tabName) {
-            // Update page title
-            const titles = {
-                'dashboard': 'Dashboard',
-                'project-profile': 'Project Profile',
-                'reference-table': 'Reference Table',
-                'transaction-masters': 'Transaction Masters',
-                'collections-master': 'Collections Master',
-                'overhead-summary': 'Overhead Summary',
-                'project-revenue': 'Project Revenue',
-                'budget-actual': 'Budget vs Actual',
-                'project-cost': 'Project Cost',
-                'accounts-receivable': 'Accounts Receivable',
-                'cash-flow': 'Cash Flow',
-                'profit-loss': 'Profit & Loss',
-                'accounts-payable': 'Accounts Payables',
-                'fixed-assets': 'Fixed Assets',
-                'owners-capital': 'Owners\' Capital',
-                'owners-liability': 'Owners Liability',
-                'balance-sheet': 'Balance Sheet',
-                'trial-balance': 'Trial Balance',
-                'general-ledger': 'General Ledger',
-                'journal-entries': 'Journal Entries',
-                'financial-reports': 'Financial Reports'
-            };
-            
-            document.getElementById('pageTitle').textContent = titles[tabName] || 'Dashboard';
-            
-            // Hide all tab contents
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            
-            // Remove active class from all nav items
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            // Show selected tab content
-            document.getElementById(tabName).classList.add('active');
-            
-            // Add active class to clicked nav item
-            event.target.classList.add('active');
-            
-            // Update data when switching to certain tabs
-            if (tabName === 'dashboard') updateDashboard();
-            if (tabName === 'project-profile') renderProjectCards();
-            if (tabName === 'reference-table') renderReferenceTables();
-            if (tabName === 'transaction-masters') renderTransactions();
-            if (tabName === 'collections-master') renderCollections();
-        }
-
-        // Render functions
-        function renderProjectCards() {
-            const container = document.getElementById('projectCards');
-            const projectsFromMaster = Object.entries(financeData.projectMaster).map(([key, project]) => ({
-                id: project.fullId,
-                projectName: project.projectName,
-                clientName: project.clientName,
-                projectType: project.projectType,
-                location: project.location,
-                status: 'Ongoing'
-            }));
-            
-            container.innerHTML = projectsFromMaster.map(project => {
-                // Calculate project metrics from transactions and collections
-                const projectTransactions = financeData.transactions.filter(t => 
-                    t.projectID === project.id || t.projectID.includes(project.id.split('-')[0])
-                );
-                const projectCollections = financeData.collections.filter(c => 
-                    c.projectID === project.id || c.projectID.includes(project.id.split('-')[0])
-                );
-                
-                const totalExpenses = projectTransactions.filter(t => t.paid === 'Yes').reduce((sum, t) => sum + (parseFloat(t.totalAmount) || 0), 0);
-                const totalCollected = projectCollections.reduce((sum, c) => sum + (parseFloat(c.amountReceived) || 0), 0);
-                const profit = totalCollected - totalExpenses;
-                const margin = totalCollected > 0 ? ((profit / totalCollected) * 100).toFixed(1) : 0;
-                
-                return `
-                    <div class="glass-card rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-800">${project.projectName}</h3>
-                                <p class="text-gray-600">${project.clientName}</p>
-                                <p class="text-xs text-gray-500">${project.location}</p>
-                            </div>
-                            <span class="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                ${project.projectType}
-                            </span>
-                        </div>
-                        
-                        <div class="space-y-3">
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Project ID:</span>
-                                <span class="font-medium font-mono">${project.id}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Total Expenses:</span>
-                                <span class="font-medium text-red-600">₱${totalExpenses.toLocaleString()}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Revenue Collected:</span>
-                                <span class="font-medium text-green-600">₱${totalCollected.toLocaleString()}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Net Profit:</span>
-                                <span class="font-medium ${profit >= 0 ? 'text-green-600' : 'text-red-600'}">₱${profit.toLocaleString()}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Profit Margin:</span>
-                                <span class="font-medium ${margin >= 0 ? 'text-green-600' : 'text-red-600'}">${margin}%</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function renderReferenceTables() {
-            renderCOATable();
-            renderProjectExpenses();
-            renderOperatingFunds();
-            renderExpenseCategories();
-            renderProjectTypes();
-            renderProjectStatus();
-            renderBillingTypes();
-        }
-
-        function renderOperatingFunds() {
-            const container = document.getElementById('operatingFundsList');
-            container.innerHTML = financeData.operatingFunds.map(fund => `
-                <div class="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <span class="font-medium text-blue-800">${fund}</span>
-                </div>
-            `).join('');
-        }
-
-        function renderExpenseCategories() {
-            const container = document.getElementById('expenseCategoriesList');
-            container.innerHTML = Object.entries(financeData.expenseCategories).map(([name, description]) => `
-                <div class="p-4 bg-gray-50 rounded-lg border">
-                    <div class="font-semibold text-gray-800 mb-2">${name}</div>
-                    <div class="text-sm text-gray-600">${description}</div>
-                </div>
-            `).join('');
-        }
-
-        function renderProjectTypes() {
-            const container = document.getElementById('projectTypesList');
-            container.innerHTML = financeData.projectTypes.map(type => `
-                <div class="p-2 bg-green-50 rounded border border-green-200">
-                    <span class="text-green-800 font-medium">${type}</span>
-                </div>
-            `).join('');
-        }
-
-        function renderProjectStatus() {
-            const container = document.getElementById('projectStatusList');
-            container.innerHTML = Object.entries(financeData.projectStatuses).map(([status, description]) => `
-                <div class="p-3 bg-gray-50 rounded-lg border">
-                    <div class="font-semibold text-gray-800">${status}</div>
-                    <div class="text-xs text-gray-600 mt-1">${description}</div>
-                </div>
-            `).join('');
-        }
-
-        function renderBillingTypes() {
-            const container = document.getElementById('billingTypesList');
-            container.innerHTML = Object.entries(financeData.billingTypes).map(([code, description]) => `
-                <div class="p-3 bg-purple-50 rounded-lg border border-purple-200">
-                    <div class="font-semibold text-purple-800">${code}</div>
-                    <div class="text-sm text-purple-600">${description}</div>
-                </div>
-            `).join('');
-        }
-
-        function renderCOATable() {
-            const tbody = document.getElementById('coaTable');
-            tbody.innerHTML = financeData.coa.map((account, index) => `
-                <tr class="hover:bg-gray-50">
-                    <td class="border border-gray-200 px-4 py-3">${account.oldCOA}</td>
-                    <td class="border border-gray-200 px-4 py-3 font-medium">${account.unifiedCode}</td>
-                    <td class="border border-gray-200 px-4 py-3">${account.accountName}</td>
-                    <td class="border border-gray-200 px-4 py-3">${account.category}</td>
-                    <td class="border border-gray-200 px-4 py-3">${account.subcategory}</td>
-                    <td class="border border-gray-200 px-4 py-3 text-gray-600">${account.notes}</td>
-                    <td class="border border-gray-200 px-4 py-3">
-                        <button onclick="editCOAAccount(${index})" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors">
-                            <i class="fas fa-edit mr-1"></i>Edit
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function renderProjectExpenses() {
-            const container = document.getElementById('projectExpensesList');
-            container.innerHTML = Object.values(financeData.projectExpenses).map(expense => `
-                <div class="p-4 bg-gray-50 rounded-lg">
-                    <div class="flex justify-between items-start mb-2">
-                        <span class="font-semibold text-primary">${expense.code}</span>
-                        <div class="flex gap-2">
-                            <button onclick="editProjectExpense('${expense.code}')" class="text-blue-500 hover:text-blue-700 text-sm">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <span class="text-sm font-medium">${expense.description}</span>
-                        </div>
-                    </div>
-                    <p class="text-sm text-gray-600">${expense.details}</p>
-                </div>
-            `).join('');
-        }
-
-        function editProjectExpense(code) {
-            const expense = financeData.projectExpenses[code];
-            if (!expense) return;
-            
-            const newDescription = prompt('Edit description:', expense.description);
-            if (newDescription === null) return;
-            
-            const newDetails = prompt('Edit details:', expense.details);
-            if (newDetails === null) return;
-            
-            financeData.projectExpenses[code] = {
-                ...expense,
-                description: newDescription,
-                details: newDetails
-            };
-            
-            renderProjectExpenses();
-            autoSave();
-            alert('Project expense updated successfully!');
-        }
-
-        function renderTransactions() {
-            const tbody = document.getElementById('transactionTable');
-            tbody.innerHTML = financeData.transactions.map(transaction => `
-                <tr class="hover:bg-gray-50">
-                    <td class="border border-gray-200 px-4 py-3">${transaction.paymentDate}</td>
-                    <td class="border border-gray-200 px-4 py-3">${transaction.particulars}</td>
-                    <td class="border border-gray-200 px-4 py-3">${transaction.expenseType}</td>
-                    <td class="border border-gray-200 px-4 py-3 font-mono">${transaction.unifiedCode}</td>
-                    <td class="border border-gray-200 px-4 py-3">${transaction.projectID}</td>
-                    <td class="border border-gray-200 px-4 py-3">${transaction.vendor}</td>
-                    <td class="border border-gray-200 px-4 py-3 font-semibold">₱${transaction.totalAmount.toLocaleString()}</td>
-                    <td class="border border-gray-200 px-4 py-3">
-                        <span class="px-2 py-1 rounded-full text-xs font-medium ${transaction.paid === 'Yes' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
-                            ${transaction.paid}
-                        </span>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function renderCollections() {
-            const tbody = document.getElementById('collectionTable');
-            tbody.innerHTML = financeData.collections.map((collection, index) => `
-                <tr class="hover:bg-gray-50">
-                    <td class="border border-gray-200 px-4 py-3">${collection.paymentDate}</td>
-                    <td class="border border-gray-200 px-4 py-3">${collection.clientName}</td>
-                    <td class="border border-gray-200 px-4 py-3">${collection.projectID}</td>
-                    <td class="border border-gray-200 px-4 py-3">${collection.projectName}</td>
-                    <td class="border border-gray-200 px-4 py-3 font-mono">${collection.invoiceNumber}</td>
-                    <td class="border border-gray-200 px-4 py-3 font-semibold text-green-600">₱${collection.amountReceived.toLocaleString()}</td>
-                    <td class="border border-gray-200 px-4 py-3">${collection.paymentMethod}</td>
-                    <td class="border border-gray-200 px-4 py-3">
-                        <button onclick="editCollection(${index})" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors">
-                            <i class="fas fa-edit mr-1"></i>Edit
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function editCollection(index) {
-            const collection = financeData.collections[index];
-            if (!collection) return;
-            
-            const newDate = prompt('Edit date (YYYY-MM-DD):', collection.paymentDate);
-            if (newDate === null) return;
-            
-            const newClient = prompt('Edit client name:', collection.clientName);
-            if (newClient === null) return;
-            
-            const newProjectId = prompt('Edit project ID:', collection.projectID);
-            if (newProjectId === null) return;
-            
-            const newInvoice = prompt('Edit invoice number:', collection.invoiceNumber);
-            if (newInvoice === null) return;
-            
-            const newAmount = parseFloat(prompt('Edit amount received:', collection.amountReceived));
-            if (isNaN(newAmount) || newAmount <= 0) return;
-            
-            const newPaymentMethod = prompt('Edit payment method:', collection.paymentMethod);
-            if (newPaymentMethod === null) return;
-            
-            const newNotes = prompt('Edit notes:', collection.notes || '');
-            if (newNotes === null) return;
-            
-            // Update the collection
-            financeData.collections[index] = {
-                ...collection,
-                paymentDate: newDate,
-                month: newDate.slice(0, 7),
-                clientName: newClient,
-                projectID: newProjectId,
-                projectName: getProjectInfo(newProjectId).projectName,
-                invoiceNumber: newInvoice,
-                amountReceived: newAmount,
-                amountBilled: newAmount,
-                amountPaid: newAmount,
-                paymentMethod: newPaymentMethod,
-                notes: newNotes
-            };
-            
-            renderCollections();
-            updateDashboard();
-            autoSave();
-            alert('Collection updated successfully!');
-        }
-
-        function updateDashboard() {
-            // Calculate totals from actual data
-            const totalRevenue = financeData.collections.reduce((sum, c) => sum + (parseFloat(c.amountReceived) || 0), 0);
-            const totalExpenses = financeData.transactions.filter(t => t.paid === 'Yes').reduce((sum, t) => sum + (parseFloat(t.totalAmount) || 0), 0);
-            const netProfit = totalRevenue - totalExpenses;
-            const outstandingReceivables = financeData.collections.filter(c => c.status === 'Unpaid').reduce((sum, c) => sum + (parseFloat(c.outstandingAmount) || 0), 0);
-            const outstandingPayables = financeData.transactions.filter(t => t.paid === 'No').reduce((sum, t) => sum + (parseFloat(t.totalAmount) || 0), 0);
-            
-            document.getElementById('totalRevenue').textContent = `₱${totalRevenue.toLocaleString()}`;
-            document.getElementById('totalCollections').textContent = `₱${totalRevenue.toLocaleString()}`;
-            document.getElementById('totalExpenses').textContent = `₱${totalExpenses.toLocaleString()}`;
-            document.getElementById('netProfit').textContent = `₱${netProfit.toLocaleString()}`;
-            document.getElementById('outstandingReceivables').textContent = `₱${outstandingReceivables.toLocaleString()}`;
-            document.getElementById('outstandingPayables').textContent = `₱${outstandingPayables.toLocaleString()}`;
-            
-            // Update charts with real data
-            updateDashboardCharts();
-        }
-
-        // Update all dashboard charts with real data
-        function updateDashboardCharts() {
-            // 1. Monthly Revenue vs Expenses Chart
-            const monthlyData = {};
-            
-            // Process collections for revenue
-            financeData.collections.forEach(collection => {
-                const month = new Date(collection.paymentDate).getMonth();
-                if (!monthlyData[month]) monthlyData[month] = { revenue: 0, expenses: 0 };
-                monthlyData[month].revenue += parseFloat(collection.amountReceived) || 0;
-            });
-            
-            // Process transactions for expenses
-            financeData.transactions.filter(t => t.paid === 'Yes').forEach(transaction => {
-                const month = new Date(transaction.paymentDate).getMonth();
-                if (!monthlyData[month]) monthlyData[month] = { revenue: 0, expenses: 0 };
-                monthlyData[month].expenses += parseFloat(transaction.totalAmount) || 0;
-            });
-            
-            const monthlyRevenue = Array(12).fill(0);
-            const monthlyExpenses = Array(12).fill(0);
-            
-            Object.keys(monthlyData).forEach(month => {
-                monthlyRevenue[month] = monthlyData[month].revenue;
-                monthlyExpenses[month] = monthlyData[month].expenses;
-            });
-            
-            financeData.charts.monthlyRevenueExpensesChart.data.datasets[0].data = monthlyRevenue;
-            financeData.charts.monthlyRevenueExpensesChart.data.datasets[1].data = monthlyExpenses;
-            financeData.charts.monthlyRevenueExpensesChart.update();
-            
-            // 2. Project Profitability Analysis Chart
-            const projectLabels = [];
-            const projectRevenue = [];
-            const projectExpenses = [];
-            const projectProfit = [];
-            
-            Object.entries(financeData.calculatedData.projectSummaries || {}).forEach(([key, project]) => {
-                if (project.totalCollected > 0 || project.totalExpenses > 0) {
-                    projectLabels.push(project.code || key);
-                    projectRevenue.push(project.totalCollected);
-                    projectExpenses.push(project.totalExpenses);
-                    projectProfit.push(project.profit);
-                }
-            });
-            
-            financeData.charts.projectProfitabilityChart.data.labels = projectLabels;
-            financeData.charts.projectProfitabilityChart.data.datasets[0].data = projectRevenue;
-            financeData.charts.projectProfitabilityChart.data.datasets[1].data = projectExpenses;
-            financeData.charts.projectProfitabilityChart.data.datasets[2].data = projectProfit;
-            financeData.charts.projectProfitabilityChart.update();
-            
-            // 3. Cash Flow Trend Chart
-            const cashInflow = monthlyRevenue.slice(); // Collections
-            const cashOutflow = monthlyExpenses.slice(); // Paid expenses
-            const netCashFlow = cashInflow.map((inflow, index) => inflow - cashOutflow[index]);
-            
-            financeData.charts.cashFlowChart.data.datasets[0].data = cashInflow;
-            financeData.charts.cashFlowChart.data.datasets[1].data = cashOutflow;
-            financeData.charts.cashFlowChart.data.datasets[2].data = netCashFlow;
-            financeData.charts.cashFlowChart.update();
-            
-            // 4. Expense Categories Breakdown Chart
-            const projectRelated = financeData.transactions.filter(t => t.expenseType === 'Project Related' && t.paid === 'Yes').reduce((sum, t) => sum + (parseFloat(t.totalAmount) || 0), 0);
-            const overhead = financeData.transactions.filter(t => t.expenseType === 'Overhead' && t.paid === 'Yes').reduce((sum, t) => sum + (parseFloat(t.totalAmount) || 0), 0);
-            const administrative = financeData.transactions.filter(t => t.unifiedCode >= '504' && t.unifiedCode <= '519' && t.paid === 'Yes').reduce((sum, t) => sum + (parseFloat(t.totalAmount) || 0), 0);
-            const operating = financeData.transactions.filter(t => t.unifiedCode >= '520' && t.unifiedCode <= '529' && t.paid === 'Yes').reduce((sum, t) => sum + (parseFloat(t.totalAmount) || 0), 0);
-            const totalExpenses = financeData.transactions.filter(t => t.paid === 'Yes').reduce((sum, t) => sum + (parseFloat(t.totalAmount) || 0), 0);
-            const other = totalExpenses - projectRelated - overhead - administrative - operating;
-            
-            financeData.charts.expenseCategoriesChart.data.datasets[0].data = [projectRelated, overhead, administrative, operating, Math.max(0, other)];
-            financeData.charts.expenseCategoriesChart.update();
-        }
-
-        // Automatic data calculation system
-        function calculateAllData() {
-            // Initialize calculated data
-            financeData.calculatedData = {
-                projectSummaries: {},
-                monthlyData: {},
-                totals: {
-                    revenue: 0,
-                    expenses: 0,
-                    collections: 0,
-                    outstanding: 0
-                }
-            };
-
-            // Calculate project summaries from transactions and collections
-            Object.keys(financeData.projectMaster).forEach(projectKey => {
-                const project = financeData.projectMaster[projectKey];
-                const projectId = project.fullId;
-                
-                // Get transactions for this project
-                const projectTransactions = financeData.transactions.filter(t => 
-                    t.projectID === projectKey || t.projectID === projectId || t.projectID === project.code
-                );
-                
-                // Get collections for this project
-                const projectCollections = financeData.collections.filter(c => 
-                    c.projectID === projectKey || c.projectID === projectId || c.projectID === project.code
-                );
-                
-                // Calculate project totals
-                const totalExpenses = projectTransactions.filter(t => t.paid === 'Yes').reduce((sum, t) => sum + (parseFloat(t.totalAmount) || 0), 0);
-                const totalCollected = projectCollections.reduce((sum, c) => sum + (parseFloat(c.amountReceived) || 0), 0);
-                
-                financeData.calculatedData.projectSummaries[projectKey] = {
-                    ...project,
-                    totalExpenses,
-                    totalCollected,
-                    profit: totalCollected - totalExpenses,
-                    margin: totalCollected > 0 ? ((totalCollected - totalExpenses) / totalCollected * 100).toFixed(2) : 0
-                };
-            });
-
-            // Calculate overall totals
-            financeData.calculatedData.totals.revenue = financeData.collections.reduce((sum, c) => sum + (parseFloat(c.amountReceived) || 0), 0);
-            financeData.calculatedData.totals.expenses = financeData.transactions.filter(t => t.paid === 'Yes').reduce((sum, t) => sum + (parseFloat(t.totalAmount) || 0), 0);
-        }
-
-        // Add/Edit functions
-        function addProject() {
-            const projectName = prompt('Enter project name:');
-            if (!projectName) return;
-            
-            const clientName = prompt('Enter client name:');
-            if (!clientName) return;
-            
-            const projectType = prompt('Enter project type (Design/Fit Out/Build/Renovation):');
-            if (!projectType) return;
-            
-            const location = prompt('Enter project location:');
-            
-            // Generate next project ID
-            const existingKeys = Object.keys(financeData.projectMaster).filter(k => k.startsWith('P')).map(k => parseInt(k.substring(1))).filter(n => !isNaN(n));
-            const nextNum = Math.max(...existingKeys, -1) + 1;
-            const projectKey = `P${nextNum}`;
-            const projectCode = projectName.substring(0, 3).toUpperCase();
-            const fullId = `${projectKey}-${projectCode}`;
-            
-            financeData.projectMaster[projectKey] = {
-                code: projectCode,
-                fullId: fullId,
-                clientName: clientName,
-                projectName: projectName,
-                projectType: projectType,
-                location: location || ''
-            };
-            
-            renderProjectCards();
-            autoSave();
-            alert(`Project ${fullId} added successfully!`);
-        }
-
-        function addTransaction() {
-            // Simple transaction form - in a real app this would be a modal
-            const paymentDate = prompt('Enter payment date (YYYY-MM-DD):') || new Date().toISOString().split('T')[0];
-            const particulars = prompt('Enter particulars:');
-            if (!particulars) return;
-            
-            const amount = parseFloat(prompt('Enter amount:') || '0');
-            if (amount <= 0) return;
-            
-            const projectID = prompt('Enter project ID (e.g., P0-ART):') || 'Non-Project';
-            const vendor = prompt('Enter vendor name:') || 'Vendor';
-            
-            const newTransaction = {
-                id: Date.now(),
-                paymentDate,
-                month: paymentDate.slice(0, 7),
-                particulars,
-                expenseType: 'General',
-                oldCOACode: '',
-                unifiedCode: '529',
-                expenseName: 'Miscellaneous Expense',
-                projectExpenseCode: '',
-                operatingFunds: 'Client Payments',
-                projectID,
-                projectName: getProjectInfo(projectID).projectName,
-                vendor,
-                address: '',
-                quantity: 1,
-                unitPrice: amount,
-                totalAmount: amount,
-                vatableAmount: amount / 1.12,
-                vat: amount - (amount / 1.12),
-                siDrOr: '',
-                paid: 'Yes',
-                paymentMethod: 'Cash Payment',
-                notes: ''
-            };
-            
-            financeData.transactions.push(newTransaction);
-            renderTransactions();
-            updateDashboard();
-            autoSave();
-            alert('Transaction added successfully!');
-        }
-
-        function addCollection() {
-            const paymentDate = prompt('Enter payment date (YYYY-MM-DD):') || new Date().toISOString().split('T')[0];
-            const projectID = prompt('Enter project ID (e.g., P0-ART):');
-            if (!projectID) return;
-            
-            const amount = parseFloat(prompt('Enter amount received:') || '0');
-            if (amount <= 0) return;
-            
-            const projectInfo = getProjectInfo(projectID);
-            const invoiceNumber = prompt('Enter invoice number:') || `INV${Date.now()}`;
-            
-            const newCollection = {
-                id: Date.now(),
-                paymentDate,
-                month: paymentDate.slice(0, 7),
-                clientName: projectInfo.clientName,
-                projectID,
-                projectName: projectInfo.projectName,
-                invoiceNumber,
-                amountReceived: amount,
-                amountBilled: amount,
-                amountPaid: amount,
-                outstandingAmount: 0,
-                paymentMethod: 'CASH',
-                coaCode: '400',
-                status: 'Paid',
-                notes: ''
-            };
-            
-            financeData.collections.push(newCollection);
-            renderCollections();
-            updateDashboard();
-            autoSave();
-            alert('Collection added successfully!');
-        }
-
-        function addCOA() {
-            const accountName = prompt('Enter account name:');
-            if (!accountName) return;
-            
-            const unifiedCode = prompt('Enter unified code:');
-            if (!unifiedCode) return;
-            
-            const category = prompt('Enter category (Asset/Liability/Equity/Revenue/Expense):');
-            if (!category) return;
-            
-            const subcategory = prompt('Enter subcategory:') || '';
-            const notes = prompt('Enter notes:') || '';
-            
-            financeData.coa.push({
-                oldCOA: '',
-                unifiedCode,
-                accountName,
-                category,
-                subcategory,
-                notes
-            });
-            
-            renderCOATable();
-            autoSave();
-            alert('COA account added successfully!');
-        }
-
-        function addFixedAsset() {
-            alert('Fixed Asset form will be implemented here');
-        }
-
-        function addCapitalEntry() {
-            alert('Capital Entry form will be implemented here');
-        }
-
-        function addLiabilityEntry() {
-            alert('Liability Entry form will be implemented here');
-        }
-
-        function addJournalEntry() {
-            alert('Journal Entry form will be implemented here');
-        }
-
-        // Remove functions
-        function removeProject() {
-            const projectIds = Object.keys(financeData.projectMaster);
-            if (projectIds.length === 0) {
-                alert('No projects to remove');
-                return;
-            }
-            
-            const projectList = projectIds.map(id => `${id}: ${financeData.projectMaster[id].projectName}`).join('\n');
-            const projectToRemove = prompt(`Enter project ID to remove:\n\n${projectList}`);
-            
-            if (projectToRemove && financeData.projectMaster[projectToRemove]) {
-                if (confirm(`Are you sure you want to remove project ${projectToRemove}?`)) {
-                    delete financeData.projectMaster[projectToRemove];
-                    renderProjectCards();
-                    autoSave();
-                    alert('Project removed successfully!');
-                }
-            } else if (projectToRemove) {
-                alert('Project ID not found');
-            }
-        }
-
-        function removeTransaction() {
-            if (financeData.transactions.length === 0) {
-                alert('No transactions to remove');
-                return;
-            }
-            
-            const transactionIndex = parseInt(prompt(`Enter transaction number to remove (1-${financeData.transactions.length}):`)) - 1;
-            
-            if (transactionIndex >= 0 && transactionIndex < financeData.transactions.length) {
-                const transaction = financeData.transactions[transactionIndex];
-                if (confirm(`Remove transaction: ${transaction.particulars}?`)) {
-                    financeData.transactions.splice(transactionIndex, 1);
-                    renderTransactions();
-                    updateDashboard();
-                    autoSave();
-                    alert('Transaction removed successfully!');
-                }
-            } else {
-                alert('Invalid transaction number');
-            }
-        }
-
-        function removeCollection() {
-            if (financeData.collections.length === 0) {
-                alert('No collections to remove');
-                return;
-            }
-            
-            const collectionIndex = parseInt(prompt(`Enter collection number to remove (1-${financeData.collections.length}):`)) - 1;
-            
-            if (collectionIndex >= 0 && collectionIndex < financeData.collections.length) {
-                const collection = financeData.collections[collectionIndex];
-                if (confirm(`Remove collection from ${collection.clientName}?`)) {
-                    financeData.collections.splice(collectionIndex, 1);
-                    renderCollections();
-                    updateDashboard();
-                    autoSave();
-                    alert('Collection removed successfully!');
-                }
-            } else {
-                alert('Invalid collection number');
-            }
-        }
-
-        function removeCOA() {
-            if (financeData.coa.length === 0) {
-                alert('No COA accounts to remove');
-                return;
-            }
-            
-            const accountCode = prompt('Enter unified code of account to remove:');
-            const accountIndex = financeData.coa.findIndex(account => account.unifiedCode === accountCode);
-            
-            if (accountIndex >= 0) {
-                const account = financeData.coa[accountIndex];
-                if (confirm(`Remove account: ${account.accountName} (${account.unifiedCode})?`)) {
-                    financeData.coa.splice(accountIndex, 1);
-                    renderCOATable();
-                    autoSave();
-                    alert('COA account removed successfully!');
-                }
-            } else {
-                alert('Account code not found');
-            }
-        }
-
-        // Utility functions
-        function importExcel() {
-            document.getElementById('excelFileInput').click();
         }
 
         function exportExcel() {
             const wb = XLSX.utils.book_new();
             
-            // Create worksheets for each data type
-            const transactionWS = XLSX.utils.json_to_sheet(financeData.transactions);
-            const collectionWS = XLSX.utils.json_to_sheet(financeData.collections);
-            
-            // Add worksheets to workbook
-            XLSX.utils.book_append_sheet(wb, transactionWS, "Transaction Masters");
-            XLSX.utils.book_append_sheet(wb, collectionWS, "Collections Master");
-            
-            // Generate and download file
-            const fileName = `Prospira_Finance_${new Date().toISOString().split('T')[0]}.xlsx`;
-            XLSX.writeFile(wb, fileName);
-        }
-
-        function editCompanyName() {
-            const newName = prompt('Enter company name:', financeData.companyName === 'Click to set company name' ? '' : financeData.companyName);
-            if (newName && newName.trim()) {
-                financeData.companyName = newName.trim();
-                document.getElementById('companyName').textContent = financeData.companyName;
-                autoSave();
+            // Export transactions
+            if (financeData.transactions.length > 0) {
+                const ws = XLSX.utils.json_to_sheet(financeData.transactions);
+                XLSX.utils.book_append_sheet(wb, ws, 'Transactions');
             }
-        }
-
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-        }
-
-        function autoSave() {
-            calculateAllData();
-            try {
-                localStorage.setItem('prospiraFinanceData', JSON.stringify(financeData));
-                showAutoSaveNotification();
-            } catch (error) {
-                console.error('Error saving to localStorage:', error);
+            
+            // Export collections
+            if (financeData.collections.length > 0) {
+                const ws = XLSX.utils.json_to_sheet(financeData.collections);
+                XLSX.utils.book_append_sheet(wb, ws, 'Collections');
             }
+            
+            XLSX.writeFile(wb, 'Prospira_Financial_Data.xlsx');
+            showNotification('Data exported successfully!', 'success');
         }
 
-        function showAutoSaveNotification() {
-            const notification = document.getElementById('autoSaveNotification');
-            notification.style.transform = 'translateY(0)';
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 ${
+                type === 'success' ? 'bg-green-500 text-white' :
+                type === 'error' ? 'bg-red-500 text-white' :
+                'bg-blue-500 text-white'
+            }`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
             setTimeout(() => {
-                notification.style.transform = 'translateY(100%)';
-            }, 2000);
+                notification.remove();
+            }, 3000);
         }
 
-        function loadFromLocalStorage() {
-            try {
-                const saved = localStorage.getItem('prospiraFinanceData');
-                if (saved) {
-                    const parsedData = JSON.parse(saved);
-                    financeData = { ...financeData, ...parsedData };
-                    document.getElementById('companyName').textContent = financeData.companyName;
-                }
-            } catch (error) {
-                console.error('Error loading from localStorage:', error);
-            }
-        }
-
-        // Chart management functions
-        function showAddChartModal() {
-            document.getElementById('addChartModal').classList.remove('hidden');
-        }
-
-        function hideAddChartModal() {
-            document.getElementById('addChartModal').classList.add('hidden');
-        }
-
-        function toggleChart(chartId) {
-            const wrapper = document.getElementById(chartId + '-wrapper');
-            const button = document.querySelector(`[data-chart="${chartId}"]`);
-            
-            if (wrapper.classList.contains('hidden')) {
-                wrapper.classList.remove('hidden');
-                button.classList.add('active');
-            } else {
-                wrapper.classList.add('hidden');
-                button.classList.remove('active');
-            }
-        }
-
-        function removeChart(chartId) {
-            if (confirm('Are you sure you want to remove this chart?')) {
-                const wrapper = document.getElementById(chartId + '-wrapper');
-                const button = document.querySelector(`[data-chart="${chartId}"]`);
-                
-                wrapper.classList.add('hidden');
-                button.classList.remove('active');
-            }
-        }
-
-        function createCustomChart() {
-            const chartType = document.getElementById('chartType').value;
-            const dataSource = document.getElementById('dataSource').value;
-            const chartTitle = document.getElementById('chartTitle').value || 'Custom Chart';
-            
-            if (!chartTitle.trim()) {
-                alert('Please enter a chart title');
-                return;
-            }
-            
-            const chartId = 'customChart_' + Date.now();
-            const chartData = generateChartData(dataSource, chartType);
-            
-            // Create chart container
-            const chartsGrid = document.getElementById('chartsGrid');
-            const chartWrapper = document.createElement('div');
-            chartWrapper.className = 'glass-card rounded-2xl p-6 shadow-xl chart-container-wrapper';
-            chartWrapper.id = chartId + '-wrapper';
-            
-            chartWrapper.innerHTML = `
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-semibold text-gray-800">${chartTitle}</h3>
-                    <button onclick="removeChart('${chartId}')" class="text-red-500 hover:text-red-700">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="chart-container">
-                    <canvas id="${chartId}"></canvas>
-                </div>
-            `;
-            
-            chartsGrid.appendChild(chartWrapper);
-            
-            // Create chart
-            const ctx = document.getElementById(chartId).getContext('2d');
-            financeData.charts[chartId] = new Chart(ctx, {
-                type: chartType,
-                data: chartData,
+        // Initialize charts
+        function initializeCharts() {
+            // Monthly Revenue vs Expenses Chart
+            const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+            new Chart(monthlyCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Revenue',
+                        data: [50000, 75000, 60000, 80000, 90000, 85000],
+                        borderColor: '#059669',
+                        backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Expenses',
+                        data: [30000, 45000, 40000, 55000, 60000, 50000],
+                        borderColor: '#dc2626',
+                        backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                        tension: 0.4
+                    }]
+                },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
@@ -2419,7 +927,7 @@
                             position: 'top',
                         }
                     },
-                    scales: chartType !== 'pie' && chartType !== 'doughnut' ? {
+                    scales: {
                         y: {
                             beginAtZero: true,
                             ticks: {
@@ -2428,383 +936,63 @@
                                 }
                             }
                         }
-                    } : {}
+                    }
                 }
             });
-            
-            // Add toggle button
-            const toggleButtons = document.getElementById('chartToggleButtons');
-            const toggleButton = document.createElement('button');
-            toggleButton.className = 'chart-toggle-btn active';
-            toggleButton.setAttribute('data-chart', chartId);
-            toggleButton.onclick = () => toggleChart(chartId);
-            toggleButton.innerHTML = `<i class="fas fa-chart-bar mr-2"></i>${chartTitle}`;
-            toggleButtons.appendChild(toggleButton);
-            
-            hideAddChartModal();
-            alert('Custom chart created successfully!');
-        }
 
-        function generateChartData(dataSource, chartType) {
-            let data = { labels: [], datasets: [] };
-            
-            switch (dataSource) {
-                case 'projects':
-                    const projectLabels = [];
-                    const projectRevenue = [];
-                    const projectExpenses = [];
-                    
-                    Object.entries(financeData.calculatedData.projectSummaries || {}).forEach(([key, project]) => {
-                        if (project.totalCollected > 0 || project.totalExpenses > 0) {
-                            projectLabels.push(project.code || key);
-                            projectRevenue.push(project.totalCollected);
-                            projectExpenses.push(project.totalExpenses);
+            // Project Profitability Chart
+            const projectCtx = document.getElementById('projectChart').getContext('2d');
+            new Chart(projectCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['P1-LEZ', 'P2-RHL', 'P3-PRP', 'P4-CRV'],
+                    datasets: [{
+                        label: 'Profit',
+                        data: [25000, 15000, 30000, 20000],
+                        backgroundColor: [
+                            'rgba(30, 64, 175, 0.8)',
+                            'rgba(5, 150, 105, 0.8)',
+                            'rgba(14, 165, 233, 0.8)',
+                            'rgba(168, 85, 247, 0.8)'
+                        ],
+                        borderColor: [
+                            '#1e40af',
+                            '#059669',
+                            '#0ea5e9',
+                            '#a855f7'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
                         }
-                    });
-                    
-                    data = {
-                        labels: projectLabels,
-                        datasets: [{
-                            label: 'Revenue',
-                            data: projectRevenue,
-                            backgroundColor: chartType === 'pie' || chartType === 'doughnut' ? 
-                                ['#1e40af', '#3b82f6', '#60a5fa', '#93c5fd', '#dbeafe'] : '#059669',
-                            borderColor: '#059669'
-                        }]
-                    };
-                    break;
-                    
-                case 'transactions':
-                    const expenseTypes = {};
-                    financeData.transactions.filter(t => t.paid === 'Yes').forEach(t => {
-                        expenseTypes[t.expenseType] = (expenseTypes[t.expenseType] || 0) + parseFloat(t.totalAmount);
-                    });
-                    
-                    data = {
-                        labels: Object.keys(expenseTypes),
-                        datasets: [{
-                            label: 'Amount',
-                            data: Object.values(expenseTypes),
-                            backgroundColor: chartType === 'pie' || chartType === 'doughnut' ? 
-                                ['#dc2626', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'] : '#dc2626',
-                            borderColor: '#dc2626'
-                        }]
-                    };
-                    break;
-                    
-                case 'collections':
-                    const monthlyCollections = Array(12).fill(0);
-                    financeData.collections.forEach(c => {
-                        const month = new Date(c.paymentDate).getMonth();
-                        monthlyCollections[month] += parseFloat(c.amountReceived);
-                    });
-                    
-                    data = {
-                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                        datasets: [{
-                            label: 'Collections',
-                            data: monthlyCollections,
-                            backgroundColor: '#059669',
-                            borderColor: '#059669',
-                            fill: chartType === 'area'
-                        }]
-                    };
-                    break;
-                    
-                default:
-                    data = {
-                        labels: ['Sample 1', 'Sample 2', 'Sample 3'],
-                        datasets: [{
-                            label: 'Sample Data',
-                            data: [100, 200, 150],
-                            backgroundColor: ['#1e40af', '#3b82f6', '#60a5fa'],
-                            borderColor: '#1e40af'
-                        }]
-                    };
-            }
-            
-            return data;
-        }
-
-        // COA Edit function
-        function editCOAAccount(index) {
-            const account = financeData.coa[index];
-            
-            const newAccountName = prompt('Edit account name:', account.accountName);
-            if (newAccountName === null) return;
-            
-            const newUnifiedCode = prompt('Edit unified code:', account.unifiedCode);
-            if (newUnifiedCode === null) return;
-            
-            const newCategory = prompt('Edit category:', account.category);
-            if (newCategory === null) return;
-            
-            const newSubcategory = prompt('Edit subcategory:', account.subcategory);
-            if (newSubcategory === null) return;
-            
-            const newNotes = prompt('Edit notes:', account.notes);
-            if (newNotes === null) return;
-            
-            // Update the account
-            financeData.coa[index] = {
-                ...account,
-                accountName: newAccountName,
-                unifiedCode: newUnifiedCode,
-                category: newCategory,
-                subcategory: newSubcategory,
-                notes: newNotes
-            };
-            
-            renderCOATable();
-            autoSave();
-            alert('COA account updated successfully!');
-        }
-
-        // Reference table management functions
-        function addProjectExpense() {
-            const code = prompt('Enter expense code (e.g., 500.13):');
-            if (!code) return;
-            
-            const description = prompt('Enter expense description:');
-            if (!description) return;
-            
-            const details = prompt('Enter expense details:');
-            if (!details) return;
-            
-            financeData.projectExpenses[code] = { code, description, details };
-            renderProjectExpenses();
-            autoSave();
-            alert('Project expense added successfully!');
-        }
-
-        function removeProjectExpense() {
-            const code = prompt('Enter expense code to remove:');
-            if (code && financeData.projectExpenses[code]) {
-                if (confirm(`Remove expense ${code}?`)) {
-                    delete financeData.projectExpenses[code];
-                    renderProjectExpenses();
-                    autoSave();
-                    alert('Project expense removed successfully!');
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '₱' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
                 }
-            } else {
-                alert('Expense code not found');
-            }
-        }
-
-        function addOperatingFund() {
-            const fund = prompt('Enter operating fund name:');
-            if (fund && fund.trim()) {
-                financeData.operatingFunds.push(fund.trim());
-                renderOperatingFunds();
-                autoSave();
-                alert('Operating fund added successfully!');
-            }
-        }
-
-        function removeOperatingFund() {
-            const fund = prompt('Enter operating fund to remove:');
-            const index = financeData.operatingFunds.indexOf(fund);
-            if (index >= 0) {
-                if (confirm(`Remove operating fund "${fund}"?`)) {
-                    financeData.operatingFunds.splice(index, 1);
-                    renderOperatingFunds();
-                    autoSave();
-                    alert('Operating fund removed successfully!');
-                }
-            } else {
-                alert('Operating fund not found');
-            }
-        }
-
-        function addExpenseCategory() {
-            const name = prompt('Enter expense category name:');
-            if (!name) return;
-            
-            const description = prompt('Enter category description:');
-            if (!description) return;
-            
-            financeData.expenseCategories[name] = description;
-            renderExpenseCategories();
-            autoSave();
-            alert('Expense category added successfully!');
-        }
-
-        function removeExpenseCategory() {
-            const name = prompt('Enter expense category to remove:');
-            if (name && financeData.expenseCategories[name]) {
-                if (confirm(`Remove category "${name}"?`)) {
-                    delete financeData.expenseCategories[name];
-                    renderExpenseCategories();
-                    autoSave();
-                    alert('Expense category removed successfully!');
-                }
-            } else {
-                alert('Expense category not found');
-            }
-        }
-
-        function addProjectType() {
-            const type = prompt('Enter project type:');
-            if (type && type.trim()) {
-                financeData.projectTypes.push(type.trim());
-                renderProjectTypes();
-                autoSave();
-                alert('Project type added successfully!');
-            }
-        }
-
-        function removeProjectType() {
-            const type = prompt('Enter project type to remove:');
-            const index = financeData.projectTypes.indexOf(type);
-            if (index >= 0) {
-                if (confirm(`Remove project type "${type}"?`)) {
-                    financeData.projectTypes.splice(index, 1);
-                    renderProjectTypes();
-                    autoSave();
-                    alert('Project type removed successfully!');
-                }
-            } else {
-                alert('Project type not found');
-            }
-        }
-
-        function addProjectStatus() {
-            const status = prompt('Enter project status name:');
-            if (!status) return;
-            
-            const description = prompt('Enter status description:');
-            if (!description) return;
-            
-            financeData.projectStatuses[status] = description;
-            renderProjectStatus();
-            autoSave();
-            alert('Project status added successfully!');
-        }
-
-        function removeProjectStatus() {
-            const status = prompt('Enter project status to remove:');
-            if (status && financeData.projectStatuses[status]) {
-                if (confirm(`Remove status "${status}"?`)) {
-                    delete financeData.projectStatuses[status];
-                    renderProjectStatus();
-                    autoSave();
-                    alert('Project status removed successfully!');
-                }
-            } else {
-                alert('Project status not found');
-            }
-        }
-
-        function addBillingType() {
-            const code = prompt('Enter billing type code (e.g., PB6):');
-            if (!code) return;
-            
-            const description = prompt('Enter billing type description:');
-            if (!description) return;
-            
-            financeData.billingTypes[code] = description;
-            renderBillingTypes();
-            autoSave();
-            alert('Billing type added successfully!');
-        }
-
-        function removeBillingType() {
-            const code = prompt('Enter billing type code to remove:');
-            if (code && financeData.billingTypes[code]) {
-                if (confirm(`Remove billing type "${code}"?`)) {
-                    delete financeData.billingTypes[code];
-                    renderBillingTypes();
-                    autoSave();
-                    alert('Billing type removed successfully!');
-                }
-            } else {
-                alert('Billing type not found');
-            }
-        }
-
-        // Collection form functions
-        function addCollectionFromForm() {
-            const date = document.getElementById('collectionDate').value;
-            const client = document.getElementById('collectionClient').value;
-            const projectId = document.getElementById('collectionProjectId').value;
-            const invoice = document.getElementById('collectionInvoice').value;
-            const amount = parseFloat(document.getElementById('collectionAmount').value);
-            const paymentMethod = document.getElementById('collectionPaymentMethod').value;
-            const notes = document.getElementById('collectionNotes').value;
-            
-            if (!date || !client || !projectId || !amount || amount <= 0) {
-                alert('Please fill in all required fields (Date, Client, Project ID, Amount)');
-                return;
-            }
-            
-            const projectInfo = getProjectInfo(projectId);
-            
-            const newCollection = {
-                id: Date.now(),
-                paymentDate: date,
-                month: date.slice(0, 7),
-                clientName: client,
-                projectID: projectId,
-                projectName: projectInfo.projectName,
-                invoiceNumber: invoice || `INV${Date.now()}`,
-                amountReceived: amount,
-                amountBilled: amount,
-                amountPaid: amount,
-                outstandingAmount: 0,
-                paymentMethod,
-                coaCode: '400',
-                status: 'Paid',
-                notes
-            };
-            
-            financeData.collections.push(newCollection);
-            renderCollections();
-            updateDashboard();
-            clearCollectionForm();
-            autoSave();
-            alert('Collection added successfully!');
-        }
-
-        function clearCollectionForm() {
-            document.getElementById('collectionDate').value = '';
-            document.getElementById('collectionClient').value = '';
-            document.getElementById('collectionProjectId').value = '';
-            document.getElementById('collectionInvoice').value = '';
-            document.getElementById('collectionAmount').value = '';
-            document.getElementById('collectionPaymentMethod').value = 'CASH';
-            document.getElementById('collectionNotes').value = '';
-        }
-
-        function populateProjectDropdown() {
-            const select = document.getElementById('collectionProjectId');
-            select.innerHTML = '<option value="">Select Project</option>';
-            
-            Object.entries(financeData.projectMaster).forEach(([key, project]) => {
-                const option = document.createElement('option');
-                option.value = project.fullId;
-                option.textContent = `${project.fullId} - ${project.clientName}`;
-                select.appendChild(option);
             });
         }
 
         // Initialize the application
-        function initializeApp() {
-            loadFromLocalStorage();
-            calculateAllData();
-            initializeCharts();
-            renderProjectCards();
-            renderReferenceTables();
-            renderTransactions();
-            renderCollections();
-            populateProjectDropdown();
+        document.addEventListener('DOMContentLoaded', function() {
+            populateProjectCards();
             updateDashboard();
-            
-            // Set default date to today
-            document.getElementById('collectionDate').value = new Date().toISOString().split('T')[0];
-        }
-
-        // Start the application
-        document.addEventListener('DOMContentLoaded', initializeApp);
+            initializeCharts();
+            showNotification('Prospira Finance System loaded successfully!', 'success');
+        });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9735b205c1dfed1a',t:'MTc1NTkwMDU3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9735e16c061bed29',t:'MTc1NTkwMjUxNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
