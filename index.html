@@ -1033,24 +1033,65 @@
     <input type="file" id="excelFileInput" accept=".xlsx,.xls" style="display: none;" onchange="handleExcelImport(event)">
 
     <script>
-        // Global data storage with your exact structure
+        // Global data storage with your exact structure and project mappings
         let financeData = {
             companyName: 'Click to set company name',
+            // Master project lookup table
+            projectMaster: {
+                'P0': { code: 'ART', fullId: 'P0-ART', clientName: 'Artisan Corp', projectName: 'Artisan Development Project', address: 'Makati City' },
+                'P1': { code: 'LEZ', fullId: 'P1-LEZ', clientName: 'Lez Holdings', projectName: 'Lez Commercial Complex', address: 'BGC, Taguig' },
+                'P2': { code: 'RHL', fullId: 'P2-RHL', clientName: 'RHL Properties', projectName: 'RHL Residential Tower', address: 'Ortigas, Pasig' },
+                'P3': { code: 'PRP', fullId: 'P3-PRP', clientName: 'Prime Properties', projectName: 'Prime Business Center', address: 'Alabang, Muntinlupa' },
+                'P4': { code: 'CRV', fullId: 'P4-CRV', clientName: 'Curve Development', projectName: 'Curve Shopping Mall', address: 'Quezon City' },
+                'P5': { code: 'JDB', fullId: 'P5-JDB', clientName: 'JDB Construction', projectName: 'JDB Office Building', address: 'Mandaluyong City' },
+                'P6': { code: 'JVP', fullId: 'P6-JVP', clientName: 'JVP Ventures', projectName: 'JVP Mixed-Use Development', address: 'Bonifacio Global City' },
+                'P7': { code: 'IMP', fullId: 'P7-IMP', clientName: 'Imperial Realty', projectName: 'Imperial Condominiums', address: 'Makati City' },
+                'P8': { code: 'BST', fullId: 'P8-BST', clientName: 'Boost Properties', projectName: 'Boost Corporate Plaza', address: 'Ortigas Center' },
+                'P9': { code: 'MOB', fullId: 'P9-MOB', clientName: 'Mobile Dynamics', projectName: 'Mobile Tech Hub', address: 'Eastwood, Quezon City' },
+                'P10': { code: 'SSC', fullId: 'P10-SSC', clientName: 'SSC Holdings', projectName: 'SSC Business Park', address: 'Laguna Technopark' },
+                'P11': { code: 'KCP', fullId: 'P11-KCP', clientName: 'KCP Development', projectName: 'KCP Retail Center', address: 'SM North, Quezon City' },
+                'P12': { code: 'KOP', fullId: 'P12-KOP', clientName: 'KOP Builders', projectName: 'KOP Industrial Complex', address: 'Cavite Industrial Zone' },
+                'P13': { code: 'MCP', fullId: 'P13-MCP', clientName: 'MCP Corporation', projectName: 'MCP Headquarters', address: 'Ayala Avenue, Makati' },
+                'P14': { code: 'VDC', fullId: 'P14-VDC', clientName: 'VDC Properties', projectName: 'VDC Luxury Residences', address: 'Rockwell, Makati' },
+                'P15': { code: 'ALR', fullId: 'P15-ALR', clientName: 'ALR Holdings', projectName: 'ALR Commercial Tower', address: 'Paseo de Roxas, Makati' },
+                'P16': { code: 'KLM', fullId: 'P16-KLM', clientName: 'KLM Developers', projectName: 'KLM Innovation Center', address: 'UP Town Center, Quezon City' },
+                'P17': { code: 'MPN', fullId: 'P17-MPN', clientName: 'MPN Group', projectName: 'MPN Logistics Hub', address: 'NAIA Complex, Pasay' },
+                'Non': { code: 'Project', fullId: 'Non-Project', clientName: 'Internal', projectName: 'Non-Project Expenses', address: 'Head Office' }
+            },
             projects: [],
             coa: [
                 { oldCOA: '1000', unifiedCode: '1000', accountName: 'Cash and Cash Equivalents', category: 'Assets', subcategory: 'Current Assets', notes: 'BIR-Compliant' },
                 { oldCOA: '1100', unifiedCode: '1100', accountName: 'Accounts Receivable', category: 'Assets', subcategory: 'Current Assets', notes: 'Trade receivables' },
-                { oldCOA: '5001', unifiedCode: '500.1', accountName: 'Materials', category: 'Project Expenses', subcategory: '500 Series', notes: 'Project materials cost' },
-                { oldCOA: '5002', unifiedCode: '500.2', accountName: 'Professional Fees', category: 'Project Expenses', subcategory: '500 Series', notes: 'Professional services' }
+                { oldCOA: '1200', unifiedCode: '1200', accountName: 'Inventory', category: 'Assets', subcategory: 'Current Assets', notes: 'Materials and supplies' },
+                { oldCOA: '1300', unifiedCode: '1300', accountName: 'Prepaid Expenses', category: 'Assets', subcategory: 'Current Assets', notes: 'Prepaid items' },
+                { oldCOA: '1500', unifiedCode: '1500', accountName: 'Property, Plant & Equipment', category: 'Assets', subcategory: 'Non-Current Assets', notes: 'Fixed assets' },
+                { oldCOA: '2000', unifiedCode: '2000', accountName: 'Accounts Payable', category: 'Liabilities', subcategory: 'Current Liabilities', notes: 'Trade payables' },
+                { oldCOA: '2100', unifiedCode: '2100', accountName: 'Accrued Expenses', category: 'Liabilities', subcategory: 'Current Liabilities', notes: 'Accrued liabilities' },
+                { oldCOA: '3000', unifiedCode: '3000', accountName: 'Capital Stock', category: 'Equity', subcategory: 'Owners Equity', notes: 'Share capital' },
+                { oldCOA: '4000', unifiedCode: '4000', accountName: 'Revenue', category: 'Revenue', subcategory: 'Operating Revenue', notes: 'Project revenue' },
+                { oldCOA: '5001', unifiedCode: '500.1', accountName: 'Materials', category: 'Project Expenses', subcategory: '500 Series', notes: 'Direct materials cost' },
+                { oldCOA: '5002', unifiedCode: '500.2', accountName: 'Labor', category: 'Project Expenses', subcategory: '500 Series', notes: 'Direct labor cost' },
+                { oldCOA: '5003', unifiedCode: '500.3', accountName: 'Equipment', category: 'Project Expenses', subcategory: '500 Series', notes: 'Equipment rental/purchase' },
+                { oldCOA: '5004', unifiedCode: '500.4', accountName: 'Subcontractor', category: 'Project Expenses', subcategory: '500 Series', notes: 'Subcontractor fees' },
+                { oldCOA: '6001', unifiedCode: '600.1', accountName: 'Office Supplies', category: 'Operating Expenses', subcategory: '600 Series', notes: 'General office supplies' },
+                { oldCOA: '6002', unifiedCode: '600.2', accountName: 'Utilities', category: 'Operating Expenses', subcategory: '600 Series', notes: 'Electricity, water, etc.' },
+                { oldCOA: '6003', unifiedCode: '600.3', accountName: 'Rent', category: 'Operating Expenses', subcategory: '600 Series', notes: 'Office rent' },
+                { oldCOA: '6004', unifiedCode: '600.4', accountName: 'Professional Fees', category: 'Operating Expenses', subcategory: '600 Series', notes: 'Legal, accounting fees' }
             ],
-            expenseTypes: ['Office Supplies', 'Utilities', 'Rent', 'Professional Fees', 'Materials', 'Labor'],
-            projectTypes: ['Construction', 'Consulting', 'Design', 'Engineering'],
+            expenseTypes: ['Materials', 'Labor', 'Equipment', 'Subcontractor', 'Office Supplies', 'Utilities', 'Rent', 'Professional Fees', 'Transportation', 'Communications'],
+            projectTypes: ['Construction', 'Consulting', 'Design', 'Engineering', 'Development', 'Renovation'],
             transactions: [],
             collections: [],
             fixedAssets: [],
             capitalEntries: [],
             liabilityEntries: [],
-            charts: {}
+            charts: {},
+            // Calculated fields that update automatically
+            calculatedData: {
+                projectSummaries: {},
+                monthlyData: {},
+                totals: {}
+            }
         };
 
         // Initialize charts
@@ -1413,8 +1454,24 @@
         function renderProjectCards() {
             const container = document.getElementById('projectCards');
             container.innerHTML = financeData.projects.map(project => {
-                const profit = (project.projectRevenue || 0) - (project.projectCost || 0);
-                const margin = project.projectRevenue ? ((profit / project.projectRevenue) * 100).toFixed(1) : 0;
+                // Get calculated data for this project
+                const projectKey = Object.keys(financeData.projectMaster).find(key => 
+                    financeData.projectMaster[key].fullId === project.id || 
+                    key === project.id ||
+                    financeData.projectMaster[key].code === project.id
+                );
+                
+                const calculatedData = financeData.calculatedData.projectSummaries[projectKey] || {
+                    totalExpenses: 0,
+                    totalCollected: 0,
+                    outstanding: 0,
+                    profit: 0,
+                    margin: 0
+                };
+                
+                const profit = calculatedData.profit;
+                const margin = calculatedData.margin;
+                const progress = project.contractAmount > 0 ? ((calculatedData.totalCollected / project.contractAmount) * 100).toFixed(1) : 0;
                 
                 return `
                     <div class="glass-card rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
@@ -1422,6 +1479,7 @@
                             <div>
                                 <h3 class="text-lg font-semibold text-gray-800">${project.projectName}</h3>
                                 <p class="text-gray-600">${project.clientName}</p>
+                                <p class="text-xs text-gray-500">${project.location}</p>
                             </div>
                             <span class="px-3 py-1 rounded-full text-xs font-medium ${project.status === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}">
                                 ${project.status}
@@ -1431,23 +1489,42 @@
                         <div class="space-y-3">
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Project ID:</span>
-                                <span class="font-medium">${project.id}</span>
+                                <span class="font-medium font-mono">${project.id}</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Contract Amount:</span>
                                 <span class="font-medium">₱${project.contractAmount.toLocaleString()}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Budget:</span>
-                                <span class="font-medium">₱${project.approvedBudget.toLocaleString()}</span>
+                                <span class="text-gray-600">Total Expenses:</span>
+                                <span class="font-medium text-red-600">₱${calculatedData.totalExpenses.toLocaleString()}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Profit:</span>
+                                <span class="text-gray-600">Revenue Collected:</span>
+                                <span class="font-medium text-green-600">₱${calculatedData.totalCollected.toLocaleString()}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Outstanding:</span>
+                                <span class="font-medium text-orange-600">₱${calculatedData.outstanding.toLocaleString()}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Net Profit:</span>
                                 <span class="font-medium ${profit >= 0 ? 'text-green-600' : 'text-red-600'}">₱${profit.toLocaleString()}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Margin:</span>
-                                <span class="font-medium">${margin}%</span>
+                                <span class="text-gray-600">Profit Margin:</span>
+                                <span class="font-medium ${margin >= 0 ? 'text-green-600' : 'text-red-600'}">${margin}%</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Progress Bar -->
+                        <div class="mt-4">
+                            <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>Collection Progress</span>
+                                <span>${progress}%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: ${Math.min(100, progress)}%"></div>
                             </div>
                         </div>
                         
@@ -1748,21 +1825,81 @@
             `).join('');
         }
 
-        // Dashboard updates
+        // Dashboard updates using calculated data
         function updateDashboard() {
-            const totalRevenue = financeData.collections.filter(c => c.status === 'Paid').reduce((sum, c) => sum + c.amountPaid, 0);
-            const totalCollections = financeData.collections.reduce((sum, c) => sum + c.amountBilled, 0);
-            const totalExpenses = financeData.transactions.filter(t => t.paid === 'Yes').reduce((sum, t) => sum + t.totalAmount, 0);
-            const netProfit = totalRevenue - totalExpenses;
-            const outstandingReceivables = financeData.collections.filter(c => c.status === 'Unpaid').reduce((sum, c) => sum + c.outstandingAmount, 0);
-            const outstandingPayables = financeData.transactions.filter(t => t.paid === 'No').reduce((sum, t) => sum + t.totalAmount, 0);
-
-            document.getElementById('totalRevenue').textContent = `₱${totalRevenue.toLocaleString()}`;
-            document.getElementById('totalCollections').textContent = `₱${totalCollections.toLocaleString()}`;
-            document.getElementById('totalExpenses').textContent = `₱${totalExpenses.toLocaleString()}`;
-            document.getElementById('netProfit').textContent = `₱${netProfit.toLocaleString()}`;
-            document.getElementById('outstandingReceivables').textContent = `₱${outstandingReceivables.toLocaleString()}`;
+            // Use calculated totals for accuracy
+            const totals = financeData.calculatedData.totals;
+            
+            document.getElementById('totalRevenue').textContent = `₱${totals.revenue.toLocaleString()}`;
+            document.getElementById('totalCollections').textContent = `₱${totals.collections.toLocaleString()}`;
+            document.getElementById('totalExpenses').textContent = `₱${totals.expenses.toLocaleString()}`;
+            document.getElementById('netProfit').textContent = `₱${(totals.revenue - totals.expenses).toLocaleString()}`;
+            document.getElementById('outstandingReceivables').textContent = `₱${totals.outstanding.toLocaleString()}`;
+            
+            // Calculate outstanding payables
+            const outstandingPayables = financeData.transactions.filter(t => t.paid === 'No').reduce((sum, t) => sum + (parseFloat(t.totalAmount) || 0), 0);
             document.getElementById('outstandingPayables').textContent = `₱${outstandingPayables.toLocaleString()}`;
+            
+            // Update charts with calculated data
+            updateDashboardCharts();
+        }
+        
+        // Update dashboard charts with real data
+        function updateDashboardCharts() {
+            // Update monthly profit chart
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const monthlyProfits = months.map((month, index) => {
+                const monthKey = `2024-${String(index + 1).padStart(2, '0')}`;
+                return financeData.calculatedData.monthlyData[monthKey]?.profit || 0;
+            });
+            
+            financeData.charts.monthlyProfitChart.data.datasets[0].data = monthlyProfits;
+            financeData.charts.monthlyProfitChart.update();
+            
+            // Update budget vs actual chart
+            const projectSummaries = Object.values(financeData.calculatedData.projectSummaries);
+            const projectNames = projectSummaries.slice(0, 10).map(p => p.code); // Show top 10 projects
+            const budgets = projectSummaries.slice(0, 10).map(p => p.totalBudget);
+            const actuals = projectSummaries.slice(0, 10).map(p => p.totalExpenses);
+            
+            financeData.charts.budgetActualChart.data.labels = projectNames;
+            financeData.charts.budgetActualChart.data.datasets[0].data = budgets;
+            financeData.charts.budgetActualChart.data.datasets[1].data = actuals;
+            financeData.charts.budgetActualChart.update();
+            
+            // Update budget usage pie chart
+            const totalBudget = projectSummaries.reduce((sum, p) => sum + p.totalBudget, 0);
+            const totalUsed = projectSummaries.reduce((sum, p) => sum + p.totalExpenses, 0);
+            const remaining = Math.max(0, totalBudget - totalUsed);
+            
+            financeData.charts.budgetUsageChart.data.datasets[0].data = [totalUsed, remaining];
+            financeData.charts.budgetUsageChart.update();
+            
+            // Update cash flow charts
+            const monthlyInflows = months.map((month, index) => {
+                const monthKey = `2024-${String(index + 1).padStart(2, '0')}`;
+                return financeData.calculatedData.monthlyData[monthKey]?.revenue || 0;
+            });
+            
+            const monthlyOutflows = months.map((month, index) => {
+                const monthKey = `2024-${String(index + 1).padStart(2, '0')}`;
+                return financeData.calculatedData.monthlyData[monthKey]?.expenses || 0;
+            });
+            
+            // Update inflow/outflow chart
+            financeData.charts.inflowOutflowChart.data.datasets[0].data = monthlyInflows;
+            financeData.charts.inflowOutflowChart.data.datasets[1].data = monthlyOutflows;
+            financeData.charts.inflowOutflowChart.update();
+            
+            // Update cash balance chart (cumulative)
+            let runningBalance = 0;
+            const cashBalances = monthlyInflows.map((inflow, index) => {
+                runningBalance += inflow - monthlyOutflows[index];
+                return runningBalance;
+            });
+            
+            financeData.charts.cashBalanceChart.data.datasets[0].data = cashBalances;
+            financeData.charts.cashBalanceChart.update();
         }
 
         // Status update functions
@@ -1835,131 +1972,184 @@
                     const workbook = XLSX.read(data, { type: 'array' });
                     
                     let importedData = false;
+                    let importSummary = {
+                        projects: 0,
+                        transactions: 0,
+                        collections: 0,
+                        fixedAssets: 0
+                    };
                     
-                    // Process each sheet and try multiple column name variations
+                    // Process each sheet with smart project mapping
                     workbook.SheetNames.forEach(sheetName => {
                         const worksheet = workbook.Sheets[sheetName];
                         const jsonData = XLSX.utils.sheet_to_json(worksheet);
                         
                         if (jsonData.length === 0) return;
                         
-                        console.log(`Processing sheet: ${sheetName}`, jsonData[0]); // Debug log
+                        console.log(`Processing sheet: ${sheetName}`, jsonData[0]);
                         
-                        // Get the first row to check column headers
                         const headers = Object.keys(jsonData[0] || {});
                         
-                        // Project Profile - try multiple variations
-                        if (sheetName.toLowerCase().includes('project') || 
-                            headers.some(h => h.toLowerCase().includes('project'))) {
+                        // Transaction Masters - Enhanced with smart project mapping
+                        if (sheetName.toLowerCase().includes('transaction') || 
+                            headers.some(h => h.toLowerCase().includes('transaction') || h.toLowerCase().includes('expense'))) {
                             
-                            financeData.projects = jsonData.map((row, index) => ({
-                                id: row['Project ID'] || row['ProjectID'] || row['ID'] || `PRJ${String(index + 1).padStart(3, '0')}`,
-                                projectName: row['Project Name'] || row['ProjectName'] || row['Name'] || `Project ${index + 1}`,
-                                clientName: row['Client Name'] || row['ClientName'] || row['Client'] || 'Client',
-                                projectType: row['Project Type'] || row['ProjectType'] || row['Type'] || 'General',
-                                location: row['Location'] || '',
-                                startDate: row['Start Date'] || row['StartDate'] || new Date().toISOString().split('T')[0],
-                                endDate: row['End Date'] || row['EndDate'] || '',
-                                contractAmount: parseFloat(row['Contract Amount'] || row['ContractAmount'] || row['Amount'] || 0),
-                                approvedBudget: parseFloat(row['Approved Budget'] || row['ApprovedBudget'] || row['Budget'] || 0),
-                                status: row['Status'] || 'Ongoing'
-                            }));
-                            importedData = true;
-                            console.log('Imported projects:', financeData.projects.length);
-                        }
-                        
-                        // Transaction Masters - try multiple variations
-                        else if (sheetName.toLowerCase().includes('transaction') || 
-                                headers.some(h => h.toLowerCase().includes('transaction') || h.toLowerCase().includes('expense'))) {
+                            financeData.transactions = jsonData.map((row, index) => {
+                                // Smart project ID mapping
+                                let projectID = row['Project ID'] || row['ProjectID'] || row['Project'] || '';
+                                
+                                // Auto-map expense type to unified code
+                                let unifiedCode = row['Unified Code'] || row['Code'] || '';
+                                const expenseType = row['Expense Type'] || row['ExpenseType'] || row['Type'] || 'General';
+                                
+                                if (!unifiedCode) {
+                                    switch (expenseType.toLowerCase()) {
+                                        case 'materials': unifiedCode = '500.1'; break;
+                                        case 'labor': unifiedCode = '500.2'; break;
+                                        case 'equipment': unifiedCode = '500.3'; break;
+                                        case 'subcontractor': unifiedCode = '500.4'; break;
+                                        case 'office supplies': unifiedCode = '600.1'; break;
+                                        case 'utilities': unifiedCode = '600.2'; break;
+                                        case 'rent': unifiedCode = '600.3'; break;
+                                        case 'professional fees': unifiedCode = '600.4'; break;
+                                        default: unifiedCode = '600.1';
+                                    }
+                                }
+                                
+                                const totalAmount = parseFloat(row['Total Amount'] || row['TotalAmount'] || row['Amount'] || 0);
+                                
+                                return {
+                                    id: Date.now() + index,
+                                    paymentDate: row['Payment Date'] || row['PaymentDate'] || row['Date'] || new Date().toISOString().split('T')[0],
+                                    month: (row['Payment Date'] || row['PaymentDate'] || row['Date'] || new Date().toISOString()).slice(0, 7),
+                                    particulars: row['Particulars'] || row['Description'] || row['Details'] || 'Transaction',
+                                    expenseType,
+                                    oldCOACode: row['Old COA Code'] || row['COA'] || unifiedCode,
+                                    unifiedCode,
+                                    expenseName: financeData.coa.find(c => c.unifiedCode === unifiedCode)?.accountName || expenseType,
+                                    projectID,
+                                    vendor: row['Vendor/Supplier'] || row['Vendor'] || row['Supplier'] || 'Vendor',
+                                    totalAmount,
+                                    vatableAmount: parseFloat(row['Vatable Amount'] || row['VatableAmount'] || (totalAmount / 1.12)),
+                                    vat: parseFloat(row['VAT'] || (totalAmount - (totalAmount / 1.12))),
+                                    paid: row['Paid'] || 'No',
+                                    paymentMethod: row['Payment Method'] || row['PaymentMethod'] || 'Cash',
+                                    notes: row['Notes'] || ''
+                                };
+                            });
                             
-                            financeData.transactions = jsonData.map((row, index) => ({
-                                id: Date.now() + index,
-                                paymentDate: row['Payment Date'] || row['PaymentDate'] || row['Date'] || new Date().toISOString().split('T')[0],
-                                month: (row['Payment Date'] || row['PaymentDate'] || row['Date'] || new Date().toISOString()).slice(0, 7),
-                                particulars: row['Particulars'] || row['Description'] || row['Details'] || 'Transaction',
-                                expenseType: row['Expense Type'] || row['ExpenseType'] || row['Type'] || 'General',
-                                oldCOACode: row['Old COA Code'] || row['COA'] || '',
-                                unifiedCode: row['Unified Code'] || row['Code'] || '',
-                                projectID: row['Project ID'] || row['ProjectID'] || '',
-                                vendor: row['Vendor/Supplier'] || row['Vendor'] || row['Supplier'] || 'Vendor',
-                                totalAmount: parseFloat(row['Total Amount'] || row['TotalAmount'] || row['Amount'] || 0),
-                                vatableAmount: parseFloat(row['Vatable Amount'] || row['VatableAmount'] || 0),
-                                vat: parseFloat(row['VAT'] || 0),
-                                paid: row['Paid'] || 'No',
-                                paymentMethod: row['Payment Method'] || row['PaymentMethod'] || 'Cash',
-                                notes: row['Notes'] || ''
-                            }));
                             importedData = true;
+                            importSummary.transactions = financeData.transactions.length;
                             console.log('Imported transactions:', financeData.transactions.length);
                         }
                         
-                        // Collections Master - try multiple variations
+                        // Collections Master - Enhanced with smart project mapping
                         else if (sheetName.toLowerCase().includes('collection') || sheetName.toLowerCase().includes('invoice') ||
                                 headers.some(h => h.toLowerCase().includes('collection') || h.toLowerCase().includes('invoice'))) {
                             
-                            financeData.collections = jsonData.map((row, index) => ({
-                                id: Date.now() + index,
-                                invoiceNumber: row['Invoice Number'] || row['InvoiceNumber'] || row['Invoice'] || `INV${String(index + 1).padStart(4, '0')}`,
-                                projectID: row['Project ID'] || row['ProjectID'] || '',
-                                projectName: row['Project Name'] || row['ProjectName'] || '',
-                                clientName: row['Client Name'] || row['ClientName'] || row['Client'] || 'Client',
-                                revenueMilestone: row['Revenue Milestones'] || row['Milestone'] || row['Description'] || 'Payment',
-                                invoiceDate: row['Invoice Date'] || row['InvoiceDate'] || row['Date'] || new Date().toISOString().split('T')[0],
-                                dueDate: row['Due Date'] || row['DueDate'] || new Date(Date.now() + 30*24*60*60*1000).toISOString().split('T')[0],
-                                amountBilled: parseFloat(row['Amount Billed'] || row['AmountBilled'] || row['Billed'] || row['Amount'] || 0),
-                                amountPaid: parseFloat(row['Amount Paid'] || row['AmountPaid'] || row['Paid'] || 0),
-                                outstandingAmount: parseFloat(row['Outstanding Amount'] || row['Outstanding'] || 0),
-                                status: row['Status'] || (parseFloat(row['Amount Paid'] || row['AmountPaid'] || 0) > 0 ? 'Paid' : 'Unpaid'),
-                                paymentDate: row['Payment Date'] || row['PaymentDate'] || '',
-                                paymentMethod: row['Payment Method'] || row['PaymentMethod'] || '',
-                                daysOverdue: parseInt(row['Days Overdue'] || row['DaysOverdue'] || 0),
-                                notes: row['Notes'] || ''
-                            }));
+                            financeData.collections = jsonData.map((row, index) => {
+                                const projectID = row['Project ID'] || row['ProjectID'] || row['Project'] || '';
+                                const projectInfo = getProjectInfo(projectID);
+                                
+                                const amountBilled = parseFloat(row['Amount Billed'] || row['AmountBilled'] || row['Billed'] || row['Amount'] || 0);
+                                const amountPaid = parseFloat(row['Amount Paid'] || row['AmountPaid'] || row['Paid'] || 0);
+                                
+                                return {
+                                    id: Date.now() + index,
+                                    invoiceNumber: row['Invoice Number'] || row['InvoiceNumber'] || row['Invoice'] || `INV${String(index + 1).padStart(4, '0')}`,
+                                    projectID,
+                                    projectName: row['Project Name'] || row['ProjectName'] || projectInfo.projectName,
+                                    clientName: row['Client Name'] || row['ClientName'] || row['Client'] || projectInfo.clientName,
+                                    revenueMilestone: row['Revenue Milestones'] || row['Milestone'] || row['Description'] || 'Payment',
+                                    invoiceDate: row['Invoice Date'] || row['InvoiceDate'] || row['Date'] || new Date().toISOString().split('T')[0],
+                                    dueDate: row['Due Date'] || row['DueDate'] || new Date(Date.now() + 30*24*60*60*1000).toISOString().split('T')[0],
+                                    amountBilled,
+                                    amountPaid,
+                                    outstandingAmount: parseFloat(row['Outstanding Amount'] || row['Outstanding'] || (amountBilled - amountPaid)),
+                                    status: row['Status'] || (amountPaid > 0 ? 'Paid' : 'Unpaid'),
+                                    paymentDate: row['Payment Date'] || row['PaymentDate'] || '',
+                                    paymentMethod: row['Payment Method'] || row['PaymentMethod'] || '',
+                                    daysOverdue: parseInt(row['Days Overdue'] || row['DaysOverdue'] || 0),
+                                    notes: row['Notes'] || ''
+                                };
+                            });
                             
-                            // Calculate outstanding amounts if not provided
-                            financeData.collections.forEach(c => {
-                                if (!c.outstandingAmount) {
-                                    c.outstandingAmount = c.amountBilled - c.amountPaid;
+                            importedData = true;
+                            importSummary.collections = financeData.collections.length;
+                            console.log('Imported collections:', financeData.collections.length);
+                        }
+                        
+                        // Project Profile - Enhanced
+                        else if (sheetName.toLowerCase().includes('project') || 
+                                headers.some(h => h.toLowerCase().includes('project'))) {
+                            
+                            const importedProjects = jsonData.map((row, index) => {
+                                const projectID = row['Project ID'] || row['ProjectID'] || row['ID'] || `P${index}`;
+                                const projectInfo = getProjectInfo(projectID);
+                                
+                                return {
+                                    id: projectID,
+                                    projectName: row['Project Name'] || row['ProjectName'] || row['Name'] || projectInfo.projectName,
+                                    clientName: row['Client Name'] || row['ClientName'] || row['Client'] || projectInfo.clientName,
+                                    projectType: row['Project Type'] || row['ProjectType'] || row['Type'] || 'Construction',
+                                    location: row['Location'] || row['Address'] || projectInfo.address,
+                                    startDate: row['Start Date'] || row['StartDate'] || '2024-01-01',
+                                    endDate: row['End Date'] || row['EndDate'] || '',
+                                    contractAmount: parseFloat(row['Contract Amount'] || row['ContractAmount'] || row['Amount'] || 0),
+                                    approvedBudget: parseFloat(row['Approved Budget'] || row['ApprovedBudget'] || row['Budget'] || 0),
+                                    status: row['Status'] || 'Ongoing'
+                                };
+                            });
+                            
+                            // Merge with existing projects from master data
+                            financeData.projects = [...financeData.projects];
+                            importedProjects.forEach(importedProject => {
+                                const existingIndex = financeData.projects.findIndex(p => p.id === importedProject.id);
+                                if (existingIndex >= 0) {
+                                    financeData.projects[existingIndex] = { ...financeData.projects[existingIndex], ...importedProject };
+                                } else {
+                                    financeData.projects.push(importedProject);
                                 }
                             });
                             
                             importedData = true;
-                            console.log('Imported collections:', financeData.collections.length);
+                            importSummary.projects = importedProjects.length;
+                            console.log('Imported/updated projects:', importedProjects.length);
                         }
                         
                         // Fixed Assets
                         else if (sheetName.toLowerCase().includes('asset') ||
                                 headers.some(h => h.toLowerCase().includes('asset'))) {
                             
-                            financeData.fixedAssets = jsonData.map((row, index) => ({
-                                id: Date.now() + index,
-                                assetName: row['Asset Name'] || row['AssetName'] || row['Name'] || `Asset ${index + 1}`,
-                                modelNo: row['Model No.'] || row['Model'] || row['ModelNo'] || '',
-                                acquisitionDate: row['Acquisition Date'] || row['AcquisitionDate'] || row['Date'] || new Date().toISOString().split('T')[0],
-                                month: (row['Acquisition Date'] || row['AcquisitionDate'] || new Date().toISOString()).slice(0, 7),
-                                acquisitionCost: parseFloat(row['Acquisition Cost'] || row['AcquisitionCost'] || row['Cost'] || 0),
-                                currentCondition: row['Current Condition'] || row['Condition'] || 'Good',
-                                usefulLife: parseInt(row['Useful Life'] || row['UsefulLife'] || row['Life'] || 5),
-                                depreciation: parseFloat(row['Depreciation'] || 0),
-                                netBookValue: parseFloat(row['Net Book Value'] || row['NetBookValue'] || row['BookValue'] || 0)
-                            }));
-                            
-                            // Calculate depreciation if not provided
-                            financeData.fixedAssets.forEach(asset => {
-                                if (!asset.depreciation && asset.acquisitionCost && asset.usefulLife) {
-                                    asset.depreciation = asset.acquisitionCost / asset.usefulLife;
-                                }
-                                if (!asset.netBookValue) {
-                                    asset.netBookValue = asset.acquisitionCost - asset.depreciation;
-                                }
+                            financeData.fixedAssets = jsonData.map((row, index) => {
+                                const acquisitionCost = parseFloat(row['Acquisition Cost'] || row['AcquisitionCost'] || row['Cost'] || 0);
+                                const usefulLife = parseInt(row['Useful Life'] || row['UsefulLife'] || row['Life'] || 5);
+                                const depreciation = parseFloat(row['Depreciation'] || (acquisitionCost / usefulLife));
+                                
+                                return {
+                                    id: Date.now() + index,
+                                    assetName: row['Asset Name'] || row['AssetName'] || row['Name'] || `Asset ${index + 1}`,
+                                    modelNo: row['Model No.'] || row['Model'] || row['ModelNo'] || '',
+                                    acquisitionDate: row['Acquisition Date'] || row['AcquisitionDate'] || row['Date'] || new Date().toISOString().split('T')[0],
+                                    month: (row['Acquisition Date'] || row['AcquisitionDate'] || new Date().toISOString()).slice(0, 7),
+                                    acquisitionCost,
+                                    currentCondition: row['Current Condition'] || row['Condition'] || 'Good',
+                                    usefulLife,
+                                    depreciation,
+                                    netBookValue: parseFloat(row['Net Book Value'] || row['NetBookValue'] || row['BookValue'] || (acquisitionCost - depreciation))
+                                };
                             });
                             
                             importedData = true;
+                            importSummary.fixedAssets = financeData.fixedAssets.length;
                             console.log('Imported fixed assets:', financeData.fixedAssets.length);
                         }
                     });
                     
                     if (importedData) {
+                        // Recalculate all data relationships
+                        calculateAllData();
+                        
                         // Force refresh all displays
                         setTimeout(() => {
                             renderProjectCards();
@@ -1967,10 +2157,18 @@
                             renderCollections();
                             renderFixedAssets();
                             renderReferenceTables();
+                            renderOverheadSummary();
+                            renderProjectRevenue();
+                            renderBudgetActual();
+                            renderProjectCost();
+                            renderAccountsReceivable();
+                            renderCashFlow();
+                            renderProfitLoss();
+                            renderAccountsPayable();
                             updateDashboard();
                             updateCapitalCalculations();
                             
-                            // Update charts
+                            // Update all charts
                             Object.values(financeData.charts).forEach(chart => {
                                 if (chart && chart.update) {
                                     chart.update();
@@ -1980,15 +2178,15 @@
                             // Save to localStorage
                             autoSave();
                             
-                            alert(`Excel file imported successfully!\n\nImported:\n- ${financeData.projects.length} projects\n- ${financeData.transactions.length} transactions\n- ${financeData.collections.length} collections\n- ${financeData.fixedAssets.length} fixed assets`);
+                            alert(`✅ Excel Import Successful!\n\n📊 Data Imported:\n• ${importSummary.projects} projects updated\n• ${importSummary.transactions} transactions\n• ${importSummary.collections} collections\n• ${importSummary.fixedAssets} fixed assets\n\n🔄 All tabs and formulas have been automatically updated with the new data!`);
                         }, 100);
                     } else {
-                        alert('No recognizable data found in the Excel file. Please check that your sheets contain the expected column headers.');
+                        alert('❌ No recognizable data found in the Excel file.\n\n📋 Expected sheet names:\n• Transaction Masters\n• Collections Master\n• Project Profile\n• Fixed Assets\n\nPlease check your Excel file format and try again.');
                     }
                     
                 } catch (error) {
                     console.error('Import error:', error);
-                    alert('Error importing Excel file: ' + error.message + '\n\nPlease ensure your Excel file has the correct format and column headers.');
+                    alert(`❌ Import Error: ${error.message}\n\n💡 Tips:\n• Ensure Excel file is not corrupted\n• Check column headers match expected format\n• Verify data types (numbers in amount columns)\n• Try saving Excel as .xlsx format`);
                 }
             };
             reader.readAsArrayBuffer(file);
@@ -2103,6 +2301,7 @@
 
         // Auto-save on data changes
         function autoSave() {
+            calculateAllData(); // Recalculate before saving
             saveToLocalStorage();
             showAutoSaveNotification();
         }
@@ -2450,9 +2649,132 @@
             }
         }
 
+        // Automatic data calculation system
+        function calculateAllData() {
+            // Initialize calculated data
+            financeData.calculatedData = {
+                projectSummaries: {},
+                monthlyData: {},
+                totals: {
+                    revenue: 0,
+                    expenses: 0,
+                    collections: 0,
+                    outstanding: 0
+                }
+            };
+
+            // Calculate project summaries from transactions and collections
+            Object.keys(financeData.projectMaster).forEach(projectKey => {
+                const project = financeData.projectMaster[projectKey];
+                const projectId = project.fullId;
+                
+                // Get transactions for this project
+                const projectTransactions = financeData.transactions.filter(t => 
+                    t.projectID === projectKey || t.projectID === projectId || t.projectID === project.code
+                );
+                
+                // Get collections for this project
+                const projectCollections = financeData.collections.filter(c => 
+                    c.projectID === projectKey || c.projectID === projectId || c.projectID === project.code
+                );
+                
+                // Calculate project totals
+                const totalExpenses = projectTransactions.filter(t => t.paid === 'Yes').reduce((sum, t) => sum + (parseFloat(t.totalAmount) || 0), 0);
+                const totalBudget = projectTransactions.reduce((sum, t) => sum + (parseFloat(t.totalAmount) || 0), 0);
+                const totalBilled = projectCollections.reduce((sum, c) => sum + (parseFloat(c.amountBilled) || 0), 0);
+                const totalCollected = projectCollections.filter(c => c.status === 'Paid').reduce((sum, c) => sum + (parseFloat(c.amountPaid) || 0), 0);
+                const outstanding = totalBilled - totalCollected;
+                
+                // Calculate by expense type (500 series)
+                const materials = projectTransactions.filter(t => t.unifiedCode === '500.1' && t.paid === 'Yes').reduce((sum, t) => sum + (parseFloat(t.totalAmount) || 0), 0);
+                const labor = projectTransactions.filter(t => t.unifiedCode === '500.2' && t.paid === 'Yes').reduce((sum, t) => sum + (parseFloat(t.totalAmount) || 0), 0);
+                const equipment = projectTransactions.filter(t => t.unifiedCode === '500.3' && t.paid === 'Yes').reduce((sum, t) => sum + (parseFloat(t.totalAmount) || 0), 0);
+                const subcontractor = projectTransactions.filter(t => t.unifiedCode === '500.4' && t.paid === 'Yes').reduce((sum, t) => sum + (parseFloat(t.totalAmount) || 0), 0);
+                
+                financeData.calculatedData.projectSummaries[projectKey] = {
+                    ...project,
+                    totalExpenses,
+                    totalBudget,
+                    totalBilled,
+                    totalCollected,
+                    outstanding,
+                    profit: totalCollected - totalExpenses,
+                    margin: totalCollected > 0 ? ((totalCollected - totalExpenses) / totalCollected * 100).toFixed(2) : 0,
+                    materials,
+                    labor,
+                    equipment,
+                    subcontractor,
+                    otherCosts: totalExpenses - materials - labor - equipment - subcontractor
+                };
+            });
+
+            // Calculate overall totals
+            financeData.calculatedData.totals.revenue = financeData.collections.filter(c => c.status === 'Paid').reduce((sum, c) => sum + (parseFloat(c.amountPaid) || 0), 0);
+            financeData.calculatedData.totals.expenses = financeData.transactions.filter(t => t.paid === 'Yes').reduce((sum, t) => sum + (parseFloat(t.totalAmount) || 0), 0);
+            financeData.calculatedData.totals.collections = financeData.collections.reduce((sum, c) => sum + (parseFloat(c.amountBilled) || 0), 0);
+            financeData.calculatedData.totals.outstanding = financeData.collections.filter(c => c.status === 'Unpaid').reduce((sum, c) => sum + (parseFloat(c.outstandingAmount) || parseFloat(c.amountBilled) || 0), 0);
+
+            // Calculate monthly data
+            const months = ['2024-01', '2024-02', '2024-03', '2024-04', '2024-05', '2024-06', '2024-07', '2024-08', '2024-09', '2024-10', '2024-11', '2024-12'];
+            months.forEach(month => {
+                const monthTransactions = financeData.transactions.filter(t => t.month === month || (t.paymentDate && t.paymentDate.startsWith(month)));
+                const monthCollections = financeData.collections.filter(c => c.invoiceDate && c.invoiceDate.startsWith(month));
+                
+                financeData.calculatedData.monthlyData[month] = {
+                    expenses: monthTransactions.filter(t => t.paid === 'Yes').reduce((sum, t) => sum + (parseFloat(t.totalAmount) || 0), 0),
+                    revenue: monthCollections.filter(c => c.status === 'Paid').reduce((sum, c) => sum + (parseFloat(c.amountPaid) || 0), 0),
+                    profit: 0
+                };
+                
+                financeData.calculatedData.monthlyData[month].profit = financeData.calculatedData.monthlyData[month].revenue - financeData.calculatedData.monthlyData[month].expenses;
+            });
+        }
+
+        // Enhanced project lookup function
+        function getProjectInfo(projectId) {
+            // Try exact match first
+            if (financeData.projectMaster[projectId]) {
+                return financeData.projectMaster[projectId];
+            }
+            
+            // Try to find by any part of the ID
+            for (const [key, project] of Object.entries(financeData.projectMaster)) {
+                if (projectId === project.fullId || projectId === project.code || projectId.includes(key)) {
+                    return project;
+                }
+            }
+            
+            // Default fallback
+            return {
+                code: 'UNK',
+                fullId: projectId,
+                clientName: 'Unknown Client',
+                projectName: 'Unknown Project',
+                address: 'Unknown Address'
+            };
+        }
+
         // Initialize the application
         function initializeApp() {
             loadFromLocalStorage();
+            
+            // Initialize projects from master data if empty
+            if (financeData.projects.length === 0) {
+                financeData.projects = Object.entries(financeData.projectMaster).map(([key, project]) => ({
+                    id: project.fullId,
+                    projectName: project.projectName,
+                    clientName: project.clientName,
+                    projectType: 'Construction',
+                    location: project.address,
+                    startDate: '2024-01-01',
+                    endDate: '',
+                    contractAmount: 0,
+                    approvedBudget: 0,
+                    status: 'Ongoing'
+                }));
+            }
+            
+            calculateAllData();
             initializeCharts();
             renderProjectCards();
             renderReferenceTables();
@@ -2467,5 +2789,5 @@
         // Start the application
         document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9734d5449192ed68',t:'MTc1NTg5MTUzMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9734e9dfe1baedcc',t:'MTc1NTg5MjM3Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
